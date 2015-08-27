@@ -27,6 +27,8 @@ namespace GameMapEditor
         private ToolStripButton toolStripBtnTilesetSelection;
         private Image currentTilesetImage;
 
+        private GameMap gameMap;
+
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapFrame));
@@ -45,9 +47,9 @@ namespace GameMapEditor
             this.picMap.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.picMap.Location = new System.Drawing.Point(0, 25);
+            this.picMap.Location = new System.Drawing.Point(2, 23);
             this.picMap.Name = "picMap";
-            this.picMap.Size = new System.Drawing.Size(281, 255);
+            this.picMap.Size = new System.Drawing.Size(278, 232);
             this.picMap.TabIndex = 0;
             this.picMap.TabStop = false;
             this.picMap.Paint += new System.Windows.Forms.PaintEventHandler(this.picMap_Paint);
@@ -58,10 +60,11 @@ namespace GameMapEditor
             // 
             // ToolStrip
             // 
+            this.ToolStrip.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.ToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripBtnGrid,
             this.toolStripBtnTilesetSelection});
-            this.ToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.ToolStrip.Location = new System.Drawing.Point(0, 275);
             this.ToolStrip.Name = "ToolStrip";
             this.ToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.ToolStrip.Size = new System.Drawing.Size(300, 25);
@@ -91,9 +94,9 @@ namespace GameMapEditor
             // 
             this.vScrollBarPicMap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.vScrollBarPicMap.Location = new System.Drawing.Point(282, 26);
+            this.vScrollBarPicMap.Location = new System.Drawing.Point(283, 23);
             this.vScrollBarPicMap.Name = "vScrollBarPicMap";
-            this.vScrollBarPicMap.Size = new System.Drawing.Size(17, 255);
+            this.vScrollBarPicMap.Size = new System.Drawing.Size(17, 241);
             this.vScrollBarPicMap.TabIndex = 2;
             this.vScrollBarPicMap.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBarPicMap_Scroll);
             // 
@@ -101,7 +104,7 @@ namespace GameMapEditor
             // 
             this.hScrollBarPicMap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.hScrollBarPicMap.Location = new System.Drawing.Point(1, 281);
+            this.hScrollBarPicMap.Location = new System.Drawing.Point(2, 258);
             this.hScrollBarPicMap.Name = "hScrollBarPicMap";
             this.hScrollBarPicMap.Size = new System.Drawing.Size(281, 17);
             this.hScrollBarPicMap.TabIndex = 3;
@@ -139,6 +142,7 @@ namespace GameMapEditor
             this.IsTilesetSelectionShowProcessActived = true;
             this.gridColor = new Pen(Color.FromArgb(130, 170, 170, 170), 2);
             this.mouseLocation = new Point();
+            this.gameMap = new GameMap();
             this.RefreshScrollComponents();
         }
 
@@ -146,13 +150,13 @@ namespace GameMapEditor
         {
             this.RefreshScrollComponents(this.hScrollBarPicMap.Value, this.vScrollBarPicMap.Value);
 
-            if (!this.hScrollBarPicMap.Enabled && !this.vScrollBarPicMap.Enabled)
+            // Centrer la map
+            /*if (!this.hScrollBarPicMap.Enabled && !this.vScrollBarPicMap.Enabled)
             {
-                Debug.WriteLine("Centered");
                 this.mapOrigin = new Point(
                     ((GlobalData.TileSize.Width * GlobalData.MapSize.Width) / 2) - (this.picMap.Size.Width / 2),
                     ((GlobalData.TileSize.Height * GlobalData.MapSize.Height) / 2) - (this.picMap.Size.Height / 2));
-            }
+            }*/
         }
 
         private void picMap_Paint(object sender, PaintEventArgs e)
@@ -297,7 +301,7 @@ namespace GameMapEditor
 
         public Pen GridColor
         {
-            get { return this.gridColor; }
+            get { return this.gridColor ?? Pens.Black; }
             set { this.gridColor = value; this.picMap.Refresh(); }
         }
 

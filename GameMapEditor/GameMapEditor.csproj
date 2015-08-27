@@ -66,6 +66,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Objects\GameMap.cs" />
+    <Compile Include="Objects\GameTile.cs" />
+    <Compile Include="Objects\GameTileset.cs" />
+    <Compile Include="Objects\IDrawable.cs" />
     <Compile Include="Objects\ImageAttrExtension.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

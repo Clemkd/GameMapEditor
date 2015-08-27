@@ -68,7 +68,9 @@
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.àProposToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStripBtnFill = new System.Windows.Forms.ToolStripButton();
             this.MenuStrip.SuspendLayout();
+            this.ToolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // DockPanel
@@ -124,6 +126,7 @@
             dockPaneStripSkin1.ToolWindowGradient = dockPaneStripToolWindowGradient1;
             dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
             this.DockPanel.Skin = dockPanelSkin1;
+            this.DockPanel.SupportDeeplyNestedContent = true;
             this.DockPanel.TabIndex = 0;
             this.DockPanel.Theme = this.OriginalTheme;
             // 
@@ -157,30 +160,31 @@
             // nouveauToolStripMenuItem
             // 
             this.nouveauToolStripMenuItem.Name = "nouveauToolStripMenuItem";
-            this.nouveauToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.nouveauToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.nouveauToolStripMenuItem.Text = "Nouveau";
+            this.nouveauToolStripMenuItem.Click += new System.EventHandler(this.nouveauToolStripMenuItem_Click);
             // 
             // ouvrirToolStripMenuItem
             // 
             this.ouvrirToolStripMenuItem.Name = "ouvrirToolStripMenuItem";
-            this.ouvrirToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.ouvrirToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.ouvrirToolStripMenuItem.Text = "Ouvrir";
             // 
             // sauvegarderToolStripMenuItem
             // 
             this.sauvegarderToolStripMenuItem.Name = "sauvegarderToolStripMenuItem";
-            this.sauvegarderToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.sauvegarderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.sauvegarderToolStripMenuItem.Text = "Sauvegarder";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(136, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // quitterToolStripMenuItem
             // 
             this.quitterToolStripMenuItem.Name = "quitterToolStripMenuItem";
-            this.quitterToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.quitterToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.quitterToolStripMenuItem.Text = "Quitter";
             // 
             // éditionToolStripMenuItem
@@ -281,12 +285,24 @@
             // ToolStrip
             // 
             this.ToolStrip.BackColor = System.Drawing.SystemColors.Control;
+            this.ToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripBtnFill});
             this.ToolStrip.Location = new System.Drawing.Point(0, 24);
             this.ToolStrip.Name = "ToolStrip";
             this.ToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.ToolStrip.Size = new System.Drawing.Size(1184, 25);
             this.ToolStrip.TabIndex = 2;
             this.ToolStrip.Text = "Tools";
+            // 
+            // toolStripBtnFill
+            // 
+            this.toolStripBtnFill.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripBtnFill.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnFill.Image")));
+            this.toolStripBtnFill.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripBtnFill.Name = "toolStripBtnFill";
+            this.toolStripBtnFill.Size = new System.Drawing.Size(23, 22);
+            this.toolStripBtnFill.Text = "Remplir";
+            this.toolStripBtnFill.Click += new System.EventHandler(this.toolStripBtnFill_Click);
             // 
             // MainFrame
             // 
@@ -304,6 +320,8 @@
             this.Text = "Editeur";
             this.MenuStrip.ResumeLayout(false);
             this.MenuStrip.PerformLayout();
+            this.ToolStrip.ResumeLayout(false);
+            this.ToolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -335,6 +353,7 @@
         private System.Windows.Forms.ToolStripMenuItem tilesetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem historiqueToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton toolStripBtnFill;
     }
 }
 

@@ -125,7 +125,7 @@ namespace GameMapEditor
         {
             if (this.currentTilesetImage != null)
             {
-                e.Graphics.Clear(Color.LightGray);
+                e.Graphics.Clear(Color.WhiteSmoke);
             
                 e.Graphics.DrawImage(this.currentTilesetImage, e.ClipRectangle,
                     this.tilesetOrigin.X,

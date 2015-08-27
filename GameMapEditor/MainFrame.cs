@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
@@ -9,7 +11,7 @@ namespace GameMapEditor
     {
         private TilesetFrame tilesetFrame;
         private MapBrowserFrame mapBrowserFrame;
-        private MapFrame mapFrame;
+        private List<MapFrame> mapFrames;
         private ConsoleFrame consoleFrame;
         private HistoryFrame historyFrame;
 
@@ -30,10 +32,7 @@ namespace GameMapEditor
             this.tilesetFrame.TilesetSelectionChanged += TilesetFrame_TilesetSelectionChanged;
             this.tilesetFrame.TilesetChanged += TilesetFrame_TilesetChanged;
 
-            this.mapFrame = new MapFrame();
-            this.mapFrame.DockAreas = DockAreas.Document;
-            this.mapFrame.Show(DockPanel);
-            this.mapFrame.DockState = DockState.Document;
+            this.mapFrames = new List<MapFrame>();
 
             this.mapBrowserFrame = new MapBrowserFrame();
             this.mapBrowserFrame.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
@@ -53,12 +52,34 @@ namespace GameMapEditor
 
         private void TilesetFrame_TilesetChanged(object sender, Image tileset)
         {
-            this.mapFrame.TilesetImage = tileset;
+            this.mapFrames.ForEach(x => x.TilesetImage = tileset);
         }
 
         private void TilesetFrame_TilesetSelectionChanged(object sender, Rectangle selection)
         {
-            this.mapFrame.TilesetSelection = selection;
+            this.mapFrames.ForEach(x => x.TilesetSelection = selection);
+        }
+
+        private void toolStripBtnFill_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void nouveauToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DockPanel.SuspendLayout(true);
+            MapFrame mapFrame = new MapFrame();
+            
+
+            mapFrame.TilesetImage = this.tilesetFrame.TilesetImage;
+            mapFrame.TilesetSelection = this.tilesetFrame.TilesetSelection;
+            this.mapFrames.Add(mapFrame);
+
+            mapFrame.Show(DockPanel);
+            mapFrame.DockState = DockState.Document;
+            mapFrame.Dock = DockStyle.Fill;
+
+            DockPanel.ResumeLayout(true, true);
         }
     }
 }
