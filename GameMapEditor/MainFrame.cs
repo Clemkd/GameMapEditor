@@ -50,7 +50,7 @@ namespace GameMapEditor
             this.historyFrame.DockState = DockState.DockBottomAutoHide;
         }
 
-        private void TilesetFrame_TilesetChanged(object sender, Image tileset)
+        private void TilesetFrame_TilesetChanged(object sender, Bitmap tileset)
         {
             this.mapFrames.ForEach(x => x.TilesetImage = tileset);
         }
@@ -62,23 +62,23 @@ namespace GameMapEditor
 
         private void toolStripBtnFill_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void nouveauToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DockPanel.SuspendLayout(true);
             MapFrame mapFrame = new MapFrame();
-            
 
             mapFrame.TilesetImage = this.tilesetFrame.TilesetImage;
             mapFrame.TilesetSelection = this.tilesetFrame.TilesetSelection;
-            this.mapFrames.Add(mapFrame);
 
             mapFrame.Show(DockPanel);
             mapFrame.DockState = DockState.Document;
             mapFrame.Dock = DockStyle.Fill;
-
+            
+            this.mapFrames.Add(mapFrame);
+            
             DockPanel.ResumeLayout(true, true);
         }
     }

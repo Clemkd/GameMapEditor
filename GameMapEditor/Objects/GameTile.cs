@@ -19,11 +19,16 @@ namespace GameMapEditor.Objects
             this.Position = new Point();
         }
 
+        public GameTile(Point position)
+        {
+            this.Position = position;
+        }
+
         public void Draw(PaintEventArgs e)
         {
             if(this.texture != null)
             {
-                e.Graphics.DrawImage(this.texture, this.Position);
+                e.Graphics.DrawImage(this.texture, new Point(this.Position.X * GlobalData.TileSize.Width, this.Position.Y * GlobalData.TileSize.Height));
             }
         }
 

@@ -25,9 +25,11 @@ namespace GameMapEditor
 
         private Rectangle tilesetSelection;
         private ToolStripButton toolStripBtnTilesetSelection;
-        private Image currentTilesetImage;
+        private Bitmap currentTilesetImage;
 
         private GameMap gameMap;
+        private int xLocation, yLocation;
+        private int oldXLocation, oldYLocation;
 
         private void InitializeComponent()
         {
@@ -123,7 +125,6 @@ namespace GameMapEditor
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(300, 300);
-            this.Name = "MapFrame";
             this.Text = "Map";
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).EndInit();
             this.ToolStrip.ResumeLayout(false);
@@ -162,7 +163,7 @@ namespace GameMapEditor
         private void picMap_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.LightGray);
-
+            if(this.gameMap != null) this.gameMap.Draw(e);
             this.DrawSelection(this.isTilesetSelectionShowProcessActived, e);
             this.DrawGrid(this.isGridActived, e);
         }
@@ -175,6 +176,27 @@ namespace GameMapEditor
         private void picMap_MouseMove(object sender, MouseEventArgs e)
         {
             this.mouseLocation = e.Location;
+            xLocation = (int)((this.mouseLocation.X + this.mapOrigin.X) / GlobalData.TileSize.Width);
+            yLocation = (int)((this.mouseLocation.Y + this.mapOrigin.Y) / GlobalData.TileSize.Height);
+
+            if (e.Button == MouseButtons.Left &&
+                (oldXLocation != xLocation || oldYLocation != yLocation) &&
+                this.tilesetSelection != null && this.currentTilesetImage != null)
+            {
+                oldXLocation = xLocation;
+                oldYLocation = yLocation;
+
+                // TODO : Identifier taille en tile (width + height) du tilesetSelection
+                // Boucle pour le clone de chaque Tile
+                // (Info : Prendre en compte les Tiles "NullRef")
+                GameTile tile = this.gameMap[xLocation, yLocation];
+                if (tile != null)
+                {
+                    tile.Texture = this.currentTilesetImage.Clone(this.tilesetSelection, PixelFormat.DontCare);
+                }
+            }
+
+            
             this.picMap.Refresh();
         }
 
@@ -321,7 +343,7 @@ namespace GameMapEditor
             set { this.tilesetSelection = value; }
         }
 
-        public Image TilesetImage
+        public Bitmap TilesetImage
         {
             set { this.currentTilesetImage = value; }
         }

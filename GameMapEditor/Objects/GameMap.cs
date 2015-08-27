@@ -14,6 +14,13 @@ namespace GameMapEditor.Objects
         public GameMap()
         {
             map = new GameTile[GlobalData.MapSize.Width, GlobalData.MapSize.Height];
+            for(int x = 0; x < map.GetLength(0); x++)
+            {
+                for (int y = 0; y < map.GetLength(1); y++)
+                {
+                    map[x, y] = new GameTile(new Point(x, y));
+                }
+            }
         }
 
         public void Draw(PaintEventArgs e)
@@ -24,16 +31,26 @@ namespace GameMapEditor.Objects
             }
         }
 
-        public GameTile Tile(Point position)
+        public GameTile this[int x, int y]
         {
-            if(position.X > 0 && position.X < this.map.GetLength(0) &&
-                position.Y > 0 && position.Y < this.map.GetLength(1))
+            get
             {
-                return this.map[position.X, position.Y];
-            }
+                
+                if (x >= 0 && x < this.map.GetLength(0) && y >= 0 && y < this.map.GetLength(1))
+                {
+                    return this.map[x, y];
+                }
 
-            Debug.WriteLine("Position du tile en dehors du tableau de valeurs.");
-            return null;
+                Debug.WriteLine("Position du tile en dehors du tableau de valeurs.");
+                return null;
+            }
+            set
+            {
+                if (x > 0 && x < this.map.GetLength(0) && y > 0 && y < this.map.GetLength(1))
+                {
+                    this.map[x, y] = value;
+                }
+            }
         }
     }
 }

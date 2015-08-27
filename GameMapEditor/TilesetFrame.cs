@@ -19,11 +19,11 @@ namespace GameMapEditor
         private Point tilesetOrigin;
         private ComboBox comboTilesetFileSelecter;
         private Rectangle tilesetSelection;
-        private List<Image> tilesetImages;
-        private Image currentTilesetImage;
+        private List<Bitmap> tilesetImages;
+        private Bitmap currentTilesetImage;
 
         public event TilesetChangedEventHandler TilesetChanged;
-        public delegate void TilesetChangedEventHandler(object sender, Image tileset);
+        public delegate void TilesetChangedEventHandler(object sender, Bitmap tileset);
         public event TilesetSelectionEventHandler TilesetSelectionChanged;
         public delegate void TilesetSelectionEventHandler(object sender, Rectangle selection);
 
@@ -114,7 +114,7 @@ namespace GameMapEditor
 
             this.tilesetOrigin = new Point();
             this.tilesetSelection = new Rectangle();
-            this.tilesetImages = new List<Image>();
+            this.tilesetImages = new List<Bitmap>();
             this.CursorColor = DefaultCursorColor;
             this.IsSelectingTiles = false;
 
@@ -213,7 +213,7 @@ namespace GameMapEditor
             string[] tilesetFiles = Directory.GetFiles(".", "*.png", SearchOption.TopDirectoryOnly);
             foreach (string file in tilesetFiles)
             {
-                this.tilesetImages.Add(Image.FromFile(file));
+                this.tilesetImages.Add(new Bitmap(Bitmap.FromFile(file)));
                 this.comboTilesetFileSelecter.Items.Add(Path.GetFileName(file));
             }
         }
@@ -242,7 +242,7 @@ namespace GameMapEditor
             }
         }
 
-        private void RaiseTilesetChangedEvent(Image tileset)
+        private void RaiseTilesetChangedEvent(Bitmap tileset)
         {
             if(this.TilesetChanged != null)
             {
@@ -280,7 +280,7 @@ namespace GameMapEditor
             get { return this.tilesetSelection; }
         }
 
-        public Image TilesetImage
+        public Bitmap TilesetImage
         {
             get { return this.currentTilesetImage; }
         }
