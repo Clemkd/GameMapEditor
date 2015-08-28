@@ -27,9 +27,15 @@ namespace GameMapEditor.Objects
         public void Draw(PaintEventArgs e)
         {
             if(this.texture != null)
-            {
                 e.Graphics.DrawImage(this.texture, new Point(this.Position.X * GlobalData.TileSize.Width, this.Position.Y * GlobalData.TileSize.Height));
-            }
+        }
+
+        public void Draw(Point origin, PaintEventArgs e)
+        {
+            if (this.texture != null)
+                e.Graphics.DrawImage(this.texture, new Point(
+                    this.Position.X * GlobalData.TileSize.Width - origin.X,
+                    this.Position.Y * GlobalData.TileSize.Height - origin.Y));
         }
 
         public Bitmap Texture
@@ -44,6 +50,7 @@ namespace GameMapEditor.Objects
             set;
         }
 
+        // TODO : Only for debug
         public override string ToString()
         {
             if (texture != null)

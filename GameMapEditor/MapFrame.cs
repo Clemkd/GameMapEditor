@@ -1,5 +1,6 @@
 ﻿using GameMapEditor.Objects;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -149,31 +150,32 @@ namespace GameMapEditor
             this.RefreshScrollComponents();
         }
 
+        #region FrameEvents
         private void picMap_Resize(object sender, EventArgs e)
         {
             this.RefreshScrollComponents(this.hScrollBarPicMap.Value, this.vScrollBarPicMap.Value);
 
-            // Centrer la map
+            /**** Centre la map ****/
             /*if (!this.hScrollBarPicMap.Enabled && !this.vScrollBarPicMap.Enabled)
             {
                 this.mapOrigin = new Point(
                     ((GlobalData.TileSize.Width * GlobalData.MapSize.Width) / 2) - (this.picMap.Size.Width / 2),
                     ((GlobalData.TileSize.Height * GlobalData.MapSize.Height) / 2) - (this.picMap.Size.Height / 2));
             }*/
+            /***********************/
         }
 
         private void picMap_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.LightGray);
-            if(this.gameMap != null) this.gameMap.Draw(e);
+            if(this.gameMap != null) this.gameMap.Draw(this.mapOrigin, e);
             this.DrawSelection(this.isTilesetSelectionShowProcessActived, e);
             this.DrawGrid(this.isGridActived, e);
         }
 
         private void picMap_MouseDown(object sender, MouseEventArgs e)
         {
-            SetTilesMapWithCurrentSelection(this.location);
-            Debug.WriteLine(this.gameMap.ToString());
+            SetTiles(this.location);
         }
 
         private void picMap_MouseMove(object sender, MouseEventArgs e)
@@ -183,6 +185,9 @@ namespace GameMapEditor
             location.X = (int)((e.Location.X + this.mapOrigin.X) / GlobalData.TileSize.Width);
             location.Y = (int)((e.Location.Y + this.mapOrigin.Y) / GlobalData.TileSize.Height);
 
+            // Si le bouton gauche de la souris est actuellement pressé,
+            // si la position de la souris à évolué (ref : tile) et
+            // s'il existe une selection du tileset et une texture courante pour le tileset
             if (e.Button == MouseButtons.Left &&
                 (oldLocation.X != location.X || oldLocation.Y != location.Y) &&
                 this.tilesetSelection != null && this.currentTilesetImage != null)
@@ -190,7 +195,7 @@ namespace GameMapEditor
                 this.oldLocation.X = this.location.X;
                 this.oldLocation.Y = this.location.Y;
 
-                SetTilesMapWithCurrentSelection(this.location);
+                SetTiles(this.location);
             }
             
             this.picMap.Refresh();
@@ -198,7 +203,8 @@ namespace GameMapEditor
 
         private void picMap_MouseUp(object sender, MouseEventArgs e)
         {
-            
+            // Save gameMap state (Undo / Redo list)
+            Debug.WriteLine(this.gameMap.ToString());
         }
 
         private void vScrollBarPicMap_Scroll(object sender, ScrollEventArgs e)
@@ -222,8 +228,55 @@ namespace GameMapEditor
         {
             this.IsTilesetSelectionShowProcessActived = !this.IsTilesetSelectionShowProcessActived;
         }
+        #endregion
 
-        private void SetTilesMapWithCurrentSelection(Point position)
+        #region Methodes
+        /// <summary>
+        /// Ouvre un nouveau document de map
+        /// </summary>
+        /// <param name="dockPanel">Le panel de gestion du document</param>
+        /// <param name="mapFrames">La liste des documents de map</param>
+        /// <param name="tilesetImage">La texture du tileset courant</param>
+        /// <param name="tilesetSelection">La selection du tileset courant</param>
+        public static void OpenNewDocument(DockPanel dockPanel, List<MapFrame> mapFrames, Bitmap tilesetImage, Rectangle tilesetSelection)
+        {
+            dockPanel.SuspendLayout(true);
+            MapFrame mapFrame = new MapFrame();
+
+            mapFrame.TilesetImage = tilesetImage;
+            mapFrame.TilesetSelection = tilesetSelection;
+
+            mapFrame.Show(dockPanel);
+            mapFrame.DockState = DockState.Document;
+            mapFrame.Dock = DockStyle.Fill;
+
+            mapFrames.Add(mapFrame);
+
+            dockPanel.ResumeLayout(true, true);
+        }
+
+        // TODO : Déplacer vers GameMap
+        /// <summary>
+        /// Remplis la map par la texture selectionnée du tileset
+        /// </summary>
+        public void Fill()
+        {
+            int tmpWidth = this.tilesetSelection.Width / GlobalData.TileSize.Width;
+            int tmpHeight = this.tilesetSelection.Height / GlobalData.TileSize.Height;
+
+            for (int y = 0; y < GlobalData.MapSize.Height; y += tmpHeight)
+                for (int x = 0; x < GlobalData.MapSize.Width; x += tmpWidth)
+                    this.SetTiles(new Point(x, y));
+
+            this.picMap.Refresh();
+        }
+
+        // TODO : Déplacer vers GameMap
+        /// <summary>
+        /// Modifie de façon intelligente les données de la carte selon la selection du tileset, à partir de la position donnée
+        /// </summary>
+        /// <param name="position">La position du premier tile en haut à gauche à modifier</param>
+        private void SetTiles(Point position)
         {
             for (int x = 0; x < this.tilesetSelection.Width / GlobalData.TileSize.Width; x++)
             {
@@ -237,11 +290,18 @@ namespace GameMapEditor
                             this.tilesetSelection.Location.Y + GlobalData.TileSize.Height * y,
                             GlobalData.TileSize.Width,
                             GlobalData.TileSize.Height);
-                        tile.Texture = this.currentTilesetImage.Clone(selection, PixelFormat.DontCare);
+
+                        GraphicsUnit unit = GraphicsUnit.Pixel;
+                        RectangleF bounds = this.currentTilesetImage.GetBounds(ref unit);
+
+                        if(bounds.Contains(selection))
+                            // OutOfMemory eventuel, par usage de textures inexistantes (OutOfRange extension)
+                            tile.Texture = this.currentTilesetImage.Clone(selection, PixelFormat.DontCare);
                     }
                 }
             }
         }
+
 
         /// <summary>
         /// Dessine la grille si l'état donné est vrai
@@ -325,7 +385,9 @@ namespace GameMapEditor
 
             this.picMap.Refresh();
         }
+        #endregion
 
+        #region Properties
         public bool IsGridActived
         {
             get { return this.isGridActived; }
@@ -363,5 +425,6 @@ namespace GameMapEditor
         {
             set { this.currentTilesetImage = value; }
         }
+        #endregion
     }
 }

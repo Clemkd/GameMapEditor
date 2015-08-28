@@ -62,24 +62,13 @@ namespace GameMapEditor
 
         private void toolStripBtnFill_Click(object sender, EventArgs e)
         {
-
+            MapFrame mapFrame = this.DockPanel.ActiveDocument as MapFrame;
+            if (mapFrame != null) mapFrame.Fill();
         }
 
         private void nouveauToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DockPanel.SuspendLayout(true);
-            MapFrame mapFrame = new MapFrame();
-
-            mapFrame.TilesetImage = this.tilesetFrame.TilesetImage;
-            mapFrame.TilesetSelection = this.tilesetFrame.TilesetSelection;
-
-            mapFrame.Show(DockPanel);
-            mapFrame.DockState = DockState.Document;
-            mapFrame.Dock = DockStyle.Fill;
-            
-            this.mapFrames.Add(mapFrame);
-            
-            DockPanel.ResumeLayout(true, true);
+            MapFrame.OpenNewDocument(DockPanel, this.mapFrames, this.tilesetFrame.TilesetImage, this.tilesetFrame.TilesetSelection);
         }
     }
 }

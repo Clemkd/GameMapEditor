@@ -146,13 +146,19 @@ namespace GameMapEditor
         {
             if (this.currentTilesetImage != null)
             {
-                Point pt = new Point((int)((e.Location.X + this.tilesetOrigin.X) / GlobalData.TileSize.Width) * GlobalData.TileSize.Width,
-                (int)((e.Location.Y + this.tilesetOrigin.Y) / GlobalData.TileSize.Height) * GlobalData.TileSize.Height);
+                Point pt = new Point(e.Location.X + this.TilesetOrigin.X, e.Location.Y + this.TilesetOrigin.Y);
+                Rectangle rect = new Rectangle(Point.Empty, this.TilesetImage.Size);
 
-                this.tilesetSelection.Location = pt;
-                this.tilesetSelection.Size = GlobalData.TileSize;
-                this.IsSelectingTiles = true;
-                this.picTileset.Refresh();
+                if (rect.Contains(pt))
+                {
+                    pt.X = (pt.X / GlobalData.TileSize.Width) * GlobalData.TileSize.Width;
+                    pt.Y = (pt.Y / GlobalData.TileSize.Height) * GlobalData.TileSize.Height;
+
+                    this.tilesetSelection.Location = pt;
+                    this.tilesetSelection.Size = GlobalData.TileSize;
+                    this.IsSelectingTiles = true;
+                    this.picTileset.Refresh();
+                }
             }
         }
 
@@ -161,15 +167,16 @@ namespace GameMapEditor
             if (this.currentTilesetImage != null)
             {
                 Point pt = new Point(e.Location.X + this.TilesetOrigin.X, e.Location.Y + this.TilesetOrigin.Y);
+                Rectangle rect = new Rectangle(Point.Empty, this.TilesetImage.Size);
 
-                if (this.IsSelectingTiles && pt.X > this.TilesetSelection.Location.X && pt.Y > this.TilesetSelection.Location.Y)
+                if (rect.Contains(pt) && this.IsSelectingTiles && pt.X > this.TilesetSelection.Location.X && pt.Y > this.TilesetSelection.Location.Y)
                 {
                     int tmpWidth = (int)((pt.X - this.TilesetSelection.X) / GlobalData.TileSize.Width) + 1;
                     int tmpHeight = (int)((pt.Y - this.TilesetSelection.Location.Y) / GlobalData.TileSize.Height) + 1;
 
                     this.tilesetSelection.Size = new Size(tmpWidth * GlobalData.TileSize.Width, tmpHeight * GlobalData.TileSize.Height);
                     this.picTileset.Refresh();
-                    
+
                 }
             }
         }
