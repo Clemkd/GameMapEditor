@@ -28,8 +28,8 @@ namespace GameMapEditor
         private Bitmap currentTilesetImage;
 
         private GameMap gameMap;
-        private int xLocation, yLocation;
-        private int oldXLocation, oldYLocation;
+        private Point location;
+        private Point oldLocation;
 
         private void InitializeComponent()
         {
@@ -143,6 +143,8 @@ namespace GameMapEditor
             this.IsTilesetSelectionShowProcessActived = true;
             this.gridColor = new Pen(Color.FromArgb(130, 170, 170, 170), 2);
             this.mouseLocation = new Point();
+            this.location = new Point();
+            this.oldLocation = new Point();
             this.gameMap = new GameMap();
             this.RefreshScrollComponents();
         }
@@ -170,32 +172,26 @@ namespace GameMapEditor
 
         private void picMap_MouseDown(object sender, MouseEventArgs e)
         {
-
+            SetTilesMapWithCurrentSelection(this.location);
+            Debug.WriteLine(this.gameMap.ToString());
         }
 
         private void picMap_MouseMove(object sender, MouseEventArgs e)
         {
             this.mouseLocation = e.Location;
-            xLocation = (int)((this.mouseLocation.X + this.mapOrigin.X) / GlobalData.TileSize.Width);
-            yLocation = (int)((this.mouseLocation.Y + this.mapOrigin.Y) / GlobalData.TileSize.Height);
+
+            location.X = (int)((e.Location.X + this.mapOrigin.X) / GlobalData.TileSize.Width);
+            location.Y = (int)((e.Location.Y + this.mapOrigin.Y) / GlobalData.TileSize.Height);
 
             if (e.Button == MouseButtons.Left &&
-                (oldXLocation != xLocation || oldYLocation != yLocation) &&
+                (oldLocation.X != location.X || oldLocation.Y != location.Y) &&
                 this.tilesetSelection != null && this.currentTilesetImage != null)
             {
-                oldXLocation = xLocation;
-                oldYLocation = yLocation;
+                this.oldLocation.X = this.location.X;
+                this.oldLocation.Y = this.location.Y;
 
-                // TODO : Identifier taille en tile (width + height) du tilesetSelection
-                // Boucle pour le clone de chaque Tile
-                // (Info : Prendre en compte les Tiles "NullRef")
-                GameTile tile = this.gameMap[xLocation, yLocation];
-                if (tile != null)
-                {
-                    tile.Texture = this.currentTilesetImage.Clone(this.tilesetSelection, PixelFormat.DontCare);
-                }
+                SetTilesMapWithCurrentSelection(this.location);
             }
-
             
             this.picMap.Refresh();
         }
@@ -225,6 +221,26 @@ namespace GameMapEditor
         private void toolStripBtnTilesetSelection_Click(object sender, EventArgs e)
         {
             this.IsTilesetSelectionShowProcessActived = !this.IsTilesetSelectionShowProcessActived;
+        }
+
+        private void SetTilesMapWithCurrentSelection(Point position)
+        {
+            for (int x = 0; x < this.tilesetSelection.Width / GlobalData.TileSize.Width; x++)
+            {
+                for (int y = 0; y < this.tilesetSelection.Height / GlobalData.TileSize.Height; y++)
+                {
+                    GameTile tile = this.gameMap[position.X + x, position.Y + y];
+                    if (tile != null)
+                    {
+                        Rectangle selection = new Rectangle(
+                            this.tilesetSelection.Location.X + GlobalData.TileSize.Width * x,
+                            this.tilesetSelection.Location.Y + GlobalData.TileSize.Height * y,
+                            GlobalData.TileSize.Width,
+                            GlobalData.TileSize.Height);
+                        tile.Texture = this.currentTilesetImage.Clone(selection, PixelFormat.DontCare);
+                    }
+                }
+            }
         }
 
         /// <summary>

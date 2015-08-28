@@ -43,5 +43,12 @@ namespace GameMapEditor.Objects
             get;
             set;
         }
+
+        public override string ToString()
+        {
+            if (texture != null)
+                return "[1]";
+            return string.Empty;
+        }
     }
 }

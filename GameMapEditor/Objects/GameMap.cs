@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 namespace GameMapEditor.Objects
@@ -51,6 +52,23 @@ namespace GameMapEditor.Objects
                     this.map[x, y] = value;
                 }
             }
+        }
+
+
+        public override string ToString()
+        {
+            StringBuilder strBuild = new StringBuilder();
+            for(int y = 0; y < this.map.GetLength(1); y++)
+            {
+                
+                for (int x = 0; x < this.map.GetLength(0); x++ )
+                {
+                    strBuild.Append(this.map[x, y].ToString());
+                }
+                strBuild.Append("\n");
+            }
+
+            return strBuild.ToString();
         }
     }
 }
