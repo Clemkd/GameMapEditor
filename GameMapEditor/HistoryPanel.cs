@@ -17,7 +17,7 @@ namespace GameMapEditor
         Pencil
     }
 
-    public class HistoryFrame : DockContent
+    public class HistoryPanel : DockContent
     {
         private ListView ListViewHistory;
         private ColumnHeader IconColumn;
@@ -30,7 +30,7 @@ namespace GameMapEditor
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HistoryFrame));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HistoryPanel));
             this.ListViewHistory = new System.Windows.Forms.ListView();
             this.IconColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ActionColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));

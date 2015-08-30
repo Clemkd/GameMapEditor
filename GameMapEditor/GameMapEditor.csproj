@@ -49,11 +49,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsoleFrame.cs">
+    <Compile Include="ConsolePanel.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GlobalData.cs" />
-    <Compile Include="HistoryFrame.cs">
+    <Compile Include="HistoryPanel.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainFrame.cs">
@@ -62,33 +62,42 @@
     <Compile Include="MainFrame.Designer.cs">
       <DependentUpon>MainFrame.cs</DependentUpon>
     </Compile>
-    <Compile Include="MapFrame.cs">
+    <Compile Include="MapPanel.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="NewMapFrame.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewMapFrame.Designer.cs">
+      <DependentUpon>NewMapFrame.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Objects\BitmapImage.cs" />
     <Compile Include="Objects\GameMap.cs" />
     <Compile Include="Objects\GameTile.cs" />
-    <Compile Include="Objects\GameTileset.cs" />
     <Compile Include="Objects\IDrawable.cs" />
     <Compile Include="Objects\ImageAttrExtension.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TilesetFrame.cs">
+    <Compile Include="TilesetPanel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MapBrowserFrame.cs">
+    <Compile Include="MapBrowserPanel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <EmbeddedResource Include="ConsoleFrame.resx">
-      <DependentUpon>ConsoleFrame.cs</DependentUpon>
+    <EmbeddedResource Include="ConsolePanel.resx">
+      <DependentUpon>ConsolePanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="HistoryFrame.resx">
-      <DependentUpon>HistoryFrame.cs</DependentUpon>
+    <EmbeddedResource Include="HistoryPanel.resx">
+      <DependentUpon>HistoryPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainFrame.resx">
       <DependentUpon>MainFrame.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MapFrame.resx">
-      <DependentUpon>MapFrame.cs</DependentUpon>
+    <EmbeddedResource Include="MapPanel.resx">
+      <DependentUpon>MapPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NewMapFrame.resx">
+      <DependentUpon>NewMapFrame.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -100,11 +109,11 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="TilesetFrame.resx">
-      <DependentUpon>TilesetFrame.cs</DependentUpon>
+    <EmbeddedResource Include="TilesetPanel.resx">
+      <DependentUpon>TilesetPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MapBrowserFrame.resx">
-      <DependentUpon>MapBrowserFrame.cs</DependentUpon>
+    <EmbeddedResource Include="MapBrowserPanel.resx">
+      <DependentUpon>MapBrowserPanel.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

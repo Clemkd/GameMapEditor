@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-
+using System.IO;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace GameMapEditor
 {
-    public class MapFrame : DockContent
+    public class MapPanel : DockContent
     {
         private ToolStrip ToolStrip;
         private ToolStripButton toolStripBtnGrid;
@@ -22,11 +22,11 @@ namespace GameMapEditor
         private VScrollBar vScrollBarPicMap;
         private HScrollBar hScrollBarPicMap;
         private Pen gridColor;
-        private Point mouseLocation;    
+        private Point mouseLocation;
 
         private Rectangle tilesetSelection;
         private ToolStripButton toolStripBtnTilesetSelection;
-        private Bitmap currentTilesetImage;
+        private BitmapImage texture;
 
         private GameMap gameMap;
         private Point location;
@@ -34,7 +34,7 @@ namespace GameMapEditor
 
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapFrame));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapPanel));
             this.picMap = new System.Windows.Forms.PictureBox();
             this.ToolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripBtnGrid = new System.Windows.Forms.ToolStripButton();
@@ -47,8 +47,8 @@ namespace GameMapEditor
             // 
             // picMap
             // 
-            this.picMap.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.picMap.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picMap.Location = new System.Drawing.Point(2, 23);
             this.picMap.Name = "picMap";
@@ -95,7 +95,7 @@ namespace GameMapEditor
             // 
             // vScrollBarPicMap
             // 
-            this.vScrollBarPicMap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.vScrollBarPicMap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.vScrollBarPicMap.Location = new System.Drawing.Point(283, 23);
             this.vScrollBarPicMap.Name = "vScrollBarPicMap";
@@ -105,7 +105,7 @@ namespace GameMapEditor
             // 
             // hScrollBarPicMap
             // 
-            this.hScrollBarPicMap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.hScrollBarPicMap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.hScrollBarPicMap.Location = new System.Drawing.Point(2, 258);
             this.hScrollBarPicMap.Name = "hScrollBarPicMap";
@@ -135,19 +135,23 @@ namespace GameMapEditor
 
         }
 
-        protected override void OnLoad(EventArgs e)
+        public MapPanel()
         {
-            base.OnLoad(e);
             this.InitializeComponent();
             this.mapOrigin = new Point();
             this.IsGridActived = true;
             this.IsTilesetSelectionShowProcessActived = true;
-            this.gridColor = new Pen(Color.FromArgb(130, 170, 170, 170), 2);
+            this.gridColor = new Pen(Color.FromArgb(255, 170, 170, 170), 2);
             this.mouseLocation = new Point();
             this.location = new Point();
             this.oldLocation = new Point();
             this.gameMap = new GameMap();
             this.RefreshScrollComponents();
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
         }
 
         #region FrameEvents
@@ -168,14 +172,14 @@ namespace GameMapEditor
         private void picMap_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.LightGray);
-            if(this.gameMap != null) this.gameMap.Draw(this.mapOrigin, e);
+            this.gameMap.Draw(this.mapOrigin, e);
             this.DrawSelection(this.isTilesetSelectionShowProcessActived, e);
             this.DrawGrid(this.isGridActived, e);
         }
 
         private void picMap_MouseDown(object sender, MouseEventArgs e)
         {
-            SetTiles(this.location);
+            this.gameMap.SetTiles(this.location.X, this.location.Y, this.texture);
         }
 
         private void picMap_MouseMove(object sender, MouseEventArgs e)
@@ -190,21 +194,21 @@ namespace GameMapEditor
             // s'il existe une selection du tileset et une texture courante pour le tileset
             if (e.Button == MouseButtons.Left &&
                 (oldLocation.X != location.X || oldLocation.Y != location.Y) &&
-                this.tilesetSelection != null && this.currentTilesetImage != null)
+                this.tilesetSelection != null && this.texture != null)
             {
                 this.oldLocation.X = this.location.X;
                 this.oldLocation.Y = this.location.Y;
 
-                SetTiles(this.location);
+                this.gameMap.SetTiles(this.location.X, this.location.Y, this.texture);
             }
-            
+
             this.picMap.Refresh();
         }
 
         private void picMap_MouseUp(object sender, MouseEventArgs e)
         {
             // Save gameMap state (Undo / Redo list)
-            Debug.WriteLine(this.gameMap.ToString());
+            //Debug.WriteLine(this.gameMap.ToString());
         }
 
         private void vScrollBarPicMap_Scroll(object sender, ScrollEventArgs e)
@@ -235,73 +239,50 @@ namespace GameMapEditor
         /// Ouvre un nouveau document de map
         /// </summary>
         /// <param name="dockPanel">Le panel de gestion du document</param>
-        /// <param name="mapFrames">La liste des documents de map</param>
+        /// <param name="mapPanels">La liste des documents de map</param>
         /// <param name="tilesetImage">La texture du tileset courant</param>
         /// <param name="tilesetSelection">La selection du tileset courant</param>
-        public static void OpenNewDocument(DockPanel dockPanel, List<MapFrame> mapFrames, Bitmap tilesetImage, Rectangle tilesetSelection)
+        public static MapPanel OpenNewDocument(DockPanel dockPanel, List<MapPanel> mapPanels, BitmapImage tilesetImage, Rectangle tilesetSelection, string mapName)
         {
             dockPanel.SuspendLayout(true);
-            MapFrame mapFrame = new MapFrame();
+            MapPanel mapPanel = new MapPanel();
 
-            mapFrame.TilesetImage = tilesetImage;
-            mapFrame.TilesetSelection = tilesetSelection;
+            mapPanel.Texture = tilesetImage;
+            mapPanel.TilesetSelection = tilesetSelection;
+            mapPanel.MapName = mapName;
 
-            mapFrame.Show(dockPanel);
-            mapFrame.DockState = DockState.Document;
-            mapFrame.Dock = DockStyle.Fill;
+            mapPanel.Show(dockPanel);
+            mapPanel.DockState = DockState.Document;
+            mapPanel.Dock = DockStyle.Fill;
 
-            mapFrames.Add(mapFrame);
+            mapPanels.Add(mapPanel);
 
             dockPanel.ResumeLayout(true, true);
+
+            return mapPanel;
         }
 
-        // TODO : Déplacer vers GameMap
         /// <summary>
         /// Remplis la map par la texture selectionnée du tileset
         /// </summary>
         public void Fill()
         {
-            int tmpWidth = this.tilesetSelection.Width / GlobalData.TileSize.Width;
-            int tmpHeight = this.tilesetSelection.Height / GlobalData.TileSize.Height;
-
-            for (int y = 0; y < GlobalData.MapSize.Height; y += tmpHeight)
-                for (int x = 0; x < GlobalData.MapSize.Width; x += tmpWidth)
-                    this.SetTiles(new Point(x, y));
-
-            this.picMap.Refresh();
-        }
-
-        // TODO : Déplacer vers GameMap
-        /// <summary>
-        /// Modifie de façon intelligente les données de la carte selon la selection du tileset, à partir de la position donnée
-        /// </summary>
-        /// <param name="position">La position du premier tile en haut à gauche à modifier</param>
-        private void SetTiles(Point position)
-        {
-            for (int x = 0; x < this.tilesetSelection.Width / GlobalData.TileSize.Width; x++)
+            if (this.tilesetSelection != null && this.texture != null)
             {
-                for (int y = 0; y < this.tilesetSelection.Height / GlobalData.TileSize.Height; y++)
-                {
-                    GameTile tile = this.gameMap[position.X + x, position.Y + y];
-                    if (tile != null)
-                    {
-                        Rectangle selection = new Rectangle(
-                            this.tilesetSelection.Location.X + GlobalData.TileSize.Width * x,
-                            this.tilesetSelection.Location.Y + GlobalData.TileSize.Height * y,
-                            GlobalData.TileSize.Width,
-                            GlobalData.TileSize.Height);
-
-                        GraphicsUnit unit = GraphicsUnit.Pixel;
-                        RectangleF bounds = this.currentTilesetImage.GetBounds(ref unit);
-
-                        if(bounds.Contains(selection))
-                            // OutOfMemory eventuel, par usage de textures inexistantes (OutOfRange extension)
-                            tile.Texture = this.currentTilesetImage.Clone(selection, PixelFormat.DontCare);
-                    }
-                }
+                this.gameMap.Fill(this.texture);
+                this.picMap.Refresh();
             }
         }
 
+        public void SaveMap()
+        {
+            this.gameMap.Save();
+        }
+
+        public void LoadMap(GameMap map)
+        {
+            this.gameMap = map;
+        }
 
         /// <summary>
         /// Dessine la grille si l'état donné est vrai
@@ -315,13 +296,13 @@ namespace GameMapEditor
             for (int x = 0; x < GlobalData.MapSize.Width + 1; x++)
                 e.Graphics.DrawLine(this.GridColor,
                     x * GlobalData.TileSize.Width - this.mapOrigin.X,
-                    - this.mapOrigin.Y,
+                    -this.mapOrigin.Y,
                     x * GlobalData.TileSize.Width - this.mapOrigin.X,
                     GlobalData.MapSize.Height * GlobalData.TileSize.Height - this.mapOrigin.Y);
 
             for (int y = 0; y < GlobalData.MapSize.Height + 1; y++)
                 e.Graphics.DrawLine(this.GridColor,
-                    - this.mapOrigin.X,
+                    -this.mapOrigin.X,
                     y * GlobalData.TileSize.Height - this.mapOrigin.Y,
                     GlobalData.MapSize.Width * GlobalData.TileSize.Width - this.mapOrigin.X,
                     y * GlobalData.TileSize.Height - this.mapOrigin.Y);
@@ -334,7 +315,7 @@ namespace GameMapEditor
         /// <param name="e">Les données de dessin</param>
         private void DrawSelection(bool state, PaintEventArgs e)
         {
-            if (!state || this.tilesetSelection == null || this.currentTilesetImage == null) return;
+            if (!state || this.tilesetSelection == null || this.texture == null) return;
 
             int xLocation = (int)((this.mouseLocation.X + this.mapOrigin.X) / GlobalData.TileSize.Width);
             int yLocation = (int)((this.mouseLocation.Y + this.mapOrigin.Y) / GlobalData.TileSize.Height);
@@ -344,7 +325,7 @@ namespace GameMapEditor
                 ImageAttributes attributes = new ImageAttributes();
                 attributes.SetOpacity(0.5f);
 
-                e.Graphics.DrawImage(this.currentTilesetImage,
+                e.Graphics.DrawImage(this.texture.BitmapSource,
                     new Rectangle(
                         xLocation * GlobalData.TileSize.Width - this.mapOrigin.X,
                         yLocation * GlobalData.TileSize.Height - this.mapOrigin.Y,
@@ -421,9 +402,15 @@ namespace GameMapEditor
             set { this.tilesetSelection = value; }
         }
 
-        public Bitmap TilesetImage
+        public BitmapImage Texture
         {
-            set { this.currentTilesetImage = value; }
+            set { this.texture = value; }
+        }
+
+        public string MapName
+        {
+            get { return this.gameMap.Name; }
+            set { this.gameMap.Name = value; this.Text = value; }
         }
         #endregion
     }

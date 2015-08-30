@@ -1,47 +1,65 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GameMapEditor.Objects
 {
-    //[Serializable]
-    class GameTile : IDrawable
+    [Serializable]
+    public class GameTile : IDrawable
     {
-        private Bitmap texture; 
+        private int formattedIndex;
+        private string textureFileName;
 
-        public GameTile()
+        #region Methods
+        public GameTile(int x, int y)
         {
-            this.texture = null;
-            this.Position = new Point();
+            this.Position = new Point(x, y);
         }
 
-        public GameTile(Point position)
+        public static int EncodeFormattedIndex(Point tileLocation, int tilesetWidthTilesCount)
         {
-            this.Position = position;
+            return tileLocation.X + tilesetWidthTilesCount * tileLocation.Y;
         }
-
-        public void Draw(PaintEventArgs e)
+        
+        public static Point DecodeFormattedIndex(int index, int tilesetWidth)
         {
-            if(this.texture != null)
-                e.Graphics.DrawImage(this.texture, new Point(this.Position.X * GlobalData.TileSize.Width, this.Position.Y * GlobalData.TileSize.Height));
+            int nt = tilesetWidth * GlobalData.TileSize.Width / GlobalData.TileSize.Width;
+            int x = --index - (index / nt) * nt;
+            int y = index / nt;
+
+            return new Point(x, y);
         }
 
         public void Draw(Point origin, PaintEventArgs e)
         {
-            if (this.texture != null)
-                e.Graphics.DrawImage(this.texture, new Point(
+            if (this.Texture != null)
+            {
+                e.Graphics.DrawImage(this.Texture, new Rectangle(
                     this.Position.X * GlobalData.TileSize.Width - origin.X,
-                    this.Position.Y * GlobalData.TileSize.Height - origin.Y));
+                    this.Position.Y * GlobalData.TileSize.Height - origin.Y,
+                    GlobalData.TileSize.Width,
+                    GlobalData.TileSize.Height));
+            }
+        }
+        #endregion
+
+        #region Properties
+        public int FormattedIndex
+        {
+            get { return this.formattedIndex; }
+            set { this.formattedIndex = value; }
+        }
+
+        public string TextureFileName
+        {
+            get { return this.textureFileName; }
+            set { this.textureFileName = value; }
         }
 
         public Bitmap Texture
         {
-            get { return this.texture; }
-            set { this.texture = value; }
+            get;
+            set;
         }
 
         public Point Position
@@ -49,13 +67,6 @@ namespace GameMapEditor.Objects
             get;
             set;
         }
-
-        // TODO : Only for debug
-        public override string ToString()
-        {
-            if (texture != null)
-                return "[1]";
-            return string.Empty;
-        }
+        #endregion
     }
 }

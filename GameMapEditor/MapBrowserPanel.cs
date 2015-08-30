@@ -3,11 +3,11 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace GameMapEditor
 {
-    public class MapBrowserFrame : DockContent
+    public class MapBrowserPanel : DockContent
     {
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapBrowserFrame));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapBrowserPanel));
             this.SuspendLayout();
             // 
             // MapBrowserFrame

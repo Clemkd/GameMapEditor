@@ -17,7 +17,7 @@ namespace GameMapEditor
         Normal
     }
 
-    public class ConsoleFrame : DockContent
+    public class ConsolePanel : DockContent
     {
         private ListView ListViewHistory;
         private ColumnHeader IconColumn;
@@ -31,7 +31,7 @@ namespace GameMapEditor
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConsoleFrame));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConsolePanel));
             this.ListViewHistory = new System.Windows.Forms.ListView();
             this.IconColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SourceColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));

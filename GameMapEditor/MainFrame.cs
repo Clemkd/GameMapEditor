@@ -1,7 +1,9 @@
-﻿using System;
+﻿using GameMapEditor.Objects;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -9,11 +11,13 @@ namespace GameMapEditor
 {
     public partial class MainFrame : Form
     {
-        private TilesetFrame tilesetFrame;
-        private MapBrowserFrame mapBrowserFrame;
-        private List<MapFrame> mapFrames;
-        private ConsoleFrame consoleFrame;
-        private HistoryFrame historyFrame;
+        private static NewMapFrame NewMapFrame;
+
+        private TilesetPanel tilesetPanel;
+        private MapBrowserPanel mapBrowserPanel;
+        private List<MapPanel> mapPanels;
+        private ConsolePanel consolePanel;
+        private HistoryPanel historyPanel;
 
         public MainFrame()
         {
@@ -24,51 +28,129 @@ namespace GameMapEditor
         {
             base.OnLoad(e);
 
-            // Chargement des frames
-            this.tilesetFrame = new TilesetFrame();
-            this.tilesetFrame.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-            this.tilesetFrame.Show(DockPanel);
-            this.tilesetFrame.DockState = DockState.DockLeft;
-            this.tilesetFrame.TilesetSelectionChanged += TilesetFrame_TilesetSelectionChanged;
-            this.tilesetFrame.TilesetChanged += TilesetFrame_TilesetChanged;
+            NewMapFrame = new NewMapFrame();
+            NewMapFrame.Validated += NewMapFrame_Validated;
 
-            this.mapFrames = new List<MapFrame>();
+            // Chargement des panels
+            this.tilesetPanel = new TilesetPanel();
+            this.tilesetPanel.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
+            this.tilesetPanel.CloseButtonVisible = false;
+            this.tilesetPanel.TilesetSelectionChanged += TilesetPanel_TilesetSelectionChanged;
+            this.tilesetPanel.TilesetChanged += TilesetPanel_TilesetChanged;
+            this.tilesetPanel.Show(DockPanel);
+            this.tilesetPanel.DockState = DockState.DockLeft;
 
-            this.mapBrowserFrame = new MapBrowserFrame();
-            this.mapBrowserFrame.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-            this.mapBrowserFrame.Show(DockPanel);
-            this.mapBrowserFrame.DockState = DockState.DockRight;
+            this.mapPanels = new List<MapPanel>();
 
-            this.consoleFrame = new ConsoleFrame();
-            this.consoleFrame.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-            this.consoleFrame.Show(DockPanel);
-            this.consoleFrame.DockState = DockState.DockBottom;
-
-            this.historyFrame = new HistoryFrame();
-            this.historyFrame.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-            this.historyFrame.Show(DockPanel);
-            this.historyFrame.DockState = DockState.DockBottomAutoHide;
+            this.LoadMapBrowserPanel();
+            this.LoadConsolePanel();
+            this.LoadHistoryPanel();
         }
 
-        private void TilesetFrame_TilesetChanged(object sender, Bitmap tileset)
+        private void TilesetPanel_TilesetChanged(object sender, BitmapImage texture)
         {
-            this.mapFrames.ForEach(x => x.TilesetImage = tileset);
+            this.mapPanels.ForEach(x => x.Texture = texture);
         }
 
-        private void TilesetFrame_TilesetSelectionChanged(object sender, Rectangle selection)
+        private void TilesetPanel_TilesetSelectionChanged(object sender, Rectangle selection)
         {
-            this.mapFrames.ForEach(x => x.TilesetSelection = selection);
+            this.mapPanels.ForEach(x => x.TilesetSelection = selection);
         }
 
         private void toolStripBtnFill_Click(object sender, EventArgs e)
         {
-            MapFrame mapFrame = this.DockPanel.ActiveDocument as MapFrame;
-            if (mapFrame != null) mapFrame.Fill();
+            MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
+            if (mapPanel != null) mapPanel.Fill();
+        }
+
+        private void NewMapFrame_Validated(string mapName)
+        {
+            MapPanel.OpenNewDocument(this.DockPanel, this.mapPanels, this.tilesetPanel.TilesetImage, this.tilesetPanel.TilesetSelection, mapName);
         }
 
         private void nouveauToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MapFrame.OpenNewDocument(DockPanel, this.mapFrames, this.tilesetFrame.TilesetImage, this.tilesetFrame.TilesetSelection);
+            NewMapFrame.ShowDialog();
+        }
+
+        private void explorateurToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.LoadMapBrowserPanel();
+        }
+
+        private void historiqueToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.LoadHistoryPanel();
+        }
+
+        private void consoleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.LoadConsolePanel();
+        }
+
+        private void PanelToolsSaveCurrent_Click(object sender, EventArgs e)
+        {
+            // Sauvegarder map courante
+            MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
+            if (mapPanel != null) mapPanel.SaveMap();
+        }
+
+        private void PanelToolsSaveAll_Click(object sender, EventArgs e)
+        {
+            // Sauvegarder tout
+        }
+
+        private void ouvrirToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "FRoG Creator map (*.frog)|*.frog";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                Console.WriteLine(openFileDialog.FileName);
+                GameMap map = GameMap.Load(openFileDialog.FileName);
+                if (map != null)
+                {
+                    MapPanel mapPanel = MapPanel.OpenNewDocument(
+                        this.DockPanel, this.mapPanels,
+                        this.tilesetPanel.TilesetImage,
+                        this.tilesetPanel.TilesetSelection, map.Name);
+                    mapPanel.LoadMap(map);
+                    map.FilesDependences.ForEach(x => consolePanel.WriteLine(map.Name, x));
+                }
+            }
+        }
+
+        private void LoadMapBrowserPanel()
+        {
+            if (this.mapBrowserPanel == null || this.mapBrowserPanel.IsDisposed)
+            {
+                this.mapBrowserPanel = new MapBrowserPanel();
+                this.mapBrowserPanel.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
+                this.mapBrowserPanel.Show(DockPanel);
+                this.mapBrowserPanel.DockState = DockState.DockRight;
+            }
+        }
+
+        private void LoadConsolePanel()
+        {
+            if (this.consolePanel == null || this.consolePanel.IsDisposed)
+            {
+                this.consolePanel = new ConsolePanel();
+                this.consolePanel.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
+                this.consolePanel.Show(DockPanel);
+                this.consolePanel.DockState = DockState.DockBottom;
+            }
+        }
+
+        private void LoadHistoryPanel()
+        {
+            if (this.historyPanel == null || this.historyPanel.IsDisposed)
+            {
+                this.historyPanel = new HistoryPanel();
+                this.historyPanel.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
+                this.historyPanel.Show(DockPanel);
+                this.historyPanel.DockState = DockState.DockBottomAutoHide;
+            }
         }
     }
 }
