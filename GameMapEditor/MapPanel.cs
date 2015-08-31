@@ -10,8 +10,11 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace GameMapEditor
 {
-    public class MapPanel : DockContent
+    public class MapPanel : DockContent, IDisposable
     {
+        #region Fields
+        private const string UNSAVED_DOCUMENT_MARK = " *";
+
         private ToolStrip ToolStrip;
         private ToolStripButton toolStripBtnGrid;
         private PictureBox picMap;
@@ -19,6 +22,7 @@ namespace GameMapEditor
         private Point mapOrigin;
         private bool isGridActived;
         private bool isTilesetSelectionShowProcessActived;
+        private bool isSaved;
         private VScrollBar vScrollBarPicMap;
         private HScrollBar hScrollBarPicMap;
         private Pen gridColor;
@@ -31,7 +35,114 @@ namespace GameMapEditor
         private GameMap gameMap;
         private Point location;
         private Point oldLocation;
+        #endregion
 
+        public MapPanel()
+        {
+            this.InitializeComponent();
+            this.mapOrigin = new Point();
+            this.IsGridActived = true;
+            this.isSaved = true;
+            this.IsTilesetSelectionShowProcessActived = true;
+            this.gridColor = new Pen(Color.FromArgb(255, 170, 170, 170), 2);
+            this.mouseLocation = new Point();
+            this.location = new Point();
+            this.oldLocation = new Point();
+
+            this.RefreshScrollComponents();
+        }
+
+        #region FrameEvents
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+        }
+
+        private void GameMap_MapChanged(object sender)
+        {
+            this.IsSaved = false;
+        }
+
+        private void picMap_Resize(object sender, EventArgs e)
+        {
+            this.RefreshScrollComponents(this.hScrollBarPicMap.Value, this.vScrollBarPicMap.Value);
+
+            /**** Centre la map ****/
+            /*if (!this.hScrollBarPicMap.Enabled && !this.vScrollBarPicMap.Enabled)
+            {
+                this.mapOrigin = new Point(
+                    ((GlobalData.TileSize.Width * GlobalData.MapSize.Width) / 2) - (this.picMap.Size.Width / 2),
+                    ((GlobalData.TileSize.Height * GlobalData.MapSize.Height) / 2) - (this.picMap.Size.Height / 2));
+            }*/
+            /***********************/
+        }
+
+        private void picMap_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.Clear(Color.LightGray);
+            this.gameMap.Draw(this.mapOrigin, e);
+            this.DrawSelection(this.isTilesetSelectionShowProcessActived, e);
+            this.DrawGrid(this.isGridActived, e);
+        }
+
+        private void picMap_MouseDown(object sender, MouseEventArgs e)
+        {
+            this.gameMap.SetTiles(this.location.X, this.location.Y, this.texture);
+        }
+
+        private void picMap_MouseMove(object sender, MouseEventArgs e)
+        {
+            this.mouseLocation = e.Location;
+
+            location.X = (int)((e.Location.X + this.mapOrigin.X) / GlobalData.TileSize.Width);
+            location.Y = (int)((e.Location.Y + this.mapOrigin.Y) / GlobalData.TileSize.Height);
+
+            // Si le bouton gauche de la souris est actuellement pressé,
+            // si la position de la souris à évolué (ref : tile) et
+            // s'il existe une selection du tileset et une texture courante pour le tileset
+            if (e.Button == MouseButtons.Left &&
+                (oldLocation.X != location.X || oldLocation.Y != location.Y) &&
+                this.tilesetSelection != null && this.texture != null)
+            {
+                this.oldLocation.X = this.location.X;
+                this.oldLocation.Y = this.location.Y;
+
+                this.gameMap.SetTiles(this.location.X, this.location.Y, this.texture);
+            }
+
+            this.picMap.Refresh();
+        }
+
+        private void picMap_MouseUp(object sender, MouseEventArgs e)
+        {
+            // Save gameMap state (Undo / Redo list)
+            //Debug.WriteLine(this.gameMap.ToString());
+        }
+
+        private void vScrollBarPicMap_Scroll(object sender, ScrollEventArgs e)
+        {
+            this.mapOrigin.Y = vScrollBarPicMap.Value;
+            this.picMap.Refresh();
+        }
+
+        private void hScrollBarPicMap_Scroll(object sender, ScrollEventArgs e)
+        {
+            this.mapOrigin.X = hScrollBarPicMap.Value;
+            this.picMap.Refresh();
+        }
+
+        private void toolStripBtnGrid_Click(object sender, EventArgs e)
+        {
+            this.IsGridActived = !this.IsGridActived;
+        }
+
+        private void toolStripBtnTilesetSelection_Click(object sender, EventArgs e)
+        {
+            this.IsTilesetSelectionShowProcessActived = !this.IsTilesetSelectionShowProcessActived;
+        }
+        #endregion
+
+        #region Methodes
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapPanel));
@@ -135,106 +246,6 @@ namespace GameMapEditor
 
         }
 
-        public MapPanel()
-        {
-            this.InitializeComponent();
-            this.mapOrigin = new Point();
-            this.IsGridActived = true;
-            this.IsTilesetSelectionShowProcessActived = true;
-            this.gridColor = new Pen(Color.FromArgb(255, 170, 170, 170), 2);
-            this.mouseLocation = new Point();
-            this.location = new Point();
-            this.oldLocation = new Point();
-            this.gameMap = new GameMap();
-            this.RefreshScrollComponents();
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-        }
-
-        #region FrameEvents
-        private void picMap_Resize(object sender, EventArgs e)
-        {
-            this.RefreshScrollComponents(this.hScrollBarPicMap.Value, this.vScrollBarPicMap.Value);
-
-            /**** Centre la map ****/
-            /*if (!this.hScrollBarPicMap.Enabled && !this.vScrollBarPicMap.Enabled)
-            {
-                this.mapOrigin = new Point(
-                    ((GlobalData.TileSize.Width * GlobalData.MapSize.Width) / 2) - (this.picMap.Size.Width / 2),
-                    ((GlobalData.TileSize.Height * GlobalData.MapSize.Height) / 2) - (this.picMap.Size.Height / 2));
-            }*/
-            /***********************/
-        }
-
-        private void picMap_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.Clear(Color.LightGray);
-            this.gameMap.Draw(this.mapOrigin, e);
-            this.DrawSelection(this.isTilesetSelectionShowProcessActived, e);
-            this.DrawGrid(this.isGridActived, e);
-        }
-
-        private void picMap_MouseDown(object sender, MouseEventArgs e)
-        {
-            this.gameMap.SetTiles(this.location.X, this.location.Y, this.texture);
-        }
-
-        private void picMap_MouseMove(object sender, MouseEventArgs e)
-        {
-            this.mouseLocation = e.Location;
-
-            location.X = (int)((e.Location.X + this.mapOrigin.X) / GlobalData.TileSize.Width);
-            location.Y = (int)((e.Location.Y + this.mapOrigin.Y) / GlobalData.TileSize.Height);
-
-            // Si le bouton gauche de la souris est actuellement pressé,
-            // si la position de la souris à évolué (ref : tile) et
-            // s'il existe une selection du tileset et une texture courante pour le tileset
-            if (e.Button == MouseButtons.Left &&
-                (oldLocation.X != location.X || oldLocation.Y != location.Y) &&
-                this.tilesetSelection != null && this.texture != null)
-            {
-                this.oldLocation.X = this.location.X;
-                this.oldLocation.Y = this.location.Y;
-
-                this.gameMap.SetTiles(this.location.X, this.location.Y, this.texture);
-            }
-
-            this.picMap.Refresh();
-        }
-
-        private void picMap_MouseUp(object sender, MouseEventArgs e)
-        {
-            // Save gameMap state (Undo / Redo list)
-            //Debug.WriteLine(this.gameMap.ToString());
-        }
-
-        private void vScrollBarPicMap_Scroll(object sender, ScrollEventArgs e)
-        {
-            this.mapOrigin.Y = vScrollBarPicMap.Value;
-            this.picMap.Refresh();
-        }
-
-        private void hScrollBarPicMap_Scroll(object sender, ScrollEventArgs e)
-        {
-            this.mapOrigin.X = hScrollBarPicMap.Value;
-            this.picMap.Refresh();
-        }
-
-        private void toolStripBtnGrid_Click(object sender, EventArgs e)
-        {
-            this.IsGridActived = !this.IsGridActived;
-        }
-
-        private void toolStripBtnTilesetSelection_Click(object sender, EventArgs e)
-        {
-            this.IsTilesetSelectionShowProcessActived = !this.IsTilesetSelectionShowProcessActived;
-        }
-        #endregion
-
-        #region Methodes
         /// <summary>
         /// Ouvre un nouveau document de map
         /// </summary>
@@ -242,14 +253,14 @@ namespace GameMapEditor
         /// <param name="mapPanels">La liste des documents de map</param>
         /// <param name="tilesetImage">La texture du tileset courant</param>
         /// <param name="tilesetSelection">La selection du tileset courant</param>
-        public static MapPanel OpenNewDocument(DockPanel dockPanel, List<MapPanel> mapPanels, BitmapImage tilesetImage, Rectangle tilesetSelection, string mapName)
+        public static MapPanel OpenNewDocument(DockPanel dockPanel, List<MapPanel> mapPanels, BitmapImage tilesetImage, Rectangle tilesetSelection, GameMap map)
         {
             dockPanel.SuspendLayout(true);
             MapPanel mapPanel = new MapPanel();
 
             mapPanel.Texture = tilesetImage;
             mapPanel.TilesetSelection = tilesetSelection;
-            mapPanel.MapName = mapName;
+            mapPanel.Open(map);
 
             mapPanel.Show(dockPanel);
             mapPanel.DockState = DockState.Document;
@@ -267,21 +278,24 @@ namespace GameMapEditor
         /// </summary>
         public void Fill()
         {
-            if (this.tilesetSelection != null && this.texture != null)
+            if (this.texture != null)
             {
                 this.gameMap.Fill(this.texture);
                 this.picMap.Refresh();
             }
         }
 
-        public void SaveMap()
+        public void Save()
         {
-            this.gameMap.Save();
+            this.Map.Save();
+            this.IsSaved = true;
         }
 
-        public void LoadMap(GameMap map)
+        public void Open(GameMap map)
         {
-            this.gameMap = map;
+            this.Map = map;
+            this.Map.MapChanged += GameMap_MapChanged;
+            this.IsSaved = true;
         }
 
         /// <summary>
@@ -366,6 +380,12 @@ namespace GameMapEditor
 
             this.picMap.Refresh();
         }
+
+        public new void Dispose()
+        {
+            this.Map.MapChanged -= GameMap_MapChanged;
+            base.Dispose();
+        }
         #endregion
 
         #region Properties
@@ -407,10 +427,16 @@ namespace GameMapEditor
             set { this.texture = value; }
         }
 
-        public string MapName
+        public GameMap Map
         {
-            get { return this.gameMap.Name; }
-            set { this.gameMap.Name = value; this.Text = value; }
+            get { return this.gameMap; }
+            private set { this.gameMap = value; }
+        }
+
+        private bool IsSaved
+        {
+            get { return this.isSaved; }
+            set { this.isSaved = value; this.Text = this.Text = this.gameMap.Name + (this.isSaved ? string.Empty : UNSAVED_DOCUMENT_MARK); }
         }
         #endregion
     }

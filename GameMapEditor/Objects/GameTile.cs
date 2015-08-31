@@ -8,7 +8,7 @@ namespace GameMapEditor.Objects
     public class GameTile : IDrawable
     {
         private int formattedIndex;
-        private string textureFileName;
+        private int textureIndex;
 
         #region Methods
         public GameTile(int x, int y)
@@ -50,10 +50,10 @@ namespace GameMapEditor.Objects
             set { this.formattedIndex = value; }
         }
 
-        public string TextureFileName
+        public int TextureIndex
         {
-            get { return this.textureFileName; }
-            set { this.textureFileName = value; }
+            get { return this.textureIndex; }
+            set { this.textureIndex = value; }
         }
 
         public Bitmap Texture

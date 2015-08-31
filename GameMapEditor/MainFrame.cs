@@ -65,7 +65,7 @@ namespace GameMapEditor
 
         private void NewMapFrame_Validated(string mapName)
         {
-            MapPanel.OpenNewDocument(this.DockPanel, this.mapPanels, this.tilesetPanel.TilesetImage, this.tilesetPanel.TilesetSelection, mapName);
+            MapPanel.OpenNewDocument(this.DockPanel, this.mapPanels, this.tilesetPanel.TilesetImage, this.tilesetPanel.TilesetSelection, new GameMap(mapName));
         }
 
         private void nouveauToolStripMenuItem_Click(object sender, EventArgs e)
@@ -92,12 +92,29 @@ namespace GameMapEditor
         {
             // Sauvegarder map courante
             MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
-            if (mapPanel != null) mapPanel.SaveMap();
+            if (mapPanel != null)
+            {
+                mapPanel.Save();
+                consolePanel.WriteLine(DateTime.Now.ToString(), "Carte de jeu enregistrée avec succés.", RowType.Information);
+            }
         }
 
         private void PanelToolsSaveAll_Click(object sender, EventArgs e)
         {
-            // Sauvegarder tout
+            try
+            {
+                // Sauvegarder tout
+                foreach (MapPanel document in this.DockPanel.Documents)
+                    document.Save();
+                consolePanel.WriteLine(DateTime.Now.ToString(), "Cartes de jeu enregistrées avec succés.", RowType.Information);
+            }
+            catch (Exception ex)
+            {
+                consolePanel.WriteLine(DateTime.Now.ToString(),
+                    "Une erreur est survenue lors de la sauvegarde de la carte : " + ex.Message,
+                    RowType.Error);
+                ErrorLog.Write(ex);
+            }
         }
 
         private void ouvrirToolStripMenuItem_Click(object sender, EventArgs e)
@@ -106,16 +123,23 @@ namespace GameMapEditor
             openFileDialog.Filter = "FRoG Creator map (*.frog)|*.frog";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                Console.WriteLine(openFileDialog.FileName);
-                GameMap map = GameMap.Load(openFileDialog.FileName);
-                if (map != null)
+                try
                 {
+                    GameMap map = GameMap.Load(openFileDialog.FileName);
                     MapPanel mapPanel = MapPanel.OpenNewDocument(
-                        this.DockPanel, this.mapPanels,
+                        this.DockPanel,
+                        this.mapPanels,
                         this.tilesetPanel.TilesetImage,
-                        this.tilesetPanel.TilesetSelection, map.Name);
-                    mapPanel.LoadMap(map);
-                    map.FilesDependences.ForEach(x => consolePanel.WriteLine(map.Name, x));
+                        this.tilesetPanel.TilesetSelection,
+                        map);
+                    mapPanel.Map.FilesDependences.ForEach(x => consolePanel.WriteLine(mapPanel.Map.Name, x));
+                }
+                catch (Exception ex)
+                {
+                    consolePanel.WriteLine("Loader",
+                        "Une erreur est survenue lors du chargement de la carte : " + ex.Message,
+                        RowType.Error);
+                    ErrorLog.Write(ex);
                 }
             }
         }

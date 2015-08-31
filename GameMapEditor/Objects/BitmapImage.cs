@@ -32,5 +32,11 @@ namespace GameMapEditor.Objects
             get;
             set;
         }
+
+        public Point SelectionLocation
+        {
+            get;
+            set;
+        }
     }
 }

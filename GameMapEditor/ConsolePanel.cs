@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -103,7 +104,7 @@ namespace GameMapEditor
         {
             base.OnLoad(e);
             this.InitializeComponent();
-            this.ColorList = new List<Color>() { SystemColors.WindowText, Color.FromArgb(255, 50, 50), Color.FromArgb(50, 50, 255) };
+            this.ColorList = new List<Color>() { SystemColors.WindowText, Color.FromArgb(255, 50, 50), Color.FromArgb(50, 50, 255) };     
         }
 
         /// <summary>

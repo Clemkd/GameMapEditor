@@ -160,7 +160,6 @@ namespace GameMapEditor
             this.gridColor = new Pen(Color.FromArgb(130, 170, 170, 170), 1);
             this.IsSelectingTiles = false;
             this.IsGridActived = true;
-            
 
             this.LoadTilesetFileList();
         }
@@ -240,6 +239,7 @@ namespace GameMapEditor
                 {
                     this.tilesetSelection.Height -= this.tilesetSelection.Size.Height + this.tilesetSelection.Location.Y - this.currentTexture.BitmapSource.Height;
                 }
+                this.currentTexture.SelectionLocation = this.TilesetSelection.Location;
                 this.currentTexture.BitmapSelection = this.currentTexture.BitmapSource.Clone(this.tilesetSelection, PixelFormat.DontCare);
                 this.RaiseTilesetSelectionChangedEvent(this.currentTexture);
             }
@@ -247,7 +247,6 @@ namespace GameMapEditor
 
         private void vPicTilesetScrollBar_Scroll(object sender, ScrollEventArgs e)
         {
-            
             this.tilesetOrigin.Y = vPicTilesetScrollBar.Value;
             this.picTileset.Refresh();
         }
