@@ -1,4 +1,5 @@
-﻿using GameMapEditor.Objects;
+﻿using GameMapEditor.Frames;
+using GameMapEditor.Objects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,13 +12,13 @@ namespace GameMapEditor
 {
     public partial class MainFrame : Form
     {
-        private static NewMapFrame NewMapFrame;
+        private static MapPanelFormular NewMapFrame;
 
         private TilesetPanel tilesetPanel;
         private MapBrowserPanel mapBrowserPanel;
         private List<MapPanel> mapPanels;
         private ConsolePanel consolePanel;
-        private HistoryPanel historyPanel;
+        private LayerPanel layerPanel;
 
         public MainFrame()
         {
@@ -28,8 +29,8 @@ namespace GameMapEditor
         {
             base.OnLoad(e);
 
-            NewMapFrame = new NewMapFrame();
-            NewMapFrame.Validated += NewMapFrame_Validated;
+            NewMapFrame = new MapPanelFormular();
+            NewMapFrame.MapValidated += NewMapFrame_Validated;
 
             // Chargement des panels
             this.tilesetPanel = new TilesetPanel();
@@ -37,14 +38,14 @@ namespace GameMapEditor
             this.tilesetPanel.CloseButtonVisible = false;
             this.tilesetPanel.TilesetSelectionChanged += TilesetPanel_TilesetSelectionChanged;
             this.tilesetPanel.TilesetChanged += TilesetPanel_TilesetChanged;
-            this.tilesetPanel.Show(DockPanel);
-            this.tilesetPanel.DockState = DockState.DockLeft;
+            this.tilesetPanel.Show(this.DockPanel);
+            this.tilesetPanel.DockTo(this.DockPanel, DockStyle.Left);
 
             this.mapPanels = new List<MapPanel>();
 
-            this.LoadMapBrowserPanel();
             this.LoadConsolePanel();
-            this.LoadHistoryPanel();
+            this.LoadMapBrowserPanel();
+            this.LoadLayerPanel();
         }
 
         private void TilesetPanel_TilesetChanged(object sender, BitmapImage texture)
@@ -65,7 +66,12 @@ namespace GameMapEditor
 
         private void NewMapFrame_Validated(string mapName)
         {
-            MapPanel.OpenNewDocument(this.DockPanel, this.mapPanels, this.tilesetPanel.TilesetImage, this.tilesetPanel.TilesetSelection, new GameMap(mapName));
+            MapPanel.OpenNewDocument(
+                this.DockPanel, 
+                this.mapPanels, 
+                this.tilesetPanel.TilesetImage, 
+                this.tilesetPanel.TilesetSelection, 
+                new GameMap(mapName));
         }
 
         private void nouveauToolStripMenuItem_Click(object sender, EventArgs e)
@@ -78,9 +84,9 @@ namespace GameMapEditor
             this.LoadMapBrowserPanel();
         }
 
-        private void historiqueToolStripMenuItem_Click(object sender, EventArgs e)
+        private void couchesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.LoadHistoryPanel();
+            this.LoadLayerPanel();
         }
 
         private void consoleToolStripMenuItem_Click(object sender, EventArgs e)
@@ -133,6 +139,8 @@ namespace GameMapEditor
                         this.tilesetPanel.TilesetSelection,
                         map);
                     mapPanel.Map.FilesDependences.ForEach(x => consolePanel.WriteLine(mapPanel.Map.Name, x));
+                    layerPanel.Clear();
+                    mapPanel.Map.Layers.ForEach(layer => layerPanel.AddLayer(layer));
                 }
                 catch (Exception ex)
                 {
@@ -144,6 +152,27 @@ namespace GameMapEditor
             }
         }
 
+        private void LayerPanel_MapLayerAdded(GameMapLayer layer)
+        {
+            MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
+            if (mapPanel != null)
+            {
+                mapPanel.Map.AddLayer(layer);
+                layerPanel.AddLayer(layer);
+                consolePanel.WriteLine(DateTime.Now.ToString(), "La couche a été ajouté avec succés à la carte en cours", RowType.Information);
+            }
+        }
+
+        private void toolStripButtonDestinationFolder_Click(object sender, EventArgs e)
+        {
+            Process.Start("explorer.exe", Path.GetFullPath("."));
+        }
+
+        private void quitterToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
         private void LoadMapBrowserPanel()
         {
             if (this.mapBrowserPanel == null || this.mapBrowserPanel.IsDisposed)
@@ -151,7 +180,7 @@ namespace GameMapEditor
                 this.mapBrowserPanel = new MapBrowserPanel();
                 this.mapBrowserPanel.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
                 this.mapBrowserPanel.Show(DockPanel);
-                this.mapBrowserPanel.DockState = DockState.DockRight;
+                this.mapBrowserPanel.DockTo(this.DockPanel, DockStyle.Right);
             }
         }
 
@@ -161,19 +190,30 @@ namespace GameMapEditor
             {
                 this.consolePanel = new ConsolePanel();
                 this.consolePanel.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-                this.consolePanel.Show(DockPanel);
-                this.consolePanel.DockState = DockState.DockBottom;
+                this.consolePanel.Show(this.DockPanel);
+                this.consolePanel.DockTo(this.DockPanel, DockStyle.Bottom);
             }
         }
 
-        private void LoadHistoryPanel()
+        private void LoadLayerPanel()
         {
-            if (this.historyPanel == null || this.historyPanel.IsDisposed)
+            if (this.layerPanel == null || this.layerPanel.IsDisposed)
             {
-                this.historyPanel = new HistoryPanel();
-                this.historyPanel.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-                this.historyPanel.Show(DockPanel);
-                this.historyPanel.DockState = DockState.DockBottomAutoHide;
+                this.layerPanel = new LayerPanel();
+                this.layerPanel.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
+                this.layerPanel.Show(this.DockPanel);
+                this.layerPanel.DockTo(this.DockPanel, DockStyle.Right);
+                this.layerPanel.MapLayerAdded += LayerPanel_MapLayerAdded;
+            }
+        }
+
+        private void DockPanel_ActiveDocumentChanged(object sender, EventArgs e)
+        {
+            MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
+            if (mapPanel != null)
+            {
+                layerPanel.Clear();
+                mapPanel.Map.Layers.ForEach(layer => layerPanel.AddLayer(layer));
             }
         }
     }

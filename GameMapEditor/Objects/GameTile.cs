@@ -56,6 +56,7 @@ namespace GameMapEditor.Objects
             set { this.textureIndex = value; }
         }
 
+        // TODO : Modifier en [field: NonSerialized] et charger la texture lors de l'ouverture
         public Bitmap Texture
         {
             get;

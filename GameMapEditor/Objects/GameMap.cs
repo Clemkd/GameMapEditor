@@ -19,9 +19,13 @@ namespace GameMapEditor
     [Serializable]
     public class GameMap : IDrawable
     {
+        [NonSerialized]
+        private const ushort MAX_LAYER_COUNT = 10;
+
         private string name;
         private Dictionary<string, int> textures;
-        private GameTile[,] tiles;
+        private List<GameMapLayer> layers;
+        
 
         [field : NonSerialized]
         public event MapChangedEventArgs MapChanged;
@@ -30,43 +34,47 @@ namespace GameMapEditor
         {
             this.name = mapName;
             this.textures = new Dictionary<string, int>();
-            this.tiles = new GameTile[GlobalData.MapSize.Width, GlobalData.MapSize.Height];
-            this.InitializeComponents();
+            this.layers = new List<GameMapLayer>();
+            this.InitializeComponent();
         }
 
-
-        private void InitializeComponents()
+        /// <summary>
+        /// Initialise les données internes de la carte
+        /// </summary>
+        private void InitializeComponent()
         {
-            for (int x = 0; x < tiles.GetLength(0); x++)
-                for (int y = 0; y < tiles.GetLength(1); y++)
-                    this.tiles[x, y] = new GameTile(x, y);
-        }
-
-        public GameTile this[int x, int y]
-        {
-            get
-            {
-                if (x >= 0 && x < this.tiles.GetLength(0) && y >= 0 && y < this.tiles.GetLength(1))
-                    return this.tiles[x, y];
-                return null;
-            }
-            set
-            {
-                if (x > 0 && x < this.tiles.GetLength(0) && y > 0 && y < this.tiles.GetLength(1))
-                    this.tiles[x, y] = value;
-            }
+            this.layers.Add(new GameMapLayer());
         }
 
         public void Draw(Point origin, PaintEventArgs e)
         {
-            foreach(GameTile tile in this.tiles)
-                tile.Draw(origin, e);
+            this.layers.ForEach(x => x.Draw(origin, e));
+        }
+
+        public bool AddLayer(GameMapLayer layer)
+        {
+            if(this.layers.Count < MAX_LAYER_COUNT)
+            {
+                this.layers.Add(layer);
+                this.RaiseMapChangedEvent();
+                return true;
+            }
+            return false;
+        }
+
+        public void RemoveLayer(int index)
+        {
+            if(index >= 0 && index < this.layers.Count)
+            {
+                this.layers.RemoveAt(index);
+                this.RaiseMapChangedEvent();
+            }
         }
 
         /// <summary>
         /// Remplis la map par la texture selectionnée du tileset
         /// </summary>
-        public void Fill(BitmapImage texture)
+        public void Fill(int layerIndex, BitmapImage texture)
         {
             if (texture.BitmapSelection.Width >= GlobalData.TileSize.Width &&
                 texture.BitmapSelection.Height >= GlobalData.TileSize.Height)
@@ -76,7 +84,7 @@ namespace GameMapEditor
 
                 for (int y = 0; y < GlobalData.MapSize.Height; y += tmpHeight)
                     for (int x = 0; x < GlobalData.MapSize.Width; x += tmpWidth)
-                        this.SetTiles(x, y, texture);
+                        this.SetTiles(layerIndex, x, y, texture);
 
                 this.RaiseMapChangedEvent();
             }
@@ -86,9 +94,9 @@ namespace GameMapEditor
         /// Modifie de façon intelligente les données de la carte selon la selection du tileset, à partir de la position donnée
         /// </summary>
         /// <param name="position">La position du premier tile en haut à gauche à modifier</param>
-        public void SetTiles(int xPosition, int yPosition, BitmapImage texture)
+        public void SetTiles(int layerIndex, int xPosition, int yPosition, BitmapImage texture)
         {
-            if (texture != null && texture.BitmapSelection != null)
+            if (texture != null && texture.BitmapSelection != null && layerIndex >= 0 && layerIndex < this.layers.Count)
             {
                 int tmpWidth = texture.BitmapSelection.Width / GlobalData.TileSize.Width;
                 int tmpHeight = texture.BitmapSelection.Height / GlobalData.TileSize.Height;
@@ -98,7 +106,7 @@ namespace GameMapEditor
                 {
                     for (int y = 0; y < tmpHeight; y++)
                     {
-                        GameTile tile = this[xPosition + x, yPosition + y];
+                        GameTile tile = this.layers.ElementAt(layerIndex)[xPosition + x, yPosition + y];
                         if (tile != null)
                         {
                             Rectangle selection = new Rectangle(
@@ -121,9 +129,7 @@ namespace GameMapEditor
                                     (selection.Location.Y + texture.SelectionLocation.Y) / GlobalData.TileSize.Height);
 
                                 tile.FormattedIndex = GameTile.EncodeFormattedIndex(location, tilesCount);
-                                
                                 tile.TextureIndex = this.RetrieveTextureIndex(texture.Path);
-                                Debug.WriteLine("\n-----   Position : {0}   -----\nIndex : {1}\nPath : {2}\n", new Point(xPosition + x, yPosition + y), tile.FormattedIndex, tile.TextureIndex);
                             }
                         }
                     }
@@ -133,6 +139,11 @@ namespace GameMapEditor
             }
         }
 
+        /// <summary>
+        /// Retourne l'index unique de la texture si existante, sinon créer un nouvel index
+        /// </summary>
+        /// <param name="texture">Le nom de fichier de la texture</param>
+        /// <returns>L'index de la texture</returns>
         private int RetrieveTextureIndex(string texture)
         {
             int value = 0;
@@ -190,21 +201,9 @@ namespace GameMapEditor
             set { this.name = value; }
         }
 
-        // TODO : Debug only
-        public override string ToString()
+        public List<GameMapLayer> Layers
         {
-            StringBuilder str = new StringBuilder();
-            for(int y = 0; y < tiles.GetLength(1); y++)
-            {
-                for (int x = 0; x < tiles.GetLength(0); x++)
-                {
-                    str.Append("[" + tiles[x, y].FormattedIndex.ToString() + "]");
-                }
-                str.Append("\n");
-            }
-            
-
-            return str.ToString();
+            get { return this.layers; }
         }
     }
 }

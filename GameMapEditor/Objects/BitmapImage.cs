@@ -15,24 +15,36 @@ namespace GameMapEditor.Objects
             this.BitmapSource = bitmap;
         }
 
+        /// <summary>
+        /// Le chemin du fichier tileset
+        /// </summary>
         public string Path
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// Le tileset source de l'objet
+        /// </summary>
         public Bitmap BitmapSource
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// La texture correspondant à la selection du tileset
+        /// </summary>
         public Bitmap BitmapSelection
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// La position de la selection du tileset, identifiée par le point supérieur gauche
+        /// </summary>
         public Point SelectionLocation
         {
             get;

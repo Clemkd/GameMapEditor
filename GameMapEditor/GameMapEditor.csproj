@@ -12,6 +12,21 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -52,31 +67,51 @@
     <Compile Include="ConsolePanel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GlobalData.cs" />
-    <Compile Include="HistoryPanel.cs">
+    <Compile Include="ConsolePanel.Designer.cs">
+      <DependentUpon>ConsolePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frames\MapLayerFormular.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Frames\MapLayerFormular.Designer.cs">
+      <DependentUpon>MapLayerFormular.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalData.cs" />
     <Compile Include="MainFrame.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainFrame.Designer.cs">
       <DependentUpon>MainFrame.cs</DependentUpon>
     </Compile>
+    <Compile Include="MapBrowserPanel.Designer.cs">
+      <DependentUpon>MapBrowserPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="MapPanel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="NewMapFrame.cs">
+    <Compile Include="MapPanel.Designer.cs">
+      <DependentUpon>MapPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frames\MapPanelFormular.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="NewMapFrame.Designer.cs">
-      <DependentUpon>NewMapFrame.cs</DependentUpon>
+    <Compile Include="Frames\MapPanelFormular.Designer.cs">
+      <DependentUpon>MapPanelFormular.cs</DependentUpon>
     </Compile>
     <Compile Include="Objects\BitmapImage.cs" />
     <Compile Include="Objects\ErrorLog.cs" />
     <Compile Include="Objects\GameMap.cs" />
+    <Compile Include="Objects\GameMapLayer.cs" />
     <Compile Include="Objects\GameTile.cs" />
     <Compile Include="Objects\IDrawable.cs" />
     <Compile Include="Objects\ImageAttrExtension.cs" />
+    <Compile Include="Objects\LayerType.cs" />
+    <Compile Include="LayerPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LayerPanel.Designer.cs">
+      <DependentUpon>LayerPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TilesetPanel.cs">
@@ -85,11 +120,14 @@
     <Compile Include="MapBrowserPanel.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="TilesetPanel.Designer.cs">
+      <DependentUpon>TilesetPanel.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="ConsolePanel.resx">
       <DependentUpon>ConsolePanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="HistoryPanel.resx">
-      <DependentUpon>HistoryPanel.cs</DependentUpon>
+    <EmbeddedResource Include="Frames\MapLayerFormular.resx">
+      <DependentUpon>MapLayerFormular.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainFrame.resx">
       <DependentUpon>MainFrame.cs</DependentUpon>
@@ -97,8 +135,11 @@
     <EmbeddedResource Include="MapPanel.resx">
       <DependentUpon>MapPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NewMapFrame.resx">
-      <DependentUpon>NewMapFrame.cs</DependentUpon>
+    <EmbeddedResource Include="Frames\MapPanelFormular.resx">
+      <DependentUpon>MapPanelFormular.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LayerPanel.resx">
+      <DependentUpon>LayerPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -131,6 +172,18 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Contents\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

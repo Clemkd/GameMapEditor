@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace GameMapEditor
+namespace GameMapEditor.Frames
 {
-    public partial class NewMapFrame : Form
+    public partial class MapPanelFormular : Form
     {
-        private const string DEFAULT_MAP_NAME = "Map";
+        private const string DEFAULT_MAP_NAME = "Carte";
         private static int IndexUnique = 0;
 
         public delegate void NewMapEventArgs(string mapName);
-#pragma warning disable CS0108
-        public event NewMapEventArgs Validated;
-#pragma warning restore CS0108
+        public event NewMapEventArgs MapValidated;
 
-        public NewMapFrame()
+
+        public MapPanelFormular()
         {
             InitializeComponent();
         }
@@ -32,9 +31,9 @@ namespace GameMapEditor
 
         private void RaiseNewMapFrameValidatedEvent()
         {
-            if(this.Validated != null)
+            if(this.MapValidated != null)
             {
-                this.Validated(this.txtMapName.Text);
+                this.MapValidated(this.txtMapName.Text);
             }
         }
     }
