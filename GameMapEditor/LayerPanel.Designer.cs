@@ -39,12 +39,15 @@
             this.ImageListVisibleState = new System.Windows.Forms.ImageList(this.components);
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonAddLayer = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonUpLayer = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonDownLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
-            // listViewOverlay
+            // listViewLayers
             // 
             this.listViewLayers.Activation = System.Windows.Forms.ItemActivation.OneClick;
+            this.listViewLayers.AutoArrange = false;
             this.listViewLayers.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listViewLayers.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.ColumnHeaderLayerState,
@@ -65,9 +68,10 @@
             this.listViewLayers.LabelWrap = false;
             this.listViewLayers.Location = new System.Drawing.Point(0, 0);
             this.listViewLayers.MultiSelect = false;
-            this.listViewLayers.Name = "listViewOverlay";
+            this.listViewLayers.Name = "listViewLayers";
             this.listViewLayers.Size = new System.Drawing.Size(200, 115);
             this.listViewLayers.SmallImageList = this.ImageListLayerType;
+            this.listViewLayers.Sorting = System.Windows.Forms.SortOrder.Descending;
             this.listViewLayers.StateImageList = this.ImageListVisibleState;
             this.listViewLayers.TabIndex = 0;
             this.listViewLayers.TileSize = new System.Drawing.Size(60, 60);
@@ -103,7 +107,9 @@
             // 
             this.toolStrip.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButtonAddLayer});
+            this.toolStripButtonAddLayer,
+            this.toolStripButtonUpLayer,
+            this.toolStripButtonDownLayer});
             this.toolStrip.Location = new System.Drawing.Point(0, 115);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(200, 25);
@@ -119,6 +125,28 @@
             this.toolStripButtonAddLayer.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonAddLayer.Text = "Ajouter une couche";
             this.toolStripButtonAddLayer.Click += new System.EventHandler(this.toolStripButtonAddLayer_Click);
+            // 
+            // toolStripButtonUpLayer
+            // 
+            this.toolStripButtonUpLayer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonUpLayer.Enabled = false;
+            this.toolStripButtonUpLayer.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonUpLayer.Image")));
+            this.toolStripButtonUpLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonUpLayer.Name = "toolStripButtonUpLayer";
+            this.toolStripButtonUpLayer.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonUpLayer.Text = "Mettre au dessus";
+            this.toolStripButtonUpLayer.Click += new System.EventHandler(this.toolStripButtonUpLayer_Click);
+            // 
+            // toolStripButtonDownLayer
+            // 
+            this.toolStripButtonDownLayer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonDownLayer.Enabled = false;
+            this.toolStripButtonDownLayer.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonDownLayer.Image")));
+            this.toolStripButtonDownLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonDownLayer.Name = "toolStripButtonDownLayer";
+            this.toolStripButtonDownLayer.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonDownLayer.Text = "Mettre en dessous";
+            this.toolStripButtonDownLayer.Click += new System.EventHandler(this.toolStripButtonDownLayer_Click);
             // 
             // LayerPanel
             // 
@@ -149,5 +177,7 @@
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton toolStripButtonAddLayer;
         private System.Windows.Forms.ImageList ImageListLayerType;
+        private System.Windows.Forms.ToolStripButton toolStripButtonUpLayer;
+        private System.Windows.Forms.ToolStripButton toolStripButtonDownLayer;
     }
 }

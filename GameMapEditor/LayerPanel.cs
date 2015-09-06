@@ -26,6 +26,13 @@ namespace GameMapEditor
             this.listViewLayers.Items.Clear();
         }
 
+        public void LoadFrom(GameMap map)
+        {
+            this.Clear();
+            foreach (GameMapLayer layer in map.Layers)
+                this.AddLayer(layer);
+        }
+
         public void AddLayer(GameMapLayer layer)
         {
             ListViewItem item = new ListViewItem()
@@ -69,7 +76,7 @@ namespace GameMapEditor
             }
         }
 
-        private void RaiseLayerSelectionChangedEvent(int firstLayerIndex, int secondLayerIndex)
+        private void RaiseLayerIndexChangedEvent(int firstLayerIndex, int secondLayerIndex)
         {
             if (this.MapLayerIndexChanged != null)
             {
@@ -83,6 +90,27 @@ namespace GameMapEditor
             e.Item.SubItems[1].Text = e.IsSelected ? e.Item.Name + " (selectionnée)" : e.Item.Name;
 
             if(e.IsSelected) this.RaiseLayerSelectionChangedEvent(e.ItemIndex);
+        }
+
+        // TODO : Implémenter
+        private void toolStripButtonUpLayer_Click(object sender, EventArgs e)
+        {
+            if(this.listViewLayers.SelectedItems.Count > 0)
+            {
+                ListViewItem item = this.listViewLayers.SelectedItems[0].Clone() as ListViewItem;
+                int index = this.listViewLayers.SelectedIndices[0];
+
+                //if (index > 0)
+                {
+                    this.listViewLayers.Items.RemoveAt(index);
+                    this.listViewLayers.Items.Insert(index - 1, item);
+                }
+            }
+        }
+
+        private void toolStripButtonDownLayer_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

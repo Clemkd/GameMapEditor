@@ -144,7 +144,7 @@ namespace GameMapEditor
                 }
                 catch (Exception ex)
                 {
-                    consolePanel.WriteLine("Loader",
+                    consolePanel.WriteLine(DateTime.Now.ToString(),
                         "Une erreur est survenue lors du chargement de la carte : " + ex.Message,
                         RowType.Error);
                     ErrorLog.Write(ex);
@@ -160,6 +160,15 @@ namespace GameMapEditor
                 mapPanel.Map.AddLayer(layer);
                 layerPanel.AddLayer(layer);
                 consolePanel.WriteLine(DateTime.Now.ToString(), "La couche a été ajouté avec succés à la carte en cours", RowType.Information);
+            }
+        }
+
+        private void LayerPanel_MapLayerSelectionChanged(int index)
+        {
+            MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
+            if (mapPanel != null)
+            {
+                mapPanel.SelectedLayerIndex = index;
             }
         }
 
@@ -204,16 +213,17 @@ namespace GameMapEditor
                 this.layerPanel.Show(this.DockPanel);
                 this.layerPanel.DockTo(this.DockPanel, DockStyle.Right);
                 this.layerPanel.MapLayerAdded += LayerPanel_MapLayerAdded;
+                this.layerPanel.MapLayerSelectionChanged += LayerPanel_MapLayerSelectionChanged;
             }
         }
 
         private void DockPanel_ActiveDocumentChanged(object sender, EventArgs e)
         {
             MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
+
             if (mapPanel != null)
             {
-                layerPanel.Clear();
-                mapPanel.Map.Layers.ForEach(layer => layerPanel.AddLayer(layer));
+                layerPanel.LoadFrom(mapPanel.Map);
             }
         }
     }

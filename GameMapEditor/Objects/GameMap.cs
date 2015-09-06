@@ -59,7 +59,7 @@ namespace GameMapEditor
         {
             if(this.layers.Count < MAX_LAYER_COUNT)
             {
-                this.layers.Add(layer);
+                this.layers.Insert(0, layer);
                 this.RaiseMapChangedEvent();
                 return true;
             }

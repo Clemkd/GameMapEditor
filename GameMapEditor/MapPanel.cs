@@ -25,6 +25,7 @@ namespace GameMapEditor
 
         private Rectangle tilesetSelection;
         private BitmapImage texture;
+        private int selectedLayerIndex;
 
         private GameMap gameMap;
         private Point location;
@@ -42,6 +43,7 @@ namespace GameMapEditor
             this.mouseLocation = new Point();
             this.location = new Point();
             this.oldLocation = new Point();
+            this.selectedLayerIndex = 0;
 
             this.RefreshScrollComponents();
         }
@@ -81,7 +83,7 @@ namespace GameMapEditor
 
         private void picMap_MouseDown(object sender, MouseEventArgs e)
         {
-            this.gameMap.SetTiles(0, this.location.X, this.location.Y, this.texture);
+            this.gameMap.SetTiles(this.selectedLayerIndex, this.location.X, this.location.Y, this.texture);
         }
 
         private void picMap_MouseMove(object sender, MouseEventArgs e)
@@ -171,7 +173,7 @@ namespace GameMapEditor
         {
             if (this.texture != null)
             {
-                this.gameMap.Fill(0, this.texture);
+                this.gameMap.Fill(this.selectedLayerIndex, this.texture);
                 this.picMap.Refresh();
             }
         }
@@ -316,6 +318,11 @@ namespace GameMapEditor
         public BitmapImage Texture
         {
             set { this.texture = value; }
+        }
+
+        public int SelectedLayerIndex
+        {
+            set { this.selectedLayerIndex = value; }
         }
 
         public GameMap Map
