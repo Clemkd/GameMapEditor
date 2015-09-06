@@ -6,9 +6,15 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace GameMapEditor
 {
+    public delegate void MapLayerAddedEventArgs(GameMapLayer layer);
+    public delegate void MapLayerSelectionChangedEventArgs(int index);
+    public delegate void MapLayerIndexChangedEventArgs(int firstLayerIndex, int secondLayerIndex);
+
     public partial class LayerPanel : DockContent, IDisposable
     {
         public event MapLayerAddedEventArgs MapLayerAdded;
+        public event MapLayerSelectionChangedEventArgs MapLayerSelectionChanged;
+        public event MapLayerIndexChangedEventArgs MapLayerIndexChanged;
 
         public LayerPanel()
         {
@@ -55,10 +61,28 @@ namespace GameMapEditor
             }
         }
 
+        private void RaiseLayerSelectionChangedEvent(int index)
+        {
+            if(this.MapLayerSelectionChanged != null)
+            {
+                this.MapLayerSelectionChanged(index);
+            }
+        }
+
+        private void RaiseLayerSelectionChangedEvent(int firstLayerIndex, int secondLayerIndex)
+        {
+            if (this.MapLayerIndexChanged != null)
+            {
+                this.MapLayerIndexChanged(firstLayerIndex, secondLayerIndex);
+            }
+        }
+
         private void listViewOverlay_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             e.Item.BackColor = e.IsSelected ? System.Drawing.Color.LightBlue : System.Drawing.Color.WhiteSmoke;
             e.Item.SubItems[1].Text = e.IsSelected ? e.Item.Name + " (selectionnée)" : e.Item.Name;
+
+            if(e.IsSelected) this.RaiseLayerSelectionChangedEvent(e.ItemIndex);
         }
     }
 }

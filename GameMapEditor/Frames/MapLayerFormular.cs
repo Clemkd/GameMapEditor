@@ -11,8 +11,6 @@ using System.Windows.Forms;
 
 namespace GameMapEditor.Frames
 {
-    public delegate void MapLayerAddedEventArgs(GameMapLayer mapLayer);
-
     public partial class MapLayerFormular : Form
     {
         public event MapLayerAddedEventArgs MapLayerAdded;

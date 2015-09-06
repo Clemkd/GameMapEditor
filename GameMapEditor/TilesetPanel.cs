@@ -181,11 +181,18 @@ namespace GameMapEditor
         #region Methods
         private void LoadTilesetFileList()
         {
-            string[] tilesetFiles = Directory.GetFiles("Textures", "*.png", SearchOption.AllDirectories);
-            foreach (string file in tilesetFiles)
+            if (Directory.Exists(GlobalData.TEXTURES_DIRECTORY_PATH))
             {
-                this.textures.Add(new BitmapImage(file, Bitmap.FromFile(file) as Bitmap));
-                this.comboTilesetFileSelecter.Items.Add(file);
+                string[] tilesetFiles = Directory.GetFiles(GlobalData.TEXTURES_DIRECTORY_PATH, "*.png", SearchOption.AllDirectories);
+                foreach (string file in tilesetFiles)
+                {
+                    this.textures.Add(new BitmapImage(file, Bitmap.FromFile(file) as Bitmap));
+                    this.comboTilesetFileSelecter.Items.Add(file);
+                }
+            }
+            else
+            {
+                Directory.CreateDirectory(GlobalData.TEXTURES_DIRECTORY_PATH);
             }
         }
 

@@ -43,7 +43,11 @@ namespace GameMapEditor
         /// </summary>
         private void InitializeComponent()
         {
-            this.layers.Add(new GameMapLayer());
+            this.layers.Add(
+                new GameMapLayer()
+                {
+                    Name = "Défaut", Type = LayerType.Lower, Visible = true
+                });
         }
 
         public void Draw(Point origin, PaintEventArgs e)
