@@ -140,7 +140,10 @@ namespace GameMapEditor
                         map);
                     mapPanel.Map.FilesDependences.ForEach(x => consolePanel.WriteLine(mapPanel.Map.Name, x));
                     layerPanel.Clear();
-                    mapPanel.Map.Layers.ForEach(layer => layerPanel.AddLayer(layer));
+                    for (int i = mapPanel.Map.Layers.Count - 1; i >= 0; i--)
+                    {
+                        layerPanel.AddLayer(mapPanel.Map.Layers[i]);
+                    }
                 }
                 catch (Exception ex)
                 {

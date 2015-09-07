@@ -44,7 +44,7 @@ namespace GameMapEditor
             };
 
             item.SubItems.Add(layer.Name);
-            this.listViewLayers.Items.Add(item);
+            this.listViewLayers.Items.Insert(0, item);
         }
 
         private void toolStripButtonAddLayer_Click(object sender, System.EventArgs e)
@@ -95,7 +95,7 @@ namespace GameMapEditor
         // TODO : Implémenter
         private void toolStripButtonUpLayer_Click(object sender, EventArgs e)
         {
-            if(this.listViewLayers.SelectedItems.Count > 0)
+            /*if(this.listViewLayers.SelectedItems.Count > 0)
             {
                 ListViewItem item = this.listViewLayers.SelectedItems[0].Clone() as ListViewItem;
                 int index = this.listViewLayers.SelectedIndices[0];
@@ -105,7 +105,7 @@ namespace GameMapEditor
                     this.listViewLayers.Items.RemoveAt(index);
                     this.listViewLayers.Items.Insert(index - 1, item);
                 }
-            }
+            }*/
         }
 
         private void toolStripButtonDownLayer_Click(object sender, EventArgs e)

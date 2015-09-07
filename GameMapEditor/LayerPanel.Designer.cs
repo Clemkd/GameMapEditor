@@ -71,7 +71,7 @@
             this.listViewLayers.Name = "listViewLayers";
             this.listViewLayers.Size = new System.Drawing.Size(200, 115);
             this.listViewLayers.SmallImageList = this.ImageListLayerType;
-            this.listViewLayers.Sorting = System.Windows.Forms.SortOrder.Descending;
+            this.listViewLayers.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listViewLayers.StateImageList = this.ImageListVisibleState;
             this.listViewLayers.TabIndex = 0;
             this.listViewLayers.TileSize = new System.Drawing.Size(60, 60);
@@ -129,7 +129,6 @@
             // toolStripButtonUpLayer
             // 
             this.toolStripButtonUpLayer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonUpLayer.Enabled = false;
             this.toolStripButtonUpLayer.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonUpLayer.Image")));
             this.toolStripButtonUpLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonUpLayer.Name = "toolStripButtonUpLayer";

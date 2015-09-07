@@ -52,7 +52,10 @@ namespace GameMapEditor
 
         public void Draw(Point origin, PaintEventArgs e)
         {
-            this.layers.ForEach(x => x.Draw(origin, e));
+            for(int i = this.layers.Count - 1; i >= 0; i--)
+            {
+                this.layers.ElementAt(i).Draw(origin, e);
+            }
         }
 
         public bool AddLayer(GameMapLayer layer)
@@ -167,8 +170,10 @@ namespace GameMapEditor
         {
             BinaryFormatter serializer = new BinaryFormatter();
             serializer.AssemblyFormat = FormatterAssemblyStyle.Simple;
-            FileStream fs = new FileStream(string.Format("{0}.frog", this.Name), FileMode.Create);
-            serializer.Serialize(fs, this);
+            using (FileStream fs = new FileStream(string.Format("{0}.frog", this.Name), FileMode.Create))
+            {
+                serializer.Serialize(fs, this);
+            }
         }
 
         /// <summary>
@@ -179,8 +184,10 @@ namespace GameMapEditor
         public static GameMap Load(string fileName)
         {
             BinaryFormatter deserializer = new BinaryFormatter();
-            FileStream fileStream = new FileStream(fileName, FileMode.Open);
-            return deserializer.Deserialize(fileStream) as GameMap;
+            using (FileStream fileStream = new FileStream(fileName, FileMode.Open))
+            {
+               return deserializer.Deserialize(fileStream) as GameMap;
+            }
         }
 
         /// <summary>

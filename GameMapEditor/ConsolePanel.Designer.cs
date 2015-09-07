@@ -53,7 +53,7 @@ namespace GameMapEditor
             this.ListViewConsole.Location = new System.Drawing.Point(0, 0);
             this.ListViewConsole.MultiSelect = false;
             this.ListViewConsole.Name = "ListViewConsole";
-            this.ListViewConsole.Size = new System.Drawing.Size(630, 300);
+            this.ListViewConsole.Size = new System.Drawing.Size(270, 50);
             this.ListViewConsole.SmallImageList = this.IconList;
             this.ListViewConsole.TabIndex = 0;
             this.ListViewConsole.TileSize = new System.Drawing.Size(32, 32);
@@ -73,7 +73,7 @@ namespace GameMapEditor
             // MessageColumn
             // 
             this.MessageColumn.Text = "Message";
-            this.MessageColumn.Width = 500;
+            this.MessageColumn.Width = 138;
             // 
             // IconList
             // 
@@ -84,18 +84,19 @@ namespace GameMapEditor
             // 
             // ConsolePanel
             // 
-            this.ClientSize = new System.Drawing.Size(630, 300);
+            this.ClientSize = new System.Drawing.Size(270, 50);
             this.Controls.Add(this.ListViewConsole);
-            this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)((((WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight)
-            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockTop)
+            this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)((((WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight) 
+            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockTop) 
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom)));
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(300, 300);
+            this.MinimumSize = new System.Drawing.Size(270, 50);
             this.Name = "ConsolePanel";
             this.Text = "Console";
             this.ResumeLayout(false);
+
         }
 
         private ListView ListViewConsole;

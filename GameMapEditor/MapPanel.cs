@@ -103,7 +103,7 @@ namespace GameMapEditor
                 this.oldLocation.X = this.location.X;
                 this.oldLocation.Y = this.location.Y;
 
-                this.gameMap.SetTiles(0, this.location.X, this.location.Y, this.texture);
+                this.gameMap.SetTiles(this.selectedLayerIndex, this.location.X, this.location.Y, this.texture);
             }
 
             this.picMap.Refresh();
