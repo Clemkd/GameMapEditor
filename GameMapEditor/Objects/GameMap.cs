@@ -43,11 +43,19 @@ namespace GameMapEditor
         /// </summary>
         private void InitializeComponent()
         {
-            this.layers.Add(
-                new GameMapLayer()
-                {
-                    Name = "Défaut", Type = LayerType.Lower, Visible = true
-                });
+            GameMapLayer layer = new GameMapLayer()
+            {
+                Name = "Défaut",
+                Type = LayerType.Lower,
+                Visible = true
+            };
+            layer.LayerChanged += Layer_LayerChanged;
+            this.layers.Add(layer);
+        }
+
+        private void Layer_LayerChanged(object sender)
+        {
+            this.RaiseMapChangedEvent();
         }
 
         public void Draw(Point origin, PaintEventArgs e)
@@ -58,10 +66,20 @@ namespace GameMapEditor
             }
         }
 
+        public GameMapLayer Layer(int index)
+        {
+            if(index >= 0 && index < this.layers.Count)
+            {
+                return this.layers.ElementAt(index);
+            }
+            return null;
+        }
+
         public bool AddLayer(GameMapLayer layer)
         {
             if(this.layers.Count < MAX_LAYER_COUNT)
             {
+                layer.LayerChanged += Layer_LayerChanged;
                 this.layers.Insert(0, layer);
                 this.RaiseMapChangedEvent();
                 return true;
@@ -73,6 +91,7 @@ namespace GameMapEditor
         {
             if(index >= 0 && index < this.layers.Count)
             {
+                this.layers.ElementAt(index).LayerChanged -= Layer_LayerChanged;
                 this.layers.RemoveAt(index);
                 this.RaiseMapChangedEvent();
             }
@@ -141,8 +160,6 @@ namespace GameMapEditor
                         }
                     }
                 }
-
-                this.RaiseMapChangedEvent();
             }
         }
 

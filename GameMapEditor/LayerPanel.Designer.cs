@@ -41,6 +41,8 @@
             this.toolStripButtonAddLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonUpLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonDownLayer = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonRemoveLayer = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonSetVisibleState = new System.Windows.Forms.ToolStripButton();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -108,8 +110,10 @@
             this.toolStrip.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonAddLayer,
+            this.toolStripButtonRemoveLayer,
             this.toolStripButtonUpLayer,
-            this.toolStripButtonDownLayer});
+            this.toolStripButtonDownLayer,
+            this.toolStripButtonSetVisibleState});
             this.toolStrip.Location = new System.Drawing.Point(0, 115);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(200, 25);
@@ -129,6 +133,7 @@
             // toolStripButtonUpLayer
             // 
             this.toolStripButtonUpLayer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonUpLayer.Enabled = false;
             this.toolStripButtonUpLayer.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonUpLayer.Image")));
             this.toolStripButtonUpLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonUpLayer.Name = "toolStripButtonUpLayer";
@@ -139,13 +144,32 @@
             // toolStripButtonDownLayer
             // 
             this.toolStripButtonDownLayer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonDownLayer.Enabled = false;
             this.toolStripButtonDownLayer.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonDownLayer.Image")));
             this.toolStripButtonDownLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonDownLayer.Name = "toolStripButtonDownLayer";
             this.toolStripButtonDownLayer.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonDownLayer.Text = "Mettre en dessous";
             this.toolStripButtonDownLayer.Click += new System.EventHandler(this.toolStripButtonDownLayer_Click);
+            // 
+            // toolStripButtonRemoveLayer
+            // 
+            this.toolStripButtonRemoveLayer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonRemoveLayer.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonRemoveLayer.Image")));
+            this.toolStripButtonRemoveLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonRemoveLayer.Name = "toolStripButtonRemoveLayer";
+            this.toolStripButtonRemoveLayer.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonRemoveLayer.Text = "Supprimer la couche";
+            this.toolStripButtonRemoveLayer.Click += new System.EventHandler(this.toolStripButtonRemoveLayer_Click);
+            // 
+            // toolStripButtonSetVisibleState
+            // 
+            this.toolStripButtonSetVisibleState.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonSetVisibleState.Image = global::GameMapEditor.Properties.Resources.eye;
+            this.toolStripButtonSetVisibleState.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonSetVisibleState.Name = "toolStripButtonSetVisibleState";
+            this.toolStripButtonSetVisibleState.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonSetVisibleState.Text = "Rend visible / invisible la couche";
+            this.toolStripButtonSetVisibleState.Click += new System.EventHandler(this.toolStripButtonSetVisibleState_Click);
             // 
             // LayerPanel
             // 
@@ -178,5 +202,7 @@
         private System.Windows.Forms.ImageList ImageListLayerType;
         private System.Windows.Forms.ToolStripButton toolStripButtonUpLayer;
         private System.Windows.Forms.ToolStripButton toolStripButtonDownLayer;
+        private System.Windows.Forms.ToolStripButton toolStripButtonRemoveLayer;
+        private System.Windows.Forms.ToolStripButton toolStripButtonSetVisibleState;
     }
 }

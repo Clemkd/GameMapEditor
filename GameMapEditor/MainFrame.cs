@@ -138,12 +138,13 @@ namespace GameMapEditor
                         this.tilesetPanel.TilesetImage,
                         this.tilesetPanel.TilesetSelection,
                         map);
+
+                    // TODO Debug only
                     mapPanel.Map.FilesDependences.ForEach(x => consolePanel.WriteLine(mapPanel.Map.Name, x));
+
                     layerPanel.Clear();
                     for (int i = mapPanel.Map.Layers.Count - 1; i >= 0; i--)
-                    {
                         layerPanel.AddLayer(mapPanel.Map.Layers[i]);
-                    }
                 }
                 catch (Exception ex)
                 {

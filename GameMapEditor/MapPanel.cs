@@ -39,7 +39,7 @@ namespace GameMapEditor
             this.IsGridActived = true;
             this.isSaved = true;
             this.IsTilesetSelectionShowProcessActived = true;
-            this.gridColor = new Pen(Color.FromArgb(255, 170, 170, 170), 2);
+            this.gridColor = new Pen(Color.FromArgb(255, 130, 130, 130), 2);
             this.mouseLocation = new Point();
             this.location = new Point();
             this.oldLocation = new Point();
@@ -57,6 +57,7 @@ namespace GameMapEditor
         private void GameMap_MapChanged(object sender)
         {
             this.IsSaved = false;
+            this.picMap.Refresh();
         }
 
         private void picMap_Resize(object sender, EventArgs e)

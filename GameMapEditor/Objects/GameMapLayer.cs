@@ -8,9 +8,14 @@ using System.Windows.Forms;
 
 namespace GameMapEditor.Objects
 {
+    public delegate void LayerChangeEventArgs(object sender);
+
     [Serializable]
     public class GameMapLayer : IDrawable
     {
+        [field: NonSerialized]
+        public event LayerChangeEventArgs LayerChanged;
+
         private string name;
         private LayerType type;
         private bool visible;
@@ -34,8 +39,11 @@ namespace GameMapEditor.Objects
 
         public void Draw(Point origin, PaintEventArgs e)
         {
-            foreach (GameTile tile in this.tiles)
-                tile.Draw(origin, e);
+            if (this.visible)
+            {
+                foreach (GameTile tile in this.tiles)
+                    tile.Draw(origin, e);
+            }
         }
 
         /// <summary>
@@ -55,35 +63,43 @@ namespace GameMapEditor.Objects
             set
             {
                 if (x > 0 && x < this.tiles.GetLength(0) && y > 0 && y < this.tiles.GetLength(1))
+                {
                     this.tiles[x, y] = value;
+                    RaiseLayerChangedEvent();
+                }
             }
+        }
+
+        private void RaiseLayerChangedEvent()
+        {
+            this.LayerChanged?.Invoke(this);
         }
         
         /// <summary>
-        /// Obtient ou défini la nom du layer
+        /// Obtient ou définit la nom du layer
         /// </summary>
         public string Name
         {
             get { return this.name; }
-            set { this.name = value; }
+            set { this.name = value; RaiseLayerChangedEvent(); }
         }
 
         /// <summary>
-        /// Obtient ou défini le type du layer
+        /// Obtient ou définit le type du layer
         /// </summary>
         public LayerType Type
         {
             get { return this.type; }
-            set { this.type = value; }
+            set { this.type = value; RaiseLayerChangedEvent(); }
         }
 
         /// <summary>
-        /// Obtient ou défini l'état d'affichage du layer
+        /// Obtient ou définit l'état d'affichage du layer
         /// </summary>
         public bool Visible
         {
             get { return this.visible; }
-            set { this.visible = value; }
+            set { this.visible = value; RaiseLayerChangedEvent(); }
         }
     }
 }
