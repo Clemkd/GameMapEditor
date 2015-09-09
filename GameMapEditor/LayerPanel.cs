@@ -29,11 +29,12 @@ namespace GameMapEditor
         public void LoadFrom(GameMap map)
         {
             this.Clear();
-            foreach (GameMapLayer layer in map.Layers)
-                this.AddLayer(layer);
+
+            for (int i = map.Layers.Count - 1; i >= 0; i--)
+                this.LoadLayer(map.Layers[i]);
         }
 
-        public void AddLayer(GameMapLayer layer)
+        public void LoadLayer(GameMapLayer layer)
         {
             ListViewItem item = new ListViewItem()
             {
@@ -53,7 +54,7 @@ namespace GameMapEditor
             MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
             if (mapPanel != null)
             {
-                mapPanel.Map.RemoveLayer(index);
+                mapPanel.Map.RemoveLayerAt(index);
                 this.listViewLayers.SelectedItems[0].Remove();
             }
         }
@@ -73,37 +74,28 @@ namespace GameMapEditor
 
         private void RaiseLayerAddedEvent(GameMapLayer layer)
         {
-            if (this.MapLayerAdded != null)
-            {
-                this.MapLayerAdded(layer);
-            }
+            this.MapLayerAdded?.Invoke(layer);
         }
 
         private void RaiseLayerSelectionChangedEvent(int index)
         {
-            if (this.MapLayerSelectionChanged != null)
-            {
-                this.MapLayerSelectionChanged(index);
-            }
+            this.MapLayerSelectionChanged?.Invoke(index);
         }
 
         private void RaiseLayerIndexChangedEvent(int firstLayerIndex, int secondLayerIndex)
         {
-            if (this.MapLayerIndexChanged != null)
-            {
-                this.MapLayerIndexChanged(firstLayerIndex, secondLayerIndex);
-            }
+            this.MapLayerIndexChanged?.Invoke(firstLayerIndex, secondLayerIndex);
         }
 
         private void listViewOverlay_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             e.Item.BackColor = e.IsSelected ? System.Drawing.Color.LightBlue : System.Drawing.Color.WhiteSmoke;
-            e.Item.SubItems[1].Text = e.IsSelected ? e.Item.Name + " (selectionnée)" : e.Item.Name;
+            e.Item.SubItems[1].Text = e.IsSelected ? "[ " + e.Item.Name + " ]" : e.Item.Name;
 
             if (e.IsSelected)
             {
                 MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
-                GameMapLayer layer = mapPanel.Map?.Layer(e.ItemIndex);
+                GameMapLayer layer = mapPanel.Map?.GetLayerAt(e.ItemIndex);
                 if (layer != null)
                 {
                     this.toolStripButtonSetVisibleState.Image =  layer.Visible ? Properties.Resources.eye : Properties.Resources.eye_close;
@@ -113,20 +105,29 @@ namespace GameMapEditor
             }
         }
 
-        // TODO : Implémenter
         private void toolStripButtonUpLayer_Click(object sender, EventArgs e)
         {
-            /*if(this.listViewLayers.SelectedItems.Count > 0)
+            if (this.listViewLayers.SelectedItems.Count > 0)
             {
-                ListViewItem item = this.listViewLayers.SelectedItems[0].Clone() as ListViewItem;
-                int index = this.listViewLayers.SelectedIndices[0];
+                ListViewItem item1 = this.listViewLayers.SelectedItems[0];
+                int index1 = item1.Index;
 
-                //if (index > 0)
+                if (index1 - 1 >= 0)
                 {
-                    this.listViewLayers.Items.RemoveAt(index);
-                    this.listViewLayers.Items.Insert(index - 1, item);
+                    ListViewItem item2 = this.listViewLayers.Items[index1 - 1];
+                    int index2 = item2.Index;
+
+                    // TODO : Changer index des layers en GameMap
+                    MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
+                    if (mapPanel != null && mapPanel.Map.TrySwapLayers(index1, index2))
+                    {
+                        this.listViewLayers.Items.Remove(item2);
+                        this.listViewLayers.Items.Remove(item1);
+                        this.listViewLayers.Items.Insert(index2, item1);
+                        this.listViewLayers.Items.Insert(index1, item2);
+                    }
                 }
-            }*/
+            }
         }
 
         private void toolStripButtonDownLayer_Click(object sender, EventArgs e)
@@ -136,18 +137,20 @@ namespace GameMapEditor
                 ListViewItem item1 = this.listViewLayers.SelectedItems[0];
                 int index1 = item1.Index;
 
-                if(index1 + 1 < this.listViewLayers.Items.Count)
+                if (index1 + 1 < this.listViewLayers.Items.Count)
                 {
                     ListViewItem item2 = this.listViewLayers.Items[index1 + 1];
                     int index2 = item2.Index;
 
                     // TODO : Changer index des layers en GameMap
-
-                    this.listViewLayers.Items.Remove(item2);
-                    this.listViewLayers.Items.Remove(item1);
-                    this.listViewLayers.Items.Insert(index1, item2);
-                    this.listViewLayers.Items.Insert(index2, item1);
-                    
+                    MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
+                    if (mapPanel != null && mapPanel.Map.TrySwapLayers(index1, index2))
+                    {
+                        this.listViewLayers.Items.Remove(item2);
+                        this.listViewLayers.Items.Remove(item1);
+                        this.listViewLayers.Items.Insert(index1, item2);
+                        this.listViewLayers.Items.Insert(index2, item1);
+                    }
                 }
             }   
         }
@@ -168,7 +171,7 @@ namespace GameMapEditor
                 MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
                 if (mapPanel != null)
                 {
-                    GameMapLayer layer = mapPanel.Map.Layer(this.listViewLayers.SelectedItems[0].Index);
+                    GameMapLayer layer = mapPanel.Map.GetLayerAt(this.listViewLayers.SelectedItems[0].Index);
                     if (layer != null)
                     {
                         layer.Visible = !layer.Visible;

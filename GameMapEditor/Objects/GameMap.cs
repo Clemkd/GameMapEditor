@@ -35,14 +35,15 @@ namespace GameMapEditor
             this.name = mapName;
             this.textures = new Dictionary<string, int>();
             this.layers = new List<GameMapLayer>();
-            this.InitializeComponent();
+            this.InitializeComponents();
         }
 
         /// <summary>
         /// Initialise les données internes de la carte
         /// </summary>
-        private void InitializeComponent()
+        private void InitializeComponents()
         {
+
             GameMapLayer layer = new GameMapLayer()
             {
                 Name = "Défaut",
@@ -58,6 +59,19 @@ namespace GameMapEditor
             this.RaiseMapChangedEvent();
         }
 
+        /// <summary>
+        /// Lie les évènements de l'objet avec ses sous-objets
+        /// </summary>
+        /// <returns>L'objet</returns>
+        public GameMap LinkEvents()
+        {
+            this.layers.ForEach(layer =>
+            {
+                layer.LayerChanged += Layer_LayerChanged;
+            });
+            return this;
+        }
+
         public void Draw(Point origin, PaintEventArgs e)
         {
             for(int i = this.layers.Count - 1; i >= 0; i--)
@@ -66,7 +80,7 @@ namespace GameMapEditor
             }
         }
 
-        public GameMapLayer Layer(int index)
+        public GameMapLayer GetLayerAt(int index)
         {
             if(index >= 0 && index < this.layers.Count)
             {
@@ -87,14 +101,53 @@ namespace GameMapEditor
             return false;
         }
 
-        public void RemoveLayer(int index)
+        public bool AddLayerAt(int index, GameMapLayer layer)
+        {
+            if (this.layers.Count < MAX_LAYER_COUNT)
+            {
+                layer.LayerChanged += Layer_LayerChanged;
+                this.layers.Insert(index, layer);
+                this.RaiseMapChangedEvent();
+                return true;
+            }
+            return false;
+        }
+
+        public bool RemoveLayerAt(int index)
         {
             if(index >= 0 && index < this.layers.Count)
             {
                 this.layers.ElementAt(index).LayerChanged -= Layer_LayerChanged;
                 this.layers.RemoveAt(index);
                 this.RaiseMapChangedEvent();
+                return true;
             }
+
+            return false;
+        }
+
+        public bool TryReplaceLayerAt(int index, GameMapLayer layer)
+        {
+            if(this.RemoveLayerAt(index))
+                return this.AddLayerAt(index, layer);
+            return false;
+        }
+
+        public bool TrySwapLayers(int index1, int index2)
+        {
+            if (index1 == index2)
+                return true;
+
+            if (index1 < this.layers.Count && index2 < this.layers.Count && index1 >= 0 && index2 >= 0)
+            {
+                GameMapLayer layer1 = this.layers.ElementAt(index1);
+                GameMapLayer layer2 = this.layers.ElementAt(index2);
+                if (!this.TryReplaceLayerAt(index1, layer2)) return false;
+                if (!this.TryReplaceLayerAt(index2, layer1)) return false;
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -203,7 +256,7 @@ namespace GameMapEditor
             BinaryFormatter deserializer = new BinaryFormatter();
             using (FileStream fileStream = new FileStream(fileName, FileMode.Open))
             {
-               return deserializer.Deserialize(fileStream) as GameMap;
+                return deserializer.Deserialize(fileStream) as GameMap;
             }
         }
 

@@ -90,7 +90,7 @@ namespace GameMapEditor.Objects
         public LayerType Type
         {
             get { return this.type; }
-            set { this.type = value; RaiseLayerChangedEvent(); }
+            set { this.type = value; this.RaiseLayerChangedEvent(); }
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace GameMapEditor.Objects
         public bool Visible
         {
             get { return this.visible; }
-            set { this.visible = value; RaiseLayerChangedEvent(); }
+            set { this.visible = value; this.RaiseLayerChangedEvent(); }
         }
     }
 }

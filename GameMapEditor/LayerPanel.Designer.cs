@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Couches supérieures", System.Windows.Forms.HorizontalAlignment.Center);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Couches inférieures", System.Windows.Forms.HorizontalAlignment.Center);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Couches supérieures", System.Windows.Forms.HorizontalAlignment.Center);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Couches inférieures", System.Windows.Forms.HorizontalAlignment.Center);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LayerPanel));
             this.listViewLayers = new System.Windows.Forms.ListView();
             this.ColumnHeaderLayerState = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -39,9 +39,9 @@
             this.ImageListVisibleState = new System.Windows.Forms.ImageList(this.components);
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonAddLayer = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonRemoveLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonUpLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonDownLayer = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonRemoveLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonSetVisibleState = new System.Windows.Forms.ToolStripButton();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -57,20 +57,21 @@
             this.listViewLayers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewLayers.FullRowSelect = true;
             this.listViewLayers.GridLines = true;
-            listViewGroup1.Header = "Couches supérieures";
-            listViewGroup1.HeaderAlignment = System.Windows.Forms.HorizontalAlignment.Center;
-            listViewGroup1.Name = "ListViewGroupUpperLayers";
-            listViewGroup2.Header = "Couches inférieures";
-            listViewGroup2.HeaderAlignment = System.Windows.Forms.HorizontalAlignment.Center;
-            listViewGroup2.Name = "ListViewGroupLowerLayers";
+            listViewGroup3.Header = "Couches supérieures";
+            listViewGroup3.HeaderAlignment = System.Windows.Forms.HorizontalAlignment.Center;
+            listViewGroup3.Name = "ListViewGroupUpperLayers";
+            listViewGroup4.Header = "Couches inférieures";
+            listViewGroup4.HeaderAlignment = System.Windows.Forms.HorizontalAlignment.Center;
+            listViewGroup4.Name = "ListViewGroupLowerLayers";
             this.listViewLayers.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2});
+            listViewGroup3,
+            listViewGroup4});
             this.listViewLayers.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listViewLayers.LabelWrap = false;
             this.listViewLayers.Location = new System.Drawing.Point(0, 0);
             this.listViewLayers.MultiSelect = false;
             this.listViewLayers.Name = "listViewLayers";
+            this.listViewLayers.ShowGroups = false;
             this.listViewLayers.Size = new System.Drawing.Size(200, 115);
             this.listViewLayers.SmallImageList = this.ImageListLayerType;
             this.listViewLayers.Sorting = System.Windows.Forms.SortOrder.Ascending;
@@ -130,10 +131,19 @@
             this.toolStripButtonAddLayer.Text = "Ajouter une couche";
             this.toolStripButtonAddLayer.Click += new System.EventHandler(this.toolStripButtonAddLayer_Click);
             // 
+            // toolStripButtonRemoveLayer
+            // 
+            this.toolStripButtonRemoveLayer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonRemoveLayer.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonRemoveLayer.Image")));
+            this.toolStripButtonRemoveLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonRemoveLayer.Name = "toolStripButtonRemoveLayer";
+            this.toolStripButtonRemoveLayer.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonRemoveLayer.Text = "Supprimer la couche";
+            this.toolStripButtonRemoveLayer.Click += new System.EventHandler(this.toolStripButtonRemoveLayer_Click);
+            // 
             // toolStripButtonUpLayer
             // 
             this.toolStripButtonUpLayer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonUpLayer.Enabled = false;
             this.toolStripButtonUpLayer.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonUpLayer.Image")));
             this.toolStripButtonUpLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonUpLayer.Name = "toolStripButtonUpLayer";
@@ -151,16 +161,6 @@
             this.toolStripButtonDownLayer.Text = "Mettre en dessous";
             this.toolStripButtonDownLayer.Click += new System.EventHandler(this.toolStripButtonDownLayer_Click);
             // 
-            // toolStripButtonRemoveLayer
-            // 
-            this.toolStripButtonRemoveLayer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonRemoveLayer.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonRemoveLayer.Image")));
-            this.toolStripButtonRemoveLayer.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonRemoveLayer.Name = "toolStripButtonRemoveLayer";
-            this.toolStripButtonRemoveLayer.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButtonRemoveLayer.Text = "Supprimer la couche";
-            this.toolStripButtonRemoveLayer.Click += new System.EventHandler(this.toolStripButtonRemoveLayer_Click);
-            // 
             // toolStripButtonSetVisibleState
             // 
             this.toolStripButtonSetVisibleState.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -168,7 +168,7 @@
             this.toolStripButtonSetVisibleState.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonSetVisibleState.Name = "toolStripButtonSetVisibleState";
             this.toolStripButtonSetVisibleState.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButtonSetVisibleState.Text = "Rend visible / invisible la couche";
+            this.toolStripButtonSetVisibleState.Text = "Affiche ou cache la couche";
             this.toolStripButtonSetVisibleState.Click += new System.EventHandler(this.toolStripButtonSetVisibleState_Click);
             // 
             // LayerPanel

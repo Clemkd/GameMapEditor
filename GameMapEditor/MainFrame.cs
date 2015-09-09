@@ -131,7 +131,8 @@ namespace GameMapEditor
             {
                 try
                 {
-                    GameMap map = GameMap.Load(openFileDialog.FileName);
+                    // Charge la carte et rétabli les liens des évents non serialisés
+                    GameMap map = GameMap.Load(openFileDialog.FileName).LinkEvents();
                     MapPanel mapPanel = MapPanel.OpenNewDocument(
                         this.DockPanel,
                         this.mapPanels,
@@ -142,9 +143,7 @@ namespace GameMapEditor
                     // TODO Debug only
                     mapPanel.Map.FilesDependences.ForEach(x => consolePanel.WriteLine(mapPanel.Map.Name, x));
 
-                    layerPanel.Clear();
-                    for (int i = mapPanel.Map.Layers.Count - 1; i >= 0; i--)
-                        layerPanel.AddLayer(mapPanel.Map.Layers[i]);
+                    layerPanel.LoadFrom(map);
                 }
                 catch (Exception ex)
                 {
@@ -162,7 +161,7 @@ namespace GameMapEditor
             if (mapPanel != null)
             {
                 mapPanel.Map.AddLayer(layer);
-                layerPanel.AddLayer(layer);
+                layerPanel.LoadLayer(layer);
                 consolePanel.WriteLine(DateTime.Now.ToString(), "La couche a été ajouté avec succés à la carte en cours", RowType.Information);
             }
         }
