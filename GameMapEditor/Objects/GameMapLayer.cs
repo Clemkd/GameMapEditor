@@ -37,6 +37,11 @@ namespace GameMapEditor.Objects
                     this.tiles[x, y] = new GameTile(x, y);
         }
 
+        /// <summary>
+        /// Dessine le layer sur le controle de dessin à l'origine spécifiée
+        /// </summary>
+        /// <param name="origin">L'origine de dessin, définie par le point supérieur gauche</param>
+        /// <param name="e">L'évènement du control de dessin</param>
         public void Draw(Point origin, PaintEventArgs e)
         {
             if (this.visible)

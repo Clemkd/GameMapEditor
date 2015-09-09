@@ -119,7 +119,7 @@ namespace GameMapEditor
 
                     // TODO : Changer index des layers en GameMap
                     MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
-                    if (mapPanel != null && mapPanel.Map.TrySwapLayers(index1, index2))
+                    if (mapPanel != null && mapPanel.Map.SwapLayers(index1, index2))
                     {
                         this.listViewLayers.Items.Remove(item2);
                         this.listViewLayers.Items.Remove(item1);
@@ -144,7 +144,7 @@ namespace GameMapEditor
 
                     // TODO : Changer index des layers en GameMap
                     MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
-                    if (mapPanel != null && mapPanel.Map.TrySwapLayers(index1, index2))
+                    if (mapPanel != null && mapPanel.Map.SwapLayers(index1, index2))
                     {
                         this.listViewLayers.Items.Remove(item2);
                         this.listViewLayers.Items.Remove(item1);

@@ -19,16 +19,17 @@ namespace GameMapEditor
     [Serializable]
     public class GameMap : IDrawable
     {
+        [field: NonSerialized]
+        public event MapChangedEventArgs MapChanged;
+
         [NonSerialized]
         private const ushort MAX_LAYER_COUNT = 10;
 
+        #region Fields
         private string name;
         private Dictionary<string, int> textures;
         private List<GameMapLayer> layers;
-        
-
-        [field : NonSerialized]
-        public event MapChangedEventArgs MapChanged;
+        #endregion
 
         public GameMap(string mapName)
         {
@@ -54,11 +55,6 @@ namespace GameMapEditor
             this.layers.Add(layer);
         }
 
-        private void Layer_LayerChanged(object sender)
-        {
-            this.RaiseMapChangedEvent();
-        }
-
         /// <summary>
         /// Lie les évènements de l'objet avec ses sous-objets
         /// </summary>
@@ -72,6 +68,11 @@ namespace GameMapEditor
             return this;
         }
 
+        /// <summary>
+        /// Dessine la map sur le controle de dessin à l'origine spécifiée
+        /// </summary>
+        /// <param name="origin">L'origine de dessin, définie par le point supérieur gauche</param>
+        /// <param name="e">L'évènement du control de dessin</param>
         public void Draw(Point origin, PaintEventArgs e)
         {
             for(int i = this.layers.Count - 1; i >= 0; i--)
@@ -80,6 +81,11 @@ namespace GameMapEditor
             }
         }
 
+        /// <summary>
+        /// Obtient le layer à l'index spécifié et retourne null si inexistante
+        /// </summary>
+        /// <param name="index">L'index de le layer</param>
+        /// <returns>Le layer</returns>
         public GameMapLayer GetLayerAt(int index)
         {
             if(index >= 0 && index < this.layers.Count)
@@ -89,19 +95,23 @@ namespace GameMapEditor
             return null;
         }
 
+        /// <summary>
+        /// Ajoute une layer de dessin dans la map
+        /// </summary>
+        /// <param name="layer">Le layer à ajouter</param>
+        /// <returns>L'état résultant de l'ajout</returns>
         public bool AddLayer(GameMapLayer layer)
         {
-            if(this.layers.Count < MAX_LAYER_COUNT)
-            {
-                layer.LayerChanged += Layer_LayerChanged;
-                this.layers.Insert(0, layer);
-                this.RaiseMapChangedEvent();
-                return true;
-            }
-            return false;
+            return this.InsertLayerAt(0, layer);
         }
 
-        public bool AddLayerAt(int index, GameMapLayer layer)
+        /// <summary>
+        /// Insert le layer à la position spécifiée dans la liste des layers de map
+        /// </summary>
+        /// <param name="index">L'index d'insertion</param>
+        /// <param name="layer">Le layer à insérer</param>
+        /// <returns>L'état résultant de l'insertion</returns>
+        public bool InsertLayerAt(int index, GameMapLayer layer)
         {
             if (this.layers.Count < MAX_LAYER_COUNT)
             {
@@ -113,6 +123,11 @@ namespace GameMapEditor
             return false;
         }
 
+        /// <summary>
+        /// Supprime le layer à l'index spécifiée
+        /// </summary>
+        /// <param name="index">L'index de le layer à supprimer</param>
+        /// <returns>L'état résultant de la suppression</returns>
         public bool RemoveLayerAt(int index)
         {
             if(index >= 0 && index < this.layers.Count)
@@ -126,14 +141,26 @@ namespace GameMapEditor
             return false;
         }
 
-        public bool TryReplaceLayerAt(int index, GameMapLayer layer)
+        /// <summary>
+        /// Remplace le layer à l'index spcifiée par le layer donnée
+        /// </summary>
+        /// <param name="index">L'index de le layer à remplacer</param>
+        /// <param name="layer">Le layer remplaçante</param>
+        /// <returns>L'état resultant du remplacement</returns>
+        public bool ReplaceLayerAt(int index, GameMapLayer layer)
         {
             if(this.RemoveLayerAt(index))
-                return this.AddLayerAt(index, layer);
+                return this.InsertLayerAt(index, layer);
             return false;
         }
 
-        public bool TrySwapLayers(int index1, int index2)
+        /// <summary>
+        /// Réalise un échange de position entre deux layers
+        /// </summary>
+        /// <param name="index1">L'index de la première layer</param>
+        /// <param name="index2">L'index de la seconde layer</param>
+        /// <returns>L'état résultant de l'échange</returns>
+        public bool SwapLayers(int index1, int index2)
         {
             if (index1 == index2)
                 return true;
@@ -142,8 +169,8 @@ namespace GameMapEditor
             {
                 GameMapLayer layer1 = this.layers.ElementAt(index1);
                 GameMapLayer layer2 = this.layers.ElementAt(index2);
-                if (!this.TryReplaceLayerAt(index1, layer2)) return false;
-                if (!this.TryReplaceLayerAt(index2, layer1)) return false;
+                if (!this.ReplaceLayerAt(index1, layer2)) return false;
+                if (!this.ReplaceLayerAt(index2, layer1)) return false;
                 return true;
             }
 
@@ -260,6 +287,11 @@ namespace GameMapEditor
             }
         }
 
+        private void Layer_LayerChanged(object sender)
+        {
+            this.RaiseMapChangedEvent();
+        }
+
         /// <summary>
         /// La liste de noms des fichiers de dépendances textures
         /// </summary>
@@ -276,12 +308,18 @@ namespace GameMapEditor
             }
         }
 
+        /// <summary>
+        /// Obtient ou définit le nom de la map
+        /// </summary>
         public string Name
         {
             get { return this.name ?? string.Empty; }
             set { this.name = value; }
         }
 
+        /// <summary>
+        /// La liste de layer de la map
+        /// </summary>
         public List<GameMapLayer> Layers
         {
             get { return this.layers; }
