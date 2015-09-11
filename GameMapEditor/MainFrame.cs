@@ -140,7 +140,7 @@ namespace GameMapEditor
                         this.tilesetPanel.TilesetSelection,
                         map);
 
-                    // TODO Debug only
+                    // TODO : Debug only
                     mapPanel.Map.FilesDependences.ForEach(x => consolePanel.WriteLine(mapPanel.Map.Name, x));
 
                     layerPanel.LoadFrom(map);

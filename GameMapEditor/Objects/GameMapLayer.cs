@@ -1,29 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ProtoBuf;
+using System;
 using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace GameMapEditor.Objects
+namespace GameMapEditor
 {
     public delegate void LayerChangeEventArgs(object sender);
 
-    [Serializable]
+    //[Serializable]
+    [ProtoContract]
     public class GameMapLayer : IDrawable
     {
-        [field: NonSerialized]
+        //[field: NonSerialized]
         public event LayerChangeEventArgs LayerChanged;
 
+        [ProtoMember(1)]
         private string name;
+        [ProtoMember(2)]
         private LayerType type;
+        [ProtoMember(3)]
         private bool visible;
-        private GameTile[,] tiles;
+        [ProtoMember(4)]
+        private GameTile[] tiles;
 
-        public GameMapLayer()
+        // Protobuf constructor
+        private GameMapLayer()
         {
-            this.tiles = new GameTile[GlobalData.MapSize.Width, GlobalData.MapSize.Height];
+        }
+
+        public GameMapLayer(string name)
+        {
+            this.name = name;
             this.InitializeComponent();
         }
 
@@ -32,9 +40,11 @@ namespace GameMapEditor.Objects
         /// </summary>
         private void InitializeComponent()
         {
-            for (int x = 0; x < tiles.GetLength(0); x++)
-                for (int y = 0; y < tiles.GetLength(1); y++)
-                    this.tiles[x, y] = new GameTile(x, y);
+            this.tiles = new GameTile[(GlobalData.MapSize.Width + 1) * (GlobalData.MapSize.Height + 1)];
+            for (int index = 0; index < tiles.GetLength(0); index++)
+            {
+                this.tiles[index] = new GameTile(index);
+            }
         }
 
         /// <summary>
@@ -47,7 +57,7 @@ namespace GameMapEditor.Objects
             if (this.visible)
             {
                 foreach (GameTile tile in this.tiles)
-                    tile.Draw(origin, e);
+                    tile?.Draw(origin, e);
             }
         }
 
@@ -61,15 +71,19 @@ namespace GameMapEditor.Objects
         {
             get
             {
-                if (x >= 0 && x < this.tiles.GetLength(0) && y >= 0 && y < this.tiles.GetLength(1))
-                    return this.tiles[x, y];
+                int index = y * (GlobalData.MapSize.Width + 1) + x;
+                if (index < tiles.GetLength(0))
+                {
+                    return this.tiles[index];
+                }
                 return null;
             }
             set
             {
-                if (x > 0 && x < this.tiles.GetLength(0) && y > 0 && y < this.tiles.GetLength(1))
+                int index = y * (GlobalData.MapSize.Width + 1) + x;
+                if (index < tiles.GetLength(0))
                 {
-                    this.tiles[x, y] = value;
+                    this.tiles[index] = value;
                     RaiseLayerChangedEvent();
                 }
             }
@@ -79,7 +93,24 @@ namespace GameMapEditor.Objects
         {
             this.LayerChanged?.Invoke(this);
         }
-        
+
+        // TODO : Debug Only
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(this.name + "\n");
+            for(int y = 0; y<15;y++)
+            {
+                for (int x = 0; x < 21; x++)
+                {
+                    builder.Append(this[x, y].ToString());
+                }
+                builder.Append("\n");
+            }
+
+            return builder.ToString();
+        }
+
         /// <summary>
         /// Obtient ou définit la nom du layer
         /// </summary>

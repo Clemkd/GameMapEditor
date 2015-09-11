@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace GameMapEditor.Objects
+namespace GameMapEditor
 {
     internal interface IDrawable
     {

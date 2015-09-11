@@ -87,7 +87,6 @@
             this.textBoxName.Name = "textBoxName";
             this.textBoxName.Size = new System.Drawing.Size(257, 20);
             this.textBoxName.TabIndex = 2;
-            this.textBoxName.Text = "Défaut";
             // 
             // buttonValidNewOverlay
             // 

@@ -13,7 +13,7 @@ namespace GameMapEditor
     public partial class MapPanel : DockContent, IDisposable
     {
         #region Fields
-        private const string UNSAVED_DOCUMENT_MARK = " *";
+        private const string UNSAVED_DOCUMENT_MARK = "*";
 
         private Point mapOrigin;
         private bool isGridActived;
@@ -335,7 +335,7 @@ namespace GameMapEditor
         private bool IsSaved
         {
             get { return this.isSaved; }
-            set { this.isSaved = value; this.Text = this.Text = this.gameMap.Name + (this.isSaved ? string.Empty : UNSAVED_DOCUMENT_MARK); }
+            set { this.isSaved = value; this.Text = this.Text = (this.isSaved ? string.Empty : UNSAVED_DOCUMENT_MARK) + this.gameMap.Name; }
         }
         #endregion
     }

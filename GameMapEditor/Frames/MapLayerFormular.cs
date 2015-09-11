@@ -32,9 +32,8 @@ namespace GameMapEditor.Frames
 
         private void buttonValidNewOverlay_Click(object sender, EventArgs e)
         {
-            GameMapLayer layer = new GameMapLayer()
+            GameMapLayer layer = new GameMapLayer(this.textBoxName.Text)
             {
-                Name = this.textBoxName.Text,
                 Visible = this.checkBoxLayerState.Checked,
                 Type = this.checkBoxLayerType.Checked ? LayerType.Upper : LayerType.Lower
             };

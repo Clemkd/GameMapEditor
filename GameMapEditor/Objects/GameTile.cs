@@ -1,45 +1,58 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
-namespace GameMapEditor.Objects
+namespace GameMapEditor
 {
-    [Serializable]
+    //[Serializable]
+    [ProtoContract]
     public class GameTile : IDrawable
     {
+        // TODO : Protobuf ?
+        [ProtoMember(1)]
         private int formattedIndex;
-        private int textureIndex;
+        [ProtoMember(2)]
+        private int texturesetIndex;
+        [ProtoMember(3)]
+        private GameVector2 position;
 
         #region Methods
-        public GameTile(int x, int y)
+        // Protobuf constructor
+        private GameTile()
         {
-            this.Position = new Point(x, y);
+        }
+
+        public GameTile(int formattedPosition)
+        {
+            this.Position = DecodeFormattedIndex(formattedPosition, GlobalData.MapSize.Width + 1);
         }
 
         /// <summary>
         /// Retourne l'index calculé par la position d'un tile sur sa planche de textures
         /// </summary>
         /// <param name="tileLocation">La position de la texture définie par le point supérieur gauche</param>
-        /// <param name="tilesetWidthTilesCount">Le nombre de tiles total sur la largeur de la planche de textures</param>
+        /// <param name="wvalue">Le nombre de tiles total sur la largeur de la planche de textures</param>
         /// <returns>L'index calculé</returns>
-        public static int EncodeFormattedIndex(Point tileLocation, int tilesetWidthTilesCount)
+        public static int EncodeFormattedIndex(Point tileLocation, int wvalue)
         {
-            return tileLocation.X + tilesetWidthTilesCount * tileLocation.Y;
+            return tileLocation.X + wvalue * tileLocation.Y;
         }
 
         /// <summary>
         /// Retourne la position calculé du tile sur sa planche de textures
         /// </summary>
         /// <param name="index">L'index formatté du tile sur sa planche de textures</param>
-        /// <param name="tilesetWidthTilesCount">Le nombre de tiles total sur la largeur de la planche de textures</param>
+        /// <param name="wvalue">Le nombre de tiles total sur la largeur de la planche de textures</param>
         /// <returns>La position calculé</returns>
-        public static Point DecodeFormattedIndex(int index, int tilesetWidthTilesCount)
+        public static GameVector2 DecodeFormattedIndex(int index, int wvalue)
         {
-            int nt = tilesetWidthTilesCount * GlobalData.TileSize.Width / GlobalData.TileSize.Width;
-            int x = --index - (index / nt) * nt;
+            int nt = wvalue * GlobalData.TileSize.Width / GlobalData.TileSize.Width;
+            int x = index - (index / nt) * nt;
             int y = index / nt;
 
-            return new Point(x, y);
+            return new GameVector2() { X = x, Y = y };
         }
 
         /// <summary>
@@ -49,6 +62,7 @@ namespace GameMapEditor.Objects
         /// <param name="e">L'évènement du control de dessin</param>
         public void Draw(Point origin, PaintEventArgs e)
         {
+            /* v0.1 */
             if (this.Texture != null)
             {
                 e.Graphics.DrawImage(this.Texture, new Rectangle(
@@ -57,6 +71,14 @@ namespace GameMapEditor.Objects
                     GlobalData.TileSize.Width,
                     GlobalData.TileSize.Height));
             }
+            /* v1.0 */
+
+        }
+
+        // TODO : Debug Only
+        public override string ToString()
+        {
+            return "[" + this.FormattedIndex.ToString() + "]";
         }
         #endregion
 
@@ -75,8 +97,8 @@ namespace GameMapEditor.Objects
         /// </summary>
         public int TextureIndex
         {
-            get { return this.textureIndex; }
-            set { this.textureIndex = value; }
+            get { return this.texturesetIndex; }
+            set { this.texturesetIndex = value; }
         }
 
         // TODO : Modifier en [field: NonSerialized] et charger la texture lors de l'ouverture
@@ -85,10 +107,11 @@ namespace GameMapEditor.Objects
             get;
             set;
         }
-        public Point Position
+
+        public GameVector2 Position
         {
-            get;
-            set;
+            get { return this.position; }
+            set { this.position = value; }
         }
         #endregion
     }

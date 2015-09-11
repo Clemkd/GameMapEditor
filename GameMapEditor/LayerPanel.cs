@@ -1,6 +1,8 @@
 ﻿using GameMapEditor.Frames;
 using GameMapEditor.Objects;
 using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -89,7 +91,7 @@ namespace GameMapEditor
 
         private void listViewOverlay_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            e.Item.BackColor = e.IsSelected ? System.Drawing.Color.LightBlue : System.Drawing.Color.WhiteSmoke;
+            e.Item.BackColor = e.IsSelected ? Color.LightBlue : SystemColors.Window;
             e.Item.SubItems[1].Text = e.IsSelected ? "[ " + e.Item.Name + " ]" : e.Item.Name;
 
             if (e.IsSelected)
@@ -117,7 +119,6 @@ namespace GameMapEditor
                     ListViewItem item2 = this.listViewLayers.Items[index1 - 1];
                     int index2 = item2.Index;
 
-                    // TODO : Changer index des layers en GameMap
                     MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
                     if (mapPanel != null && mapPanel.Map.SwapLayers(index1, index2))
                     {
@@ -142,7 +143,6 @@ namespace GameMapEditor
                     ListViewItem item2 = this.listViewLayers.Items[index1 + 1];
                     int index2 = item2.Index;
 
-                    // TODO : Changer index des layers en GameMap
                     MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
                     if (mapPanel != null && mapPanel.Map.SwapLayers(index1, index2))
                     {

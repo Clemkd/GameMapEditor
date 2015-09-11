@@ -1,4 +1,7 @@
-﻿namespace GameMapEditor
+﻿using GameMapEditor.Objects;
+using System.Windows.Forms;
+
+namespace GameMapEditor
 {
     partial class LayerPanel
     {
@@ -29,10 +32,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Couches supérieures", System.Windows.Forms.HorizontalAlignment.Center);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Couches inférieures", System.Windows.Forms.HorizontalAlignment.Center);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Couches supérieures", System.Windows.Forms.HorizontalAlignment.Center);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Couches inférieures", System.Windows.Forms.HorizontalAlignment.Center);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LayerPanel));
-            this.listViewLayers = new System.Windows.Forms.ListView();
+            this.listViewLayers = new ListView();
             this.ColumnHeaderLayerState = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ColumnHeaderLayerName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ImageListLayerType = new System.Windows.Forms.ImageList(this.components);
@@ -57,15 +60,15 @@
             this.listViewLayers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewLayers.FullRowSelect = true;
             this.listViewLayers.GridLines = true;
-            listViewGroup3.Header = "Couches supérieures";
-            listViewGroup3.HeaderAlignment = System.Windows.Forms.HorizontalAlignment.Center;
-            listViewGroup3.Name = "ListViewGroupUpperLayers";
-            listViewGroup4.Header = "Couches inférieures";
-            listViewGroup4.HeaderAlignment = System.Windows.Forms.HorizontalAlignment.Center;
-            listViewGroup4.Name = "ListViewGroupLowerLayers";
+            listViewGroup1.Header = "Couches supérieures";
+            listViewGroup1.HeaderAlignment = System.Windows.Forms.HorizontalAlignment.Center;
+            listViewGroup1.Name = "ListViewGroupUpperLayers";
+            listViewGroup2.Header = "Couches inférieures";
+            listViewGroup2.HeaderAlignment = System.Windows.Forms.HorizontalAlignment.Center;
+            listViewGroup2.Name = "ListViewGroupLowerLayers";
             this.listViewLayers.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup3,
-            listViewGroup4});
+            listViewGroup1,
+            listViewGroup2});
             this.listViewLayers.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listViewLayers.LabelWrap = false;
             this.listViewLayers.Location = new System.Drawing.Point(0, 0);
@@ -193,7 +196,7 @@
 
         #endregion
 
-        private System.Windows.Forms.ListView listViewLayers;
+        private ListView listViewLayers;
         private System.Windows.Forms.ColumnHeader ColumnHeaderLayerName;
         private System.Windows.Forms.ImageList ImageListVisibleState;
         private System.Windows.Forms.ColumnHeader ColumnHeaderLayerState;

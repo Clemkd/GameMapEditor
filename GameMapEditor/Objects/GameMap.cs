@@ -1,8 +1,8 @@
 ﻿
 using GameMapEditor.Objects;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -16,20 +16,29 @@ namespace GameMapEditor
 {
     public delegate void MapChangedEventArgs(object sender);
 
-    [Serializable]
+    //[Serializable]
+    [ProtoContract]
     public class GameMap : IDrawable
     {
-        [field: NonSerialized]
+        //[field: NonSerialized]
         public event MapChangedEventArgs MapChanged;
 
-        [NonSerialized]
-        private const ushort MAX_LAYER_COUNT = 10;
+        //[NonSerialized]
+        private const byte MAX_LAYER_COUNT = 10;
 
         #region Fields
+        [ProtoMember(1)]
         private string name;
+        [ProtoMember(2)]
         private Dictionary<string, int> textures;
+        [ProtoMember(3)]
         private List<GameMapLayer> layers;
         #endregion
+
+        // Protobuf constructor
+        private GameMap()
+        {
+        }
 
         public GameMap(string mapName)
         {
@@ -44,10 +53,8 @@ namespace GameMapEditor
         /// </summary>
         private void InitializeComponents()
         {
-
-            GameMapLayer layer = new GameMapLayer()
+            GameMapLayer layer = new GameMapLayer("Couche 1")
             {
-                Name = "Défaut",
                 Type = LayerType.Lower,
                 Visible = true
             };
@@ -169,8 +176,11 @@ namespace GameMapEditor
             {
                 GameMapLayer layer1 = this.layers.ElementAt(index1);
                 GameMapLayer layer2 = this.layers.ElementAt(index2);
-                if (!this.ReplaceLayerAt(index1, layer2)) return false;
-                if (!this.ReplaceLayerAt(index2, layer1)) return false;
+
+                if (!this.ReplaceLayerAt(index1, layer2))
+                    return false;
+                if (!this.ReplaceLayerAt(index2, layer1))
+                    return false;
                 return true;
             }
 
@@ -190,17 +200,18 @@ namespace GameMapEditor
 
                 for (int y = 0; y < GlobalData.MapSize.Height; y += tmpHeight)
                     for (int x = 0; x < GlobalData.MapSize.Width; x += tmpWidth)
-                        this.SetTiles(layerIndex, x, y, texture);
+                        this.SetTiles(layerIndex, x, y, texture, false);
 
                 this.RaiseMapChangedEvent();
             }
         }
 
+        // TODO : Optimisation requise
         /// <summary>
         /// Modifie de façon intelligente les données de la carte selon la selection du tileset, à partir de la position donnée
         /// </summary>
         /// <param name="position">La position du premier tile en haut à gauche à modifier</param>
-        public void SetTiles(int layerIndex, int xPosition, int yPosition, BitmapImage texture)
+        public void SetTiles(int layerIndex, int xPosition, int yPosition, BitmapImage texture, bool raiseChanged = true)
         {
             if (texture != null && texture.BitmapSelection != null && layerIndex >= 0 && layerIndex < this.layers.Count)
             {
@@ -229,7 +240,6 @@ namespace GameMapEditor
                                 // OutOfMemory eventuel, par usage de textures inexistantes (OutOfRange extension)
                                 tile.Texture = texture.BitmapSelection.Clone(selection, PixelFormat.DontCare);
 
-                                // Insertion des données serialisables
                                 Point location = new Point(
                                     (selection.Location.X + texture.SelectionLocation.X) / GlobalData.TileSize.Width,
                                     (selection.Location.Y + texture.SelectionLocation.Y) / GlobalData.TileSize.Height);
@@ -240,6 +250,9 @@ namespace GameMapEditor
                         }
                     }
                 }
+
+                if(raiseChanged)
+                    this.RaiseMapChangedEvent();
             }
         }
 
@@ -265,11 +278,15 @@ namespace GameMapEditor
         /// </summary>
         public void Save()
         {
-            BinaryFormatter serializer = new BinaryFormatter();
+            /*BinaryFormatter serializer = new BinaryFormatter();
             serializer.AssemblyFormat = FormatterAssemblyStyle.Simple;
             using (FileStream fs = new FileStream(string.Format("{0}.frog", this.Name), FileMode.Create))
             {
                 serializer.Serialize(fs, this);
+            }*/
+            using (FileStream file = File.Create(string.Format("{0}.frog", this.Name)))
+            {
+                Serializer.Serialize(file, this);
             }
         }
 
@@ -280,10 +297,16 @@ namespace GameMapEditor
         /// <returns></returns>
         public static GameMap Load(string fileName)
         {
-            BinaryFormatter deserializer = new BinaryFormatter();
+            /*BinaryFormatter deserializer = new BinaryFormatter();
             using (FileStream fileStream = new FileStream(fileName, FileMode.Open))
             {
                 return deserializer.Deserialize(fileStream) as GameMap;
+            }*/
+            using (FileStream file = File.OpenRead(fileName))
+            {
+                var map = Serializer.Deserialize<GameMap>(file);
+                Console.Write(map.ToString());
+                return map;
             }
         }
 
@@ -302,10 +325,18 @@ namespace GameMapEditor
 
         private void RaiseMapChangedEvent()
         {
-            if (this.MapChanged != null)
+            this.MapChanged?.Invoke(this);
+        }
+
+        // TODO : Debug Only
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            foreach (GameMapLayer layer in this.layers)
             {
-                this.MapChanged(this);
+                builder.Append(layer.ToString() + "\n");
             }
+            return builder.ToString();
         }
 
         /// <summary>

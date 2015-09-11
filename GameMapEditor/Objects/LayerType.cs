@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ProtoBuf;
 
-namespace GameMapEditor.Objects
+namespace GameMapEditor
 {
-    [Serializable]
+    //[Serializable]
+    [ProtoContract]
     public enum LayerType
     {
+        [ProtoMember(1)]
         /// <summary>
         /// Layer de type supérieur
         /// </summary>
         Upper,
 
+        [ProtoMember(2)]
         /// <summary>
         /// Layer de type inférieur
         /// </summary>
