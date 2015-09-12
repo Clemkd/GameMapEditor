@@ -1,6 +1,6 @@
 ﻿namespace GameMapEditor.Frames
 {
-    partial class MapLayerFormular
+    partial class MapLayerFrame
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapLayerFormular));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapLayerFrame));
             this.checkBoxLayerState = new System.Windows.Forms.CheckBox();
             this.ImageListVisibleState = new System.Windows.Forms.ImageList(this.components);
             this.ImageListLayerType = new System.Windows.Forms.ImageList(this.components);

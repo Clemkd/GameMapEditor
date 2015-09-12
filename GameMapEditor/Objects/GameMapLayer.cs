@@ -1,5 +1,6 @@
 ﻿using ProtoBuf;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -22,7 +23,7 @@ namespace GameMapEditor
         [ProtoMember(3)]
         private bool visible;
         [ProtoMember(4)]
-        private GameTile[] tiles;
+        private List<GameTile> tiles;
 
         // Protobuf constructor
         private GameMapLayer()
@@ -40,10 +41,10 @@ namespace GameMapEditor
         /// </summary>
         private void InitializeComponent()
         {
-            this.tiles = new GameTile[(GlobalData.MapSize.Width + 1) * (GlobalData.MapSize.Height + 1)];
-            for (int index = 0; index < tiles.GetLength(0); index++)
+            this.tiles = new List<GameTile>();
+            for (int index = 0; index < GlobalData.MapSize.Width * GlobalData.MapSize.Height; index++)
             {
-                this.tiles[index] = new GameTile(index);
+                this.tiles.Add(new GameTile(index));
             }
         }
 
@@ -56,8 +57,7 @@ namespace GameMapEditor
         {
             if (this.visible)
             {
-                foreach (GameTile tile in this.tiles)
-                    tile?.Draw(origin, e);
+                this.tiles.ForEach(tile => tile.Draw(origin, e));
             }
         }
 
@@ -71,8 +71,8 @@ namespace GameMapEditor
         {
             get
             {
-                int index = y * (GlobalData.MapSize.Width + 1) + x;
-                if (index < tiles.GetLength(0))
+                int index = GameTile.EncodeFormattedIndex(new Point(x, y), GlobalData.MapSize.Width);
+                if (index < this.tiles.Count)
                 {
                     return this.tiles[index];
                 }
@@ -80,8 +80,8 @@ namespace GameMapEditor
             }
             set
             {
-                int index = y * (GlobalData.MapSize.Width + 1) + x;
-                if (index < tiles.GetLength(0))
+                int index = GameTile.EncodeFormattedIndex(new Point(x, y), GlobalData.MapSize.Width);
+                if (index < this.tiles.Count)
                 {
                     this.tiles[index] = value;
                     RaiseLayerChangedEvent();
@@ -99,9 +99,9 @@ namespace GameMapEditor
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(this.name + "\n");
-            for(int y = 0; y<15;y++)
+            for(int y = 0; y<14;y++)
             {
-                for (int x = 0; x < 21; x++)
+                for (int x = 0; x < 20; x++)
                 {
                     builder.Append(this[x, y].ToString());
                 }
@@ -136,6 +136,11 @@ namespace GameMapEditor
         {
             get { return this.visible; }
             set { this.visible = value; this.RaiseLayerChangedEvent(); }
+        }
+
+        public List<GameTile> Tiles
+        {
+            get { return this.tiles; }
         }
     }
 }

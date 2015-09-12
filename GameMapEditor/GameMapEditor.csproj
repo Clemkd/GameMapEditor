@@ -74,12 +74,19 @@
     <Compile Include="ConsolePanel.Designer.cs">
       <DependentUpon>ConsolePanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Frames\MapLayerFormular.cs">
+    <Compile Include="Frames\MapLayerFrame.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Frames\MapLayerFormular.Designer.cs">
-      <DependentUpon>MapLayerFormular.cs</DependentUpon>
+    <Compile Include="Frames\MapLayerFrame.Designer.cs">
+      <DependentUpon>MapLayerFrame.cs</DependentUpon>
     </Compile>
+    <Compile Include="Frames\IndefinedWaitingFrame.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frames\IndefinedWaitingFrame.Designer.cs">
+      <DependentUpon>IndefinedWaitingFrame.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Objects\GameMap.Data.cs" />
     <Compile Include="GlobalData.cs" />
     <Compile Include="MainFrame.cs">
       <SubType>Form</SubType>
@@ -96,11 +103,11 @@
     <Compile Include="MapPanel.Designer.cs">
       <DependentUpon>MapPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Frames\MapPanelFormular.cs">
+    <Compile Include="Frames\MapPanelFrame.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Frames\MapPanelFormular.Designer.cs">
-      <DependentUpon>MapPanelFormular.cs</DependentUpon>
+    <Compile Include="Frames\MapPanelFrame.Designer.cs">
+      <DependentUpon>MapPanelFrame.cs</DependentUpon>
     </Compile>
     <Compile Include="Objects\BitmapImage.cs" />
     <Compile Include="Objects\ErrorLog.cs" />
@@ -131,8 +138,11 @@
     <EmbeddedResource Include="ConsolePanel.resx">
       <DependentUpon>ConsolePanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Frames\MapLayerFormular.resx">
-      <DependentUpon>MapLayerFormular.cs</DependentUpon>
+    <EmbeddedResource Include="Frames\IndefinedWaitingFrame.resx">
+      <DependentUpon>IndefinedWaitingFrame.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frames\MapLayerFrame.resx">
+      <DependentUpon>MapLayerFrame.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainFrame.resx">
       <DependentUpon>MainFrame.cs</DependentUpon>
@@ -140,8 +150,8 @@
     <EmbeddedResource Include="MapPanel.resx">
       <DependentUpon>MapPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Frames\MapPanelFormular.resx">
-      <DependentUpon>MapPanelFormular.cs</DependentUpon>
+    <EmbeddedResource Include="Frames\MapPanelFrame.resx">
+      <DependentUpon>MapPanelFrame.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LayerPanel.resx">
       <DependentUpon>LayerPanel.cs</DependentUpon>

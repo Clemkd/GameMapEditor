@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace GameMapEditor.Frames
 {
-    public partial class MapPanelFormular : Form
+    public partial class MapPanelFrame : Form
     {
         private const string DEFAULT_MAP_NAME = "Carte";
         private static int IndexUnique = 0;
@@ -12,7 +12,7 @@ namespace GameMapEditor.Frames
         public event NewMapEventArgs MapValidated;
 
 
-        public MapPanelFormular()
+        public MapPanelFrame()
         {
             InitializeComponent();
         }

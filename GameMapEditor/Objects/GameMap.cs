@@ -7,9 +7,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GameMapEditor
@@ -18,7 +17,7 @@ namespace GameMapEditor
 
     //[Serializable]
     [ProtoContract]
-    public class GameMap : IDrawable
+    public partial class GameMap : IDrawable
     {
         //[field: NonSerialized]
         public event MapChangedEventArgs MapChanged;
@@ -60,19 +59,6 @@ namespace GameMapEditor
             };
             layer.LayerChanged += Layer_LayerChanged;
             this.layers.Add(layer);
-        }
-
-        /// <summary>
-        /// Lie les évènements de l'objet avec ses sous-objets
-        /// </summary>
-        /// <returns>L'objet</returns>
-        public GameMap LinkEvents()
-        {
-            this.layers.ForEach(layer =>
-            {
-                layer.LayerChanged += Layer_LayerChanged;
-            });
-            return this;
         }
 
         /// <summary>
@@ -274,6 +260,20 @@ namespace GameMapEditor
         }
 
         /// <summary>
+        /// Retourne le nom de la texture selon l'index spécifié si existant, sinon retourne null
+        /// </summary>
+        /// <param name="index">L'index de la texture</param>
+        /// <returns>Le nom de fichier de la texture</returns>
+        private string RetrieveTextureName(int index)
+        {
+            if(!this.textures.ContainsValue(index))
+            {
+                return null;
+            }
+            return this.textures.FirstOrDefault(x => x.Value == index).Key;
+        }
+
+        /// <summary>
         /// Sauvegarde la carte de jeu dans un fichier de données
         /// </summary>
         public void Save()
@@ -284,6 +284,7 @@ namespace GameMapEditor
             {
                 serializer.Serialize(fs, this);
             }*/
+
             using (FileStream file = File.Create(string.Format("{0}.frog", this.Name)))
             {
                 Serializer.Serialize(file, this);
@@ -295,18 +296,11 @@ namespace GameMapEditor
         /// </summary>
         /// <param name="fileName">Chemin suivi du nom et de l'extension du fichier de données</param>
         /// <returns></returns>
-        public static GameMap Load(string fileName)
+        public static async Task<GameMap> Load(string fileName)
         {
-            /*BinaryFormatter deserializer = new BinaryFormatter();
-            using (FileStream fileStream = new FileStream(fileName, FileMode.Open))
-            {
-                return deserializer.Deserialize(fileStream) as GameMap;
-            }*/
             using (FileStream file = File.OpenRead(fileName))
             {
-                var map = Serializer.Deserialize<GameMap>(file);
-                Console.Write(map.ToString());
-                return map;
+                return await Serializer.Deserialize<GameMap>(file).LoadDependences();
             }
         }
 

@@ -63,7 +63,7 @@ namespace GameMapEditor
 
         private void toolStripButtonAddLayer_Click(object sender, System.EventArgs e)
         {
-            MapLayerFormular formular = new MapLayerFormular();
+            MapLayerFrame formular = new MapLayerFrame();
             formular.MapLayerAdded += Formular_MapLayerAdded;
             formular.ShowDialog();
             formular.MapLayerAdded -= Formular_MapLayerAdded;

@@ -10,6 +10,8 @@ namespace GameMapEditor
     [ProtoContract]
     public class GameTile : IDrawable
     {
+        public const int EMPTY = -1;
+
         // TODO : Protobuf ?
         [ProtoMember(1)]
         private int formattedIndex;
@@ -26,7 +28,8 @@ namespace GameMapEditor
 
         public GameTile(int formattedPosition)
         {
-            this.Position = DecodeFormattedIndex(formattedPosition, GlobalData.MapSize.Width + 1);
+            this.FormattedIndex = EMPTY;
+            this.Position = DecodeFormattedIndex(formattedPosition, GlobalData.MapSize.Width);
         }
 
         /// <summary>

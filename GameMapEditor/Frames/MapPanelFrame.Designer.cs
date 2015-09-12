@@ -1,6 +1,6 @@
 ﻿namespace GameMapEditor.Frames
 {
-    partial class MapPanelFormular
+    partial class MapPanelFrame
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapPanelFormular));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapPanelFrame));
             this.lblMapName = new System.Windows.Forms.Label();
             this.grpMapInformation = new System.Windows.Forms.GroupBox();
             this.txtMapName = new System.Windows.Forms.TextBox();

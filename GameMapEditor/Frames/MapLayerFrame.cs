@@ -11,11 +11,11 @@ using System.Windows.Forms;
 
 namespace GameMapEditor.Frames
 {
-    public partial class MapLayerFormular : Form
+    public partial class MapLayerFrame : Form
     {
         public event MapLayerAddedEventArgs MapLayerAdded;
 
-        public MapLayerFormular()
+        public MapLayerFrame()
         {
             InitializeComponent();
         }

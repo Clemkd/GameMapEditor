@@ -12,7 +12,7 @@ namespace GameMapEditor
 {
     public partial class MainFrame : Form
     {
-        private static MapPanelFormular NewMapFrame;
+        private static MapPanelFrame NewMapFrame;
 
         private TilesetPanel tilesetPanel;
         private MapBrowserPanel mapBrowserPanel;
@@ -29,7 +29,7 @@ namespace GameMapEditor
         {
             base.OnLoad(e);
 
-            NewMapFrame = new MapPanelFormular();
+            NewMapFrame = new MapPanelFrame();
             NewMapFrame.MapValidated += NewMapFrame_Validated;
 
             // Chargement des panels
@@ -123,16 +123,21 @@ namespace GameMapEditor
             }
         }
 
-        private void ouvrirToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void ouvrirToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "FRoG Creator map (*.frog)|*.frog";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
+                IndefinedWaitingFrame waintingFrame = new IndefinedWaitingFrame();
                 try
                 {
-                    // Charge la carte et rétabli les liens des évents non serialisés
-                    GameMap map = GameMap.Load(openFileDialog.FileName).LinkEvents();
+                    waintingFrame.Location = new Point(this.Location.X + (this.Width - waintingFrame.Width) / 2,
+                        this.Location.Y + (this.Height - waintingFrame.Height) / 2);
+                    waintingFrame.Show(this);
+
+                    GameMap map = await GameMap.Load(openFileDialog.FileName);
+                    
                     MapPanel mapPanel = MapPanel.OpenNewDocument(
                         this.DockPanel,
                         this.mapPanels,
@@ -151,6 +156,10 @@ namespace GameMapEditor
                         "Une erreur est survenue lors du chargement de la carte : " + ex.Message,
                         RowType.Error);
                     ErrorLog.Write(ex);
+                }
+                finally
+                {
+                    waintingFrame.Close();
                 }
             }
         }
