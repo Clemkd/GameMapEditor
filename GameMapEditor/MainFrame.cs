@@ -232,11 +232,7 @@ namespace GameMapEditor
         private void DockPanel_ActiveDocumentChanged(object sender, EventArgs e)
         {
             MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
-
-            if (mapPanel != null)
-            {
-                layerPanel.LoadFrom(mapPanel.Map);
-            }
+            layerPanel.LoadFrom(mapPanel?.Map);
         }
     }
 }

@@ -31,83 +31,16 @@ namespace GameMapEditor
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Couches supérieures", System.Windows.Forms.HorizontalAlignment.Center);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Couches inférieures", System.Windows.Forms.HorizontalAlignment.Center);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LayerPanel));
-            this.listViewLayers = new ListView();
-            this.ColumnHeaderLayerState = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ColumnHeaderLayerName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ImageListLayerType = new System.Windows.Forms.ImageList(this.components);
-            this.ImageListVisibleState = new System.Windows.Forms.ImageList(this.components);
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonAddLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonRemoveLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonUpLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonDownLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonSetVisibleState = new System.Windows.Forms.ToolStripButton();
+            this.layerPanelCTM = new GameMapEditor.Objects.Controls.LayerPanelCTM();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // listViewLayers
-            // 
-            this.listViewLayers.Activation = System.Windows.Forms.ItemActivation.OneClick;
-            this.listViewLayers.AutoArrange = false;
-            this.listViewLayers.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.listViewLayers.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.ColumnHeaderLayerState,
-            this.ColumnHeaderLayerName});
-            this.listViewLayers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listViewLayers.FullRowSelect = true;
-            this.listViewLayers.GridLines = true;
-            listViewGroup1.Header = "Couches supérieures";
-            listViewGroup1.HeaderAlignment = System.Windows.Forms.HorizontalAlignment.Center;
-            listViewGroup1.Name = "ListViewGroupUpperLayers";
-            listViewGroup2.Header = "Couches inférieures";
-            listViewGroup2.HeaderAlignment = System.Windows.Forms.HorizontalAlignment.Center;
-            listViewGroup2.Name = "ListViewGroupLowerLayers";
-            this.listViewLayers.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2});
-            this.listViewLayers.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listViewLayers.LabelWrap = false;
-            this.listViewLayers.Location = new System.Drawing.Point(0, 0);
-            this.listViewLayers.MultiSelect = false;
-            this.listViewLayers.Name = "listViewLayers";
-            this.listViewLayers.ShowGroups = false;
-            this.listViewLayers.Size = new System.Drawing.Size(200, 115);
-            this.listViewLayers.SmallImageList = this.ImageListLayerType;
-            this.listViewLayers.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.listViewLayers.StateImageList = this.ImageListVisibleState;
-            this.listViewLayers.TabIndex = 0;
-            this.listViewLayers.TileSize = new System.Drawing.Size(60, 60);
-            this.listViewLayers.UseCompatibleStateImageBehavior = false;
-            this.listViewLayers.View = System.Windows.Forms.View.Details;
-            this.listViewLayers.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listViewOverlay_ItemSelectionChanged);
-            // 
-            // ColumnHeaderLayerState
-            // 
-            this.ColumnHeaderLayerState.Text = "Status";
-            this.ColumnHeaderLayerState.Width = 48;
-            // 
-            // ColumnHeaderLayerName
-            // 
-            this.ColumnHeaderLayerName.Text = "Couche";
-            this.ColumnHeaderLayerName.Width = 113;
-            // 
-            // ImageListLayerType
-            // 
-            this.ImageListLayerType.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ImageListLayerType.ImageStream")));
-            this.ImageListLayerType.TransparentColor = System.Drawing.Color.Transparent;
-            this.ImageListLayerType.Images.SetKeyName(0, "category-access-upper.png");
-            this.ImageListLayerType.Images.SetKeyName(1, "category-access-lower.png");
-            // 
-            // ImageListVisibleState
-            // 
-            this.ImageListVisibleState.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ImageListVisibleState.ImageStream")));
-            this.ImageListVisibleState.TransparentColor = System.Drawing.Color.Transparent;
-            this.ImageListVisibleState.Images.SetKeyName(0, "eye.png");
-            this.ImageListVisibleState.Images.SetKeyName(1, "eye-close.png");
             // 
             // toolStrip
             // 
@@ -174,12 +107,23 @@ namespace GameMapEditor
             this.toolStripButtonSetVisibleState.Text = "Affiche ou cache la couche";
             this.toolStripButtonSetVisibleState.Click += new System.EventHandler(this.toolStripButtonSetVisibleState_Click);
             // 
+            // layerPanelCTM
+            // 
+            this.layerPanelCTM.AutoScroll = true;
+            this.layerPanelCTM.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layerPanelCTM.Location = new System.Drawing.Point(0, 0);
+            this.layerPanelCTM.Name = "layerPanelCTM";
+            this.layerPanelCTM.SelectedIndex = 0;
+            this.layerPanelCTM.Size = new System.Drawing.Size(200, 115);
+            this.layerPanelCTM.TabIndex = 2;
+            this.layerPanelCTM.ItemSelectionChanged += new GameMapEditor.Objects.Controls.PanelItemSelectionChangedEventArgs(this.layerPanelCTM_ItemSelectionChanged);
+            // 
             // LayerPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(200, 140);
-            this.Controls.Add(this.listViewLayers);
+            this.Controls.Add(this.layerPanelCTM);
             this.Controls.Add(this.toolStrip);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -195,17 +139,12 @@ namespace GameMapEditor
         }
 
         #endregion
-
-        private ListView listViewLayers;
-        private System.Windows.Forms.ColumnHeader ColumnHeaderLayerName;
-        private System.Windows.Forms.ImageList ImageListVisibleState;
-        private System.Windows.Forms.ColumnHeader ColumnHeaderLayerState;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton toolStripButtonAddLayer;
-        private System.Windows.Forms.ImageList ImageListLayerType;
         private System.Windows.Forms.ToolStripButton toolStripButtonUpLayer;
         private System.Windows.Forms.ToolStripButton toolStripButtonDownLayer;
         private System.Windows.Forms.ToolStripButton toolStripButtonRemoveLayer;
         private System.Windows.Forms.ToolStripButton toolStripButtonSetVisibleState;
+        private Objects.Controls.LayerPanelCTM layerPanelCTM;
     }
 }

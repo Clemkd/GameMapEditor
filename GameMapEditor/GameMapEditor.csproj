@@ -86,6 +86,15 @@
     <Compile Include="Frames\IndefinedWaitingFrame.Designer.cs">
       <DependentUpon>IndefinedWaitingFrame.cs</DependentUpon>
     </Compile>
+    <Compile Include="Objects\Controls\LayerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Objects\Controls\LayerControl.Designer.cs">
+      <DependentUpon>LayerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Objects\Controls\LayerPanelCTM.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Objects\GameMap.Data.cs" />
     <Compile Include="GlobalData.cs" />
     <Compile Include="MainFrame.cs">
@@ -156,6 +165,9 @@
     <EmbeddedResource Include="LayerPanel.resx">
       <DependentUpon>LayerPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Objects\Controls\LayerControl.resx">
+      <DependentUpon>LayerControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -206,6 +218,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\eye.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\category-access-upper.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\category-access-lower.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -43,7 +43,7 @@ namespace GameMapEditor
             Bitmap resultBitmap;
             if (CroppedTextures.TryGetValue(index, out resultBitmap))
                 return resultBitmap;
-            else throw new NullReferenceException("Une erreur est survenue lors du chargement des tiles de la carte.");
+            return null;
         }
 
         private async Task<GameMap> LoadDependences()
