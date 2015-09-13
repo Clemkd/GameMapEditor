@@ -37,7 +37,6 @@ namespace GameMapEditor
             this.toolStripButtonRemoveLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonUpLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonDownLayer = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonSetVisibleState = new System.Windows.Forms.ToolStripButton();
             this.layerPanelCTM = new GameMapEditor.Objects.Controls.LayerPanelCTM();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -49,8 +48,7 @@ namespace GameMapEditor
             this.toolStripButtonAddLayer,
             this.toolStripButtonRemoveLayer,
             this.toolStripButtonUpLayer,
-            this.toolStripButtonDownLayer,
-            this.toolStripButtonSetVisibleState});
+            this.toolStripButtonDownLayer});
             this.toolStrip.Location = new System.Drawing.Point(0, 115);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(200, 25);
@@ -97,16 +95,6 @@ namespace GameMapEditor
             this.toolStripButtonDownLayer.Text = "Mettre en dessous";
             this.toolStripButtonDownLayer.Click += new System.EventHandler(this.toolStripButtonDownLayer_Click);
             // 
-            // toolStripButtonSetVisibleState
-            // 
-            this.toolStripButtonSetVisibleState.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonSetVisibleState.Image = global::GameMapEditor.Properties.Resources.eye;
-            this.toolStripButtonSetVisibleState.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonSetVisibleState.Name = "toolStripButtonSetVisibleState";
-            this.toolStripButtonSetVisibleState.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButtonSetVisibleState.Text = "Affiche ou cache la couche";
-            this.toolStripButtonSetVisibleState.Click += new System.EventHandler(this.toolStripButtonSetVisibleState_Click);
-            // 
             // layerPanelCTM
             // 
             this.layerPanelCTM.AutoScroll = true;
@@ -117,6 +105,8 @@ namespace GameMapEditor
             this.layerPanelCTM.Size = new System.Drawing.Size(200, 115);
             this.layerPanelCTM.TabIndex = 2;
             this.layerPanelCTM.ItemSelectionChanged += new GameMapEditor.Objects.Controls.PanelItemSelectionChangedEventArgs(this.layerPanelCTM_ItemSelectionChanged);
+            this.layerPanelCTM.LayerVisibleStateChanged += new GameMapEditor.Objects.Controls.ItemChangedEventArgs(this.layerPanelCTM_LayerVisibleStateChanged);
+            this.layerPanelCTM.LayerTypeChanged += new GameMapEditor.Objects.Controls.ItemChangedEventArgs(this.layerPanelCTM_LayerTypeChanged);
             // 
             // LayerPanel
             // 
@@ -144,7 +134,6 @@ namespace GameMapEditor
         private System.Windows.Forms.ToolStripButton toolStripButtonUpLayer;
         private System.Windows.Forms.ToolStripButton toolStripButtonDownLayer;
         private System.Windows.Forms.ToolStripButton toolStripButtonRemoveLayer;
-        private System.Windows.Forms.ToolStripButton toolStripButtonSetVisibleState;
         private Objects.Controls.LayerPanelCTM layerPanelCTM;
     }
 }

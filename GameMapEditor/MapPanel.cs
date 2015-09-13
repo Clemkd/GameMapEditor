@@ -278,7 +278,8 @@ namespace GameMapEditor
         public new void Dispose()
         {
             this.Map.MapChanged -= GameMap_MapChanged;
-            base.Dispose();
+            this.gridColor.Dispose();
+            base.Dispose(true);
         }
         #endregion
 

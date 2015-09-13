@@ -14,6 +14,8 @@ namespace GameMapEditor.Objects.Controls
     public class LayerPanelCTM : Panel
     {
         public event PanelItemSelectionChangedEventArgs ItemSelectionChanged;
+        public event ItemChangedEventArgs LayerVisibleStateChanged;
+        public event ItemChangedEventArgs LayerTypeChanged;
 
         private int selectedIndex;
 
@@ -25,6 +27,9 @@ namespace GameMapEditor.Objects.Controls
         {
             LayerControl layerControl = new LayerControl(layer.Name, layer.Visible, layer.Type);
             layerControl.LayerClicked += LayerControl_Click;
+            layerControl.LayerVisibleStateChanged += LayerControl_LayerVisibleStateChanged;
+            layerControl.LayerTypeChanged += LayerControl_LayerTypeChanged;
+
             this.Controls.Add(layerControl);
             this.RefreshPositions();
             this.SelectedIndex = this.Controls.Count - 1;
@@ -36,6 +41,8 @@ namespace GameMapEditor.Objects.Controls
             {
                 LayerControl layerControl = new LayerControl(layer.Name, layer.Visible, layer.Type);
                 layerControl.LayerClicked += LayerControl_Click;
+                layerControl.LayerVisibleStateChanged += LayerControl_LayerVisibleStateChanged;
+                layerControl.LayerTypeChanged += LayerControl_LayerTypeChanged;
 
                 this.Controls.Add(layerControl);
                 this.Controls.SetChildIndex(layerControl, index);
@@ -50,12 +57,18 @@ namespace GameMapEditor.Objects.Controls
         {
             if (index >= 0 && index < this.Controls.Count)
             {
-                (this.Controls[index] as LayerControl).LayerClicked -= LayerControl_Click;
+                LayerControl layerControl = this.Controls[index] as LayerControl;
+                layerControl.LayerClicked -= LayerControl_Click;
+                layerControl.LayerVisibleStateChanged -= LayerControl_LayerVisibleStateChanged;
+                layerControl.LayerTypeChanged -= LayerControl_LayerTypeChanged;
+
                 this.Controls.RemoveAt(index);
                 this.RefreshPositions(index);
 
-                if(this.Controls.Count > 0)
+                if (this.Controls.Count > 0)
+                {
                     this.SelectedIndex = 0;
+                }
             }
             else
                 throw new IndexOutOfRangeException("La couche spécifiée n'existe pas et ne peut donc pas être supprimée.");
@@ -101,26 +114,29 @@ namespace GameMapEditor.Objects.Controls
             }
         }
 
-        private void RefreshSelection(int index)
+        private void ColorItem(int index)
         {
-            Console.WriteLine(index);
             for (int i = 0; i < this.Controls.Count; i++)
             {
                 LayerControl layerControl = this.Controls[i] as LayerControl;
-                layerControl.Selected = index == i;
+                layerControl.Selected = (index == i);
             }
         }
 
         private void LayerControl_Click(object sender)
         {
-            for(int i = 0; i < this.Controls.Count; i++)
-            {
-                LayerControl layerControl = this.Controls[i] as LayerControl;
-                if(layerControl == sender)
-                {
-                    this.SelectedIndex = i;
-                }
-            }
+            LayerControl layerC = sender as LayerControl;
+            this.SelectedIndex = this.Controls.IndexOf(layerC);
+        }
+
+        private void LayerControl_LayerVisibleStateChanged(object sender)
+        {
+            this.LayerVisibleStateChanged?.Invoke(sender);
+        }
+
+        private void LayerControl_LayerTypeChanged(object sender)
+        {
+            this.LayerTypeChanged?.Invoke(sender);
         }
 
         protected override void OnResize(EventArgs eventargs)
@@ -132,20 +148,15 @@ namespace GameMapEditor.Objects.Controls
             }
         }
 
-        [Instable]
         public int SelectedIndex
         {
             get { return this.selectedIndex; }
             set
             {
-                if (value >= 0 && value < this.Controls.Count)
-                {
-                    this.selectedIndex = value;
-                    this.RefreshSelection(value);
-                    this.ItemSelectionChanged?.Invoke(this, value);
-                }
-                else
-                    throw new IndexOutOfRangeException("Impossible de changer la selection, l'index spécifié est en dehors des limites du tableau.");
+                this.selectedIndex = value;
+                this.ColorItem(value);
+                this.ItemSelectionChanged?.Invoke(this, value);
+                //throw new IndexOutOfRangeException("Impossible de changer la selection, l'index spécifié est en dehors des limites du tableau.");
             }
         }
     }
