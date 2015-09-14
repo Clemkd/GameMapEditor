@@ -441,6 +441,7 @@
             this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "MainFrame";
             this.Text = "Editeur";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFrame_FormClosing);
             this.MenuStrip.ResumeLayout(false);
             this.MenuStrip.PerformLayout();
             this.ToolStrip.ResumeLayout(false);

@@ -324,6 +324,7 @@ namespace GameMapEditor
 
         public int SelectedLayerIndex
         {
+            get { return this.selectedLayerIndex; }
             set { this.selectedLayerIndex = value; }
         }
 
@@ -333,10 +334,10 @@ namespace GameMapEditor
             private set { this.gameMap = value; }
         }
 
-        private bool IsSaved
+        public bool IsSaved
         {
             get { return this.isSaved; }
-            set { this.isSaved = value; this.Text = this.Text = (this.isSaved ? string.Empty : UNSAVED_DOCUMENT_MARK) + this.gameMap.Name; }
+            private set { this.isSaved = value; this.Text = this.Text = (this.isSaved ? string.Empty : UNSAVED_DOCUMENT_MARK) + this.gameMap.Name; }
         }
         #endregion
     }

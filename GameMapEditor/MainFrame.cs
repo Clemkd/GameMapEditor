@@ -148,7 +148,7 @@ namespace GameMapEditor
                     // TODO : Debug only
                     mapPanel.Map.FilesDependences.ForEach(x => consolePanel.WriteLine(mapPanel.Map.Name, x));
 
-                    layerPanel.LoadFrom(map);
+                    layerPanel.LoadLayers(map);
                 }
                 catch (Exception ex)
                 {
@@ -170,7 +170,7 @@ namespace GameMapEditor
             if (mapPanel != null)
             {
                 mapPanel.Map.AddLayer(layer);
-                layerPanel.LoadLayer(layer);
+                // TODO : Prendre en compte MAX_LAYER_COUNT de GameMap
                 consolePanel.WriteLine(DateTime.Now.ToString(), "La couche a été ajouté avec succés à la carte en cours", RowType.Information);
             }
         }
@@ -226,15 +226,39 @@ namespace GameMapEditor
                 this.layerPanel.DockTo(this.DockPanel, DockStyle.Right);
                 this.layerPanel.MapLayerAdded += LayerPanel_MapLayerAdded;
                 this.layerPanel.MapLayerSelectionChanged += LayerPanel_MapLayerSelectionChanged;
+                this.layerPanel.RefreshState();
             }
         }
 
         private void DockPanel_ActiveDocumentChanged(object sender, EventArgs e)
         {
-            MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
-            if (mapPanel != null)
+            this.layerPanel?.RefreshState();
+        }
+
+        private void MainFrame_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if(ExistsUnsavedDocuments)
             {
-                layerPanel.LoadFrom(mapPanel.Map);
+                DialogResult result = MessageBox.Show(this, "Tous les documents n'ont pas été sauvegardé !\nQuitter sans sauvegarder ?",
+                    "Sauvegarde", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+                if (result == DialogResult.OK)
+                {
+                    Environment.Exit(0);
+                }
+                else e.Cancel = true;
+            }
+        }
+
+        private bool ExistsUnsavedDocuments
+        {
+            get
+            {
+                foreach (MapPanel mapPanel in DockPanel.Documents)
+                {
+                    if (!mapPanel.IsSaved)
+                        return true;
+                }
+                return false;
             }
         }
     }

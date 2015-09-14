@@ -15,15 +15,12 @@ namespace GameMapEditor
 {
     public delegate void MapChangedEventArgs(object sender);
 
-    //[Serializable]
     [ProtoContract]
     public partial class GameMap : IDrawable
     {
-        //[field: NonSerialized]
         public event MapChangedEventArgs MapChanged;
 
-        //[NonSerialized]
-        private const byte MAX_LAYER_COUNT = 10;
+        public const byte MAX_LAYER_COUNT = 10;
 
         #region Fields
         [ProtoMember(1)]
@@ -89,7 +86,7 @@ namespace GameMapEditor
         }
 
         /// <summary>
-        /// Ajoute une layer de dessin dans la map
+        /// Ajoute une couche de dessin dans la map
         /// </summary>
         /// <param name="layer">Le layer à ajouter</param>
         /// <returns>L'état résultant de l'ajout</returns>
@@ -99,7 +96,7 @@ namespace GameMapEditor
         }
 
         /// <summary>
-        /// Insert le layer à la position spécifiée dans la liste des layers de map
+        /// Insert la couche à la position spécifiée dans la liste des layers de map
         /// </summary>
         /// <param name="index">L'index d'insertion</param>
         /// <param name="layer">Le layer à insérer</param>

@@ -28,7 +28,7 @@ namespace GameMapEditor
             this.layerPanelCTM.Controls.Clear();
         }
 
-        public void LoadFrom(GameMap map)
+        public void LoadLayers(GameMap map)
         {
             this.Clear();
 
@@ -38,9 +38,22 @@ namespace GameMapEditor
             }
         }
 
-        public void LoadLayer(GameMapLayer layer)
+        public void RefreshState()
         {
-            this.layerPanelCTM.Add(0, layer);
+            MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
+            this.Enabled = mapPanel != null;
+            if (mapPanel != null)
+            {
+                this.LoadLayers(mapPanel.Map);
+
+                //if (mapPanel.SelectedLayerIndex < this.layerPanelCTM.Controls.Count)
+                    this.layerPanelCTM.SelectedIndex = mapPanel.SelectedLayerIndex;
+            }
+        }
+
+        public void Add(GameMapLayer layer)
+        {
+            this.layerPanelCTM.Insert(0, layer);
         }
 
         public void RemoveLayer(int index)
@@ -141,6 +154,8 @@ namespace GameMapEditor
 
         private void Formular_MapLayerAdded(GameMapLayer layer)
         {
+            this.Add(layer);
+            // TODO : Prendre en compte MAX_LAYER_COUNT de GameMap
             RaiseLayerAddedEvent(layer);
         }
 
@@ -167,6 +182,13 @@ namespace GameMapEditor
         private void layerPanelCTM_LayerVisibleStateChanged(object sender)
         {
             ChangeVisibleState(sender as LayerControl);
+        }
+
+        protected override void OnEnabledChanged(EventArgs e)
+        {
+            base.OnEnabledChanged(e);
+            if(!this.Enabled)
+                this.Clear();
         }
     }
 }

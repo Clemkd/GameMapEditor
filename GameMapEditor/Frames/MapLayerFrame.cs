@@ -1,12 +1,4 @@
-﻿using GameMapEditor.Objects;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows.Forms;
 
 namespace GameMapEditor.Frames
@@ -18,6 +10,11 @@ namespace GameMapEditor.Frames
         public MapLayerFrame()
         {
             InitializeComponent();
+        }
+
+        private void MapLayerFrame_Load(object sender, EventArgs e)
+        {
+            this.textBoxName.Select();
         }
 
         private void checkBoxVisibleState_CheckedChanged(object sender, EventArgs e)

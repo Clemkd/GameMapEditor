@@ -98,6 +98,7 @@ namespace GameMapEditor
             // layerPanelCTM
             // 
             this.layerPanelCTM.AutoScroll = true;
+            this.layerPanelCTM.AutoScrollMargin = new System.Drawing.Size(20, 0);
             this.layerPanelCTM.Dock = System.Windows.Forms.DockStyle.Fill;
             this.layerPanelCTM.Location = new System.Drawing.Point(0, 0);
             this.layerPanelCTM.Name = "layerPanelCTM";
