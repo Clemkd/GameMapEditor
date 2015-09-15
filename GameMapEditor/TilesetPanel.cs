@@ -28,6 +28,13 @@ namespace GameMapEditor
         public event TilesetSelectionEventHandler TilesetSelectionChanged;
         public delegate void TilesetSelectionEventHandler(object sender, Rectangle selection);
 
+        public static TilesetPanel Instance = new TilesetPanel();
+
+        private TilesetPanel()
+        {
+            this.HideOnClose = true;
+        }
+
         #region FrameEvents
         protected override void OnLoad(EventArgs e)
         {

@@ -71,20 +71,26 @@ namespace GameMapEditor
         {
             get
             {
-                int index = GameTile.EncodeFormattedIndex(new Point(x, y), GlobalData.MapSize.Width);
-                if (index < this.tiles.Count)
+                if (x >= 0 && x < GlobalData.MapSize.Width && y >= 0 && y < GlobalData.MapSize.Height)
                 {
-                    return this.tiles[index];
+                    int index = GameTile.EncodeFormattedIndex(new Point(x, y), GlobalData.MapSize.Width);
+                    if (index < this.tiles.Count)
+                    {
+                        return this.tiles[index];
+                    }
                 }
                 return null;
             }
             set
             {
-                int index = GameTile.EncodeFormattedIndex(new Point(x, y), GlobalData.MapSize.Width);
-                if (index < this.tiles.Count)
+                if (x >= 0 && x < GlobalData.MapSize.Width && y >= 0 && y < GlobalData.MapSize.Height)
                 {
-                    this.tiles[index] = value;
-                    RaiseLayerChangedEvent();
+                    int index = GameTile.EncodeFormattedIndex(new Point(x, y), GlobalData.MapSize.Width);
+                    if (index < this.tiles.Count)
+                    {
+                        this.tiles[index] = value;
+                        RaiseLayerChangedEvent();
+                    }
                 }
             }
         }

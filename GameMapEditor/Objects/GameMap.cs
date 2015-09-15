@@ -34,6 +34,9 @@ namespace GameMapEditor
         // Protobuf constructor
         private GameMap()
         {
+            // Cas de sauvegarde vide
+            if(this.textures == null)
+                this.textures = new Dictionary<string, int>();
         }
 
         public GameMap(string mapName)
@@ -275,13 +278,6 @@ namespace GameMapEditor
         /// </summary>
         public void Save()
         {
-            /*BinaryFormatter serializer = new BinaryFormatter();
-            serializer.AssemblyFormat = FormatterAssemblyStyle.Simple;
-            using (FileStream fs = new FileStream(string.Format("{0}.frog", this.Name), FileMode.Create))
-            {
-                serializer.Serialize(fs, this);
-            }*/
-
             using (FileStream file = File.Create(string.Format("{0}.frog", this.Name)))
             {
                 Serializer.Serialize(file, this);

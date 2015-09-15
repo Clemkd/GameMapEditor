@@ -67,13 +67,13 @@ namespace GameMapEditor
             // 
             // SourceColumn
             // 
-            this.SourceColumn.Text = "Source";
+            this.SourceColumn.Text = "";
             this.SourceColumn.Width = 103;
             // 
             // MessageColumn
             // 
             this.MessageColumn.Text = "Message";
-            this.MessageColumn.Width = 138;
+            this.MessageColumn.Width = 345;
             // 
             // IconList
             // 

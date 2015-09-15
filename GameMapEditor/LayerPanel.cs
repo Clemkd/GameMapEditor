@@ -18,8 +18,11 @@ namespace GameMapEditor
         public event MapLayerAddedEventArgs MapLayerAdded;
         public event MapLayerSelectionChangedEventArgs MapLayerSelectionChanged;
 
-        public LayerPanel()
+        public static LayerPanel Instance = new LayerPanel();
+
+        private LayerPanel()
         {
+            this.HideOnClose = true;
             InitializeComponent();
         }
 
@@ -38,8 +41,10 @@ namespace GameMapEditor
             }
         }
 
-        public void RefreshState()
+        public override void Refresh()
         {
+            base.Refresh();
+
             MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
             this.Enabled = mapPanel != null;
             if (mapPanel != null)
@@ -141,10 +146,11 @@ namespace GameMapEditor
 
         private void toolStripButtonRemoveLayer_Click(object sender, EventArgs e)
         {
-            if (this.layerPanelCTM.Controls.Count > 0)
+            if (this.layerPanelCTM.Controls.Count > 1)
             {
                 this.RemoveLayer(this.layerPanelCTM.SelectedIndex);
             }
+            else throw new AccessViolationException("Impossible de supprimer la dernière couche de la carte");
         }
 
         private void toolStripButtonSetVisibleState_Click(object sender, EventArgs e)

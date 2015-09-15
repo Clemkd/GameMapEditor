@@ -86,6 +86,7 @@
     <Compile Include="Frames\IndefinedWaitingFrame.Designer.cs">
       <DependentUpon>IndefinedWaitingFrame.cs</DependentUpon>
     </Compile>
+    <Compile Include="Objects\Controls\ConsoleStreamWriter.cs" />
     <Compile Include="Objects\Controls\LayerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -103,8 +104,8 @@
     <Compile Include="MainFrame.Designer.cs">
       <DependentUpon>MainFrame.cs</DependentUpon>
     </Compile>
-    <Compile Include="MapBrowserPanel.Designer.cs">
-      <DependentUpon>MapBrowserPanel.cs</DependentUpon>
+    <Compile Include="BrowserPanel.Designer.cs">
+      <DependentUpon>BrowserPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="MapPanel.cs">
       <SubType>Form</SubType>
@@ -138,7 +139,7 @@
     <Compile Include="TilesetPanel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MapBrowserPanel.cs">
+    <Compile Include="BrowserPanel.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="TilesetPanel.Designer.cs">
@@ -184,8 +185,8 @@
     <EmbeddedResource Include="TilesetPanel.resx">
       <DependentUpon>TilesetPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MapBrowserPanel.resx">
-      <DependentUpon>MapBrowserPanel.cs</DependentUpon>
+    <EmbeddedResource Include="BrowserPanel.resx">
+      <DependentUpon>BrowserPanel.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

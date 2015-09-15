@@ -1,5 +1,6 @@
 ﻿using GameMapEditor.Frames;
 using GameMapEditor.Objects;
+using GameMapEditor.Objects.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,15 +11,11 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace GameMapEditor
 {
-    public partial class MainFrame : Form
+    public partial class MainFrame : Form, IDisposable
     {
-        private static MapPanelFrame NewMapFrame;
+        private static List<MapPanel> MapPanels = new List<MapPanel>();
 
-        private TilesetPanel tilesetPanel;
-        private MapBrowserPanel mapBrowserPanel;
-        private List<MapPanel> mapPanels;
-        private ConsolePanel consolePanel;
-        private LayerPanel layerPanel;
+        private ConsoleStreamWriter consoleSW;
 
         public MainFrame()
         {
@@ -29,33 +26,33 @@ namespace GameMapEditor
         {
             base.OnLoad(e);
 
-            NewMapFrame = new MapPanelFrame();
-            NewMapFrame.MapValidated += NewMapFrame_Validated;
+            // Redirection du flux Console vers ConsolePanel
+            this.consoleSW = new ConsoleStreamWriter(ConsolePanel.Instance);
+            Console.SetOut(this.consoleSW);
 
             // Chargement des panels
-            this.tilesetPanel = new TilesetPanel();
-            this.tilesetPanel.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-            this.tilesetPanel.CloseButtonVisible = false;
-            this.tilesetPanel.TilesetSelectionChanged += TilesetPanel_TilesetSelectionChanged;
-            this.tilesetPanel.TilesetChanged += TilesetPanel_TilesetChanged;
-            this.tilesetPanel.Show(this.DockPanel);
-            this.tilesetPanel.DockTo(this.DockPanel, DockStyle.Left);
-
-            this.mapPanels = new List<MapPanel>();
-
+            this.LoadTilesetPanel();
             this.LoadConsolePanel();
-            this.LoadMapBrowserPanel();
+            this.LoadBrowserPanel();
             this.LoadLayerPanel();
+
+            // Création des liens
+            MapPanelFrame.Instance.MapValidated += NewMapFrame_Validated;
+            TilesetPanel.Instance.TilesetSelectionChanged += TilesetPanel_TilesetSelectionChanged;
+            TilesetPanel.Instance.TilesetChanged += TilesetPanel_TilesetChanged;
+            LayerPanel.Instance.MapLayerAdded += LayerPanel_MapLayerAdded;
+            LayerPanel.Instance.MapLayerSelectionChanged += LayerPanel_MapLayerSelectionChanged;
+            LayerPanel.Instance.Refresh();
         }
 
         private void TilesetPanel_TilesetChanged(object sender, BitmapImage texture)
         {
-            this.mapPanels.ForEach(x => x.Texture = texture);
+            MapPanels.ForEach(x => x.Texture = texture);
         }
 
         private void TilesetPanel_TilesetSelectionChanged(object sender, Rectangle selection)
         {
-            this.mapPanels.ForEach(x => x.TilesetSelection = selection);
+            MapPanels.ForEach(x => x.TilesetSelection = selection);
         }
 
         private void toolStripBtnFill_Click(object sender, EventArgs e)
@@ -67,21 +64,26 @@ namespace GameMapEditor
         private void NewMapFrame_Validated(string mapName)
         {
             MapPanel.OpenNewDocument(
-                this.DockPanel, 
-                this.mapPanels, 
-                this.tilesetPanel.TilesetImage, 
-                this.tilesetPanel.TilesetSelection, 
+                this.DockPanel,
+                MapPanels, 
+                TilesetPanel.Instance.TilesetImage,
+                TilesetPanel.Instance.TilesetSelection, 
                 new GameMap(mapName));
         }
 
         private void nouveauToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            NewMapFrame.ShowDialog();
+            MapPanelFrame.Instance.ShowDialog();
+        }
+
+        private void tilesetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.LoadTilesetPanel();
         }
 
         private void explorateurToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.LoadMapBrowserPanel();
+            this.LoadBrowserPanel();
         }
 
         private void couchesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -94,6 +96,7 @@ namespace GameMapEditor
             this.LoadConsolePanel();
         }
 
+        // TODO : Verifier si le fichier existe déjà et proposer un overwrite
         private void PanelToolsSaveCurrent_Click(object sender, EventArgs e)
         {
             // Sauvegarder map courante
@@ -101,10 +104,11 @@ namespace GameMapEditor
             if (mapPanel != null)
             {
                 mapPanel.Save();
-                consolePanel.WriteLine(DateTime.Now.ToString(), "Carte de jeu enregistrée avec succés.", RowType.Information);
+                ConsolePanel.Instance.WriteLine("Carte de jeu enregistrée avec succés.", RowType.Information);
             }
         }
 
+        // TODO : Verifier si le fichier existe déjà et proposer un overwrite
         private void PanelToolsSaveAll_Click(object sender, EventArgs e)
         {
             try
@@ -112,13 +116,11 @@ namespace GameMapEditor
                 // Sauvegarder tout
                 foreach (MapPanel document in this.DockPanel.Documents)
                     document.Save();
-                consolePanel.WriteLine(DateTime.Now.ToString(), "Cartes de jeu enregistrées avec succés.", RowType.Information);
+                ConsolePanel.Instance.WriteLine( "Cartes de jeu enregistrées avec succés.", RowType.Information);
             }
             catch (Exception ex)
             {
-                consolePanel.WriteLine(DateTime.Now.ToString(),
-                    "Une erreur est survenue lors de la sauvegarde de la carte : " + ex.Message,
-                    RowType.Error);
+                ConsolePanel.Instance.WriteLine("Une erreur est survenue lors de la sauvegarde de la carte : " + ex.Message, RowType.Error);
                 ErrorLog.Write(ex);
             }
         }
@@ -140,21 +142,19 @@ namespace GameMapEditor
                     
                     MapPanel mapPanel = MapPanel.OpenNewDocument(
                         this.DockPanel,
-                        this.mapPanels,
-                        this.tilesetPanel.TilesetImage,
-                        this.tilesetPanel.TilesetSelection,
+                        MapPanels,
+                        TilesetPanel.Instance.TilesetImage,
+                        TilesetPanel.Instance.TilesetSelection,
                         map);
 
                     // TODO : Debug only
-                    mapPanel.Map.FilesDependences.ForEach(x => consolePanel.WriteLine(mapPanel.Map.Name, x));
+                    mapPanel.Map.FilesDependences.ForEach(x => ConsolePanel.Instance.WriteLine(x));
 
-                    layerPanel.LoadLayers(map);
+                    LayerPanel.Instance.LoadLayers(map);
                 }
                 catch (Exception ex)
                 {
-                    consolePanel.WriteLine(DateTime.Now.ToString(),
-                        "Une erreur est survenue lors du chargement de la carte : " + ex.Message,
-                        RowType.Error);
+                    ConsolePanel.Instance.WriteLine("Une erreur est survenue lors du chargement de la carte : " + ex.Message, RowType.Error);
                     ErrorLog.Write(ex);
                 }
                 finally
@@ -171,7 +171,7 @@ namespace GameMapEditor
             {
                 mapPanel.Map.AddLayer(layer);
                 // TODO : Prendre en compte MAX_LAYER_COUNT de GameMap
-                consolePanel.WriteLine(DateTime.Now.ToString(), "La couche a été ajouté avec succés à la carte en cours", RowType.Information);
+                ConsolePanel.Instance.WriteLine("La couche a été ajouté avec succés à la carte en cours", RowType.Information);
             }
         }
 
@@ -194,45 +194,37 @@ namespace GameMapEditor
             Environment.Exit(0);
         }
 
-        private void LoadMapBrowserPanel()
+        private void LoadTilesetPanel()
         {
-            if (this.mapBrowserPanel == null || this.mapBrowserPanel.IsDisposed)
-            {
-                this.mapBrowserPanel = new MapBrowserPanel();
-                this.mapBrowserPanel.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-                this.mapBrowserPanel.Show(DockPanel);
-                this.mapBrowserPanel.DockTo(this.DockPanel, DockStyle.Right);
-            }
+            TilesetPanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
+            TilesetPanel.Instance.Show(this.DockPanel);
+            TilesetPanel.Instance.DockTo(this.DockPanel, DockStyle.Left);
         }
 
         private void LoadConsolePanel()
         {
-            if (this.consolePanel == null || this.consolePanel.IsDisposed)
-            {
-                this.consolePanel = new ConsolePanel();
-                this.consolePanel.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-                this.consolePanel.Show(this.DockPanel);
-                this.consolePanel.DockTo(this.DockPanel, DockStyle.Bottom);
-            }
+            ConsolePanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
+            ConsolePanel.Instance.Show(this.DockPanel);
+            ConsolePanel.Instance.DockTo(this.DockPanel, DockStyle.Bottom);
+        }
+
+        private void LoadBrowserPanel()
+        {
+            BrowserPanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
+            BrowserPanel.Instance.Show(DockPanel);
+            BrowserPanel.Instance.DockTo(this.DockPanel, DockStyle.Right);
         }
 
         private void LoadLayerPanel()
         {
-            if (this.layerPanel == null || this.layerPanel.IsDisposed)
-            {
-                this.layerPanel = new LayerPanel();
-                this.layerPanel.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-                this.layerPanel.Show(this.DockPanel);
-                this.layerPanel.DockTo(this.DockPanel, DockStyle.Right);
-                this.layerPanel.MapLayerAdded += LayerPanel_MapLayerAdded;
-                this.layerPanel.MapLayerSelectionChanged += LayerPanel_MapLayerSelectionChanged;
-                this.layerPanel.RefreshState();
-            }
+            LayerPanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
+            LayerPanel.Instance.Show(this.DockPanel);
+            LayerPanel.Instance.DockTo(this.DockPanel, DockStyle.Right);
         }
 
         private void DockPanel_ActiveDocumentChanged(object sender, EventArgs e)
         {
-            this.layerPanel?.RefreshState();
+            LayerPanel.Instance.Refresh();
         }
 
         private void MainFrame_FormClosing(object sender, FormClosingEventArgs e)

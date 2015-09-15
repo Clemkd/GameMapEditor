@@ -1,4 +1,6 @@
-﻿namespace GameMapEditor
+﻿using System.Diagnostics;
+
+namespace GameMapEditor
 {
     partial class MainFrame
     {
@@ -16,7 +18,14 @@
             if (disposing && (components != null))
             {
                 components.Dispose();
+                
             }
+
+            TilesetPanel.Instance.TilesetSelectionChanged -= TilesetPanel_TilesetSelectionChanged;
+            TilesetPanel.Instance.TilesetChanged -= TilesetPanel_TilesetChanged;
+            LayerPanel.Instance.MapLayerAdded -= LayerPanel_MapLayerAdded;
+            LayerPanel.Instance.MapLayerSelectionChanged -= LayerPanel_MapLayerSelectionChanged;
+
             base.Dispose(disposing);
         }
 
@@ -57,12 +66,12 @@
             this.éditionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.annulerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refaireToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.outilsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.testsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tilesetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.historiqueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.consoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.baseDeDonnéesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contactToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -152,7 +161,8 @@
             this.MenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fichierToolStripMenuItem,
             this.éditionToolStripMenuItem,
-            this.outilsToolStripMenuItem,
+            this.viewToolStripMenuItem,
+            this.toolsToolStripMenuItem,
             this.baseDeDonnéesToolStripMenuItem,
             this.aideToolStripMenuItem});
             this.MenuStrip.Location = new System.Drawing.Point(0, 0);
@@ -244,29 +254,23 @@
             this.refaireToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.refaireToolStripMenuItem.Text = "Rétablir";
             // 
-            // outilsToolStripMenuItem
+            // viewToolStripMenuItem
             // 
-            this.outilsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.testsToolStripMenuItem,
-            this.toolStripSeparator2,
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tilesetToolStripMenuItem,
             this.mapToolStripMenuItem,
             this.historiqueToolStripMenuItem,
             this.consoleToolStripMenuItem});
-            this.outilsToolStripMenuItem.Name = "outilsToolStripMenuItem";
-            this.outilsToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
-            this.outilsToolStripMenuItem.Text = "&Outils";
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
+            this.viewToolStripMenuItem.Text = "&Affichage";
             // 
-            // testsToolStripMenuItem
+            // tilesetToolStripMenuItem
             // 
-            this.testsToolStripMenuItem.Enabled = false;
-            this.testsToolStripMenuItem.Name = "testsToolStripMenuItem";
-            this.testsToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            this.testsToolStripMenuItem.Text = "Tests";
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(130, 6);
+            this.tilesetToolStripMenuItem.Name = "tilesetToolStripMenuItem";
+            this.tilesetToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.tilesetToolStripMenuItem.Text = "Tileset";
+            this.tilesetToolStripMenuItem.Click += new System.EventHandler(this.tilesetToolStripMenuItem_Click);
             // 
             // mapToolStripMenuItem
             // 
@@ -288,6 +292,13 @@
             this.consoleToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.consoleToolStripMenuItem.Text = "Console";
             this.consoleToolStripMenuItem.Click += new System.EventHandler(this.consoleToolStripMenuItem_Click);
+            // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.Enabled = false;
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
+            this.toolsToolStripMenuItem.Text = "&Outils";
             // 
             // baseDeDonnéesToolStripMenuItem
             // 
@@ -458,7 +469,7 @@
         private System.Windows.Forms.MenuStrip MenuStrip;
         private System.Windows.Forms.ToolStripMenuItem fichierToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem éditionToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem outilsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem baseDeDonnéesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aideToolStripMenuItem;
         private System.Windows.Forms.ToolStrip ToolStrip;
@@ -472,8 +483,6 @@
         private System.Windows.Forms.ToolStripMenuItem contactToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator;
         private System.Windows.Forms.ToolStripMenuItem àProposToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem testsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem mapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem historiqueToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripBtnFill;
@@ -488,6 +497,8 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonRedo;
         private System.Windows.Forms.StatusStrip StatusStrip;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem tilesetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
     }
 }
 

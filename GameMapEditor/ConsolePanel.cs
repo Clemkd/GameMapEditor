@@ -25,6 +25,13 @@ namespace GameMapEditor
         private static Color InformationColor = Color.FromArgb(50, 50, 255);
         private List<Color> ColorList;
 
+        public static ConsolePanel Instance = new ConsolePanel();
+
+        private ConsolePanel() : base()
+        {
+            this.HideOnClose = true;
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -35,14 +42,13 @@ namespace GameMapEditor
         /// <summary>
         /// Ajoute une nouvelle ligne d'informations dans la console
         /// </summary>
-        /// <param name="source">La source des données</param>
         /// <param name="message">Le message des données</param>
         /// /// <param name="type">Le type de la ligne</param>
-        public void WriteLine(string source, string message, RowType type = RowType.Normal)
+        public void WriteLine(string message, RowType type = RowType.Normal)
         {
             ListViewItem item = new ListViewItem();
             item.ImageIndex = (int)type;
-            item.SubItems.Add(source);
+            item.SubItems.Add(DateTime.Now.ToString());
             item.SubItems.Add(message);
             item.ForeColor = ColorList.ElementAt(((int)type < this.ColorList.Count - 1) ? (int)type + 1 : 0);
             this.ListViewConsole.Items.Add(item);
