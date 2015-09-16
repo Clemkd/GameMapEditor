@@ -177,7 +177,7 @@ namespace GameMapEditor.Objects.Controls
 
             foreach (LayerControl layerControl in this.Controls)
             {
-                layerControl.RefreshSize();
+                layerControl.Refresh();
             }
         }
 

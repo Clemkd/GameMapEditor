@@ -71,44 +71,6 @@ namespace GameMapEditor
             }
         }
 
-        // TODO : Reviser
-        private void ChangeLayerType(LayerControl sender)
-        {
-            if (this.layerPanelCTM.Controls.Count > 0)
-            {
-                MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
-                if (mapPanel != null)
-                {
-                    int index = this.layerPanelCTM.Controls.IndexOf(sender);
-                    GameMapLayer layer = mapPanel.Map?.GetLayerAt(index);
-                    if (layer != null)
-                    {
-                        layer.Type = layer.Type == LayerType.Lower ? LayerType.Upper : LayerType.Lower;
-                        sender.Type = layer.Type;
-                    }
-                }
-            }
-        }
-
-        // TODO : Reviser
-        private void ChangeVisibleState(LayerControl sender)
-        {
-            if (this.layerPanelCTM.Controls.Count > 0)
-            {
-                MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
-                if (mapPanel != null)
-                {
-                    int index = this.layerPanelCTM.Controls.IndexOf(sender);
-                    GameMapLayer layer = mapPanel.Map?.GetLayerAt(index);
-                    if (layer != null)
-                    {
-                        layer.Visible = !layer.Visible;
-                        sender.Visible = layer.Visible;
-                    }
-                }
-            }
-        }
-
         private void toolStripButtonAddLayer_Click(object sender, System.EventArgs e)
         {
             MapLayerFrame formular = new MapLayerFrame();
@@ -155,14 +117,20 @@ namespace GameMapEditor
 
         private void toolStripButtonSetVisibleState_Click(object sender, EventArgs e)
         {
-            ChangeVisibleState(sender as LayerControl);
+            this.layerPanelCTM_LayerVisibleStateChanged(sender);
         }
 
         private void Formular_MapLayerAdded(GameMapLayer layer)
         {
-            this.Add(layer);
-            // TODO : Prendre en compte MAX_LAYER_COUNT de GameMap
-            RaiseLayerAddedEvent(layer);
+            if (this.layerPanelCTM.Controls.Count < GameMap.MAX_LAYER_COUNT)
+            {
+                this.Add(layer);
+                RaiseLayerAddedEvent(layer);
+            }
+            else
+                ConsolePanel.Instance.
+                    WriteLine("Impossible d'ajouter la nouvelle couche : Le nombre maximal de couches est atteint (" +
+                    GameMap.MAX_LAYER_COUNT + ")", RowType.Error);
         }
 
         private void RaiseLayerAddedEvent(GameMapLayer layer)
@@ -182,12 +150,36 @@ namespace GameMapEditor
 
         private void layerPanelCTM_LayerTypeChanged(object sender)
         {
-            ChangeLayerType(sender as LayerControl);
+            if (this.layerPanelCTM.Controls.Count > 0)
+            {
+                MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
+                if (mapPanel != null)
+                {
+                    var layerControl = sender as LayerControl;
+                    int index = this.layerPanelCTM.Controls.IndexOf(layerControl);
+                    GameMapLayer layer = mapPanel.Map?.GetLayerAt(index);
+
+                    if (layer != null)
+                        layer.Type = layer.Type == LayerType.Lower ? LayerType.Upper : LayerType.Lower;
+                }
+            }
         }
 
         private void layerPanelCTM_LayerVisibleStateChanged(object sender)
         {
-            ChangeVisibleState(sender as LayerControl);
+            if (this.layerPanelCTM.Controls.Count > 0)
+            {
+                MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
+                if (mapPanel != null)
+                {
+                    var layerControl = sender as LayerControl;
+                    int index = this.layerPanelCTM.Controls.IndexOf(layerControl);
+
+                    GameMapLayer layer = mapPanel.Map?.GetLayerAt(index);
+                    if (layer != null)
+                        layer.Visible = !layer.Visible;
+                }
+            }
         }
 
         protected override void OnEnabledChanged(EventArgs e)

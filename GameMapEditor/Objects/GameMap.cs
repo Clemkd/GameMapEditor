@@ -176,7 +176,7 @@ namespace GameMapEditor
         /// <summary>
         /// Remplis la map par la texture selectionnée du tileset
         /// </summary>
-        public void Fill(int layerIndex, BitmapImage texture)
+        public void Fill(int layerIndex, BitmapImageBundle texture)
         {
             if (texture.BitmapSelection.Width >= GlobalData.TileSize.Width &&
                 texture.BitmapSelection.Height >= GlobalData.TileSize.Height)
@@ -192,48 +192,60 @@ namespace GameMapEditor
             }
         }
 
-        // TODO : Optimisation requise
+        // TODO : Optimisation requise (Division en sous-methodes, calculs et déroulement impératif unique)
         /// <summary>
         /// Modifie de façon intelligente les données de la carte selon la selection du tileset, à partir de la position donnée
         /// </summary>
         /// <param name="position">La position du premier tile en haut à gauche à modifier</param>
-        public void SetTiles(int layerIndex, int xPosition, int yPosition, BitmapImage texture, bool raiseChanged = true)
+        public void SetTiles(int layerIndex, int xPosition, int yPosition, BitmapImageBundle texture, bool raiseChanged = true)
         {
-            if (texture != null && texture.BitmapSelection != null && layerIndex >= 0 && layerIndex < this.layers.Count)
+            if (layerIndex >= 0 && layerIndex < this.layers.Count)
             {
-                int tmpWidth = texture.BitmapSelection.Width / GlobalData.TileSize.Width;
-                int tmpHeight = texture.BitmapSelection.Height / GlobalData.TileSize.Height;
-                int tilesCount = texture.BitmapSource.Width / GlobalData.TileSize.Width;
-
-                for (int x = 0; x < tmpWidth; x++)
+                if (texture != null && texture.BitmapSelection != null)
                 {
-                    for (int y = 0; y < tmpHeight; y++)
+                    int tmpWidth = texture.BitmapSelection.Width / GlobalData.TileSize.Width;
+                    int tmpHeight = texture.BitmapSelection.Height / GlobalData.TileSize.Height;
+                    int tilesCount = texture.BitmapSource.Width / GlobalData.TileSize.Width;
+
+                    for (int x = 0; x < tmpWidth; x++)
                     {
-                        GameTile tile = this.layers.ElementAt(layerIndex)[xPosition + x, yPosition + y];
-                        if (tile != null)
+                        for (int y = 0; y < tmpHeight; y++)
                         {
-                            Rectangle selection = new Rectangle(
-                                GlobalData.TileSize.Width * x,
-                                GlobalData.TileSize.Height * y,
-                                GlobalData.TileSize.Width,
-                                GlobalData.TileSize.Height);
-
-                            GraphicsUnit unit = GraphicsUnit.Pixel;
-                            RectangleF bounds = texture.BitmapSource.GetBounds(ref unit);
-
-                            if (bounds.Contains(selection))
+                            GameTile tile = this.layers.ElementAt(layerIndex)[xPosition + x, yPosition + y];
+                            if (tile != null)
                             {
-                                // OutOfMemory eventuel, par usage de textures inexistantes (OutOfRange extension)
-                                tile.Texture = texture.BitmapSelection.Clone(selection, PixelFormat.DontCare);
+                                Rectangle selection = new Rectangle(
+                                    GlobalData.TileSize.Width * x,
+                                    GlobalData.TileSize.Height * y,
+                                    GlobalData.TileSize.Width,
+                                    GlobalData.TileSize.Height);
 
-                                Point location = new Point(
-                                    (selection.Location.X + texture.SelectionLocation.X) / GlobalData.TileSize.Width,
-                                    (selection.Location.Y + texture.SelectionLocation.Y) / GlobalData.TileSize.Height);
+                                GraphicsUnit unit = GraphicsUnit.Pixel;
+                                RectangleF bounds = texture.BitmapSource.GetBounds(ref unit);
 
-                                tile.FormattedIndex = GameTile.EncodeFormattedIndex(location, tilesCount);
-                                tile.TextureIndex = this.RetrieveTextureIndex(texture.Path);
+                                if (bounds.Contains(selection))
+                                {
+                                    // OutOfMemory eventuel, par usage de textures inexistantes (OutOfRange extension)
+                                    tile.Texture = texture.BitmapSelection.Clone(selection, PixelFormat.DontCare);
+
+                                    Point location = new Point(
+                                        (selection.Location.X + texture.SelectionLocation.X) / GlobalData.TileSize.Width,
+                                        (selection.Location.Y + texture.SelectionLocation.Y) / GlobalData.TileSize.Height);
+
+                                    tile.FormattedIndex = GameTile.EncodeFormattedIndex(location, tilesCount);
+                                    tile.TextureIndex = this.RetrieveTextureIndex(texture.Path);
+                                }
                             }
                         }
+                    }
+                }
+                else
+                {
+                    GameTile tile = this.layers.ElementAt(layerIndex)[xPosition, yPosition];
+                    if (tile != null)
+                    {
+                        tile.FormattedIndex = GameTile.EMPTY;
+                        tile.Texture = null;
                     }
                 }
 

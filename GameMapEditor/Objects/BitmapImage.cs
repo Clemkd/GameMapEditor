@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace GameMapEditor.Objects
 {
-    public class BitmapImage
+    public class BitmapImageBundle
     {
-        public BitmapImage(string path, Bitmap bitmap)
+        public BitmapImageBundle(string path, Bitmap bitmap)
         {
             this.Path = path;
             this.BitmapSource = bitmap;

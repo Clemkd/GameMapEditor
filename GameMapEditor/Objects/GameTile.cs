@@ -54,7 +54,7 @@ namespace GameMapEditor
             int x = index - (index / nt) * nt;
             int y = index / nt;
 
-            return new GameVector2() { X = x, Y = y };
+            return new GameVector2(x, y);
         }
 
         /// <summary>

@@ -45,7 +45,7 @@ namespace GameMapEditor
             LayerPanel.Instance.Refresh();
         }
 
-        private void TilesetPanel_TilesetChanged(object sender, BitmapImage texture)
+        private void TilesetPanel_TilesetChanged(object sender, BitmapImageBundle texture)
         {
             MapPanels.ForEach(x => x.Texture = texture);
         }
@@ -165,7 +165,6 @@ namespace GameMapEditor
             if (mapPanel != null)
             {
                 mapPanel.Map.AddLayer(layer);
-                // TODO : Prendre en compte MAX_LAYER_COUNT de GameMap
                 ConsolePanel.Instance.WriteLine("La couche a été ajouté avec succés à la carte en cours", RowType.Information);
             }
         }

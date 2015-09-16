@@ -16,15 +16,15 @@ namespace GameMapEditor
     {
         private Point tilesetOrigin;
         private Rectangle tilesetSelection;
-        private List<BitmapImage> textures;
+        private List<BitmapImageBundle> textures;
         
-        private BitmapImage currentTexture;
+        private BitmapImageBundle currentTexture;
         private bool isGridActived;
         private Pen gridColor;
         private SolidBrush fillBrush;
 
         public event TilesetChangedEventHandler TilesetChanged;
-        public delegate void TilesetChangedEventHandler(object sender, BitmapImage texture);
+        public delegate void TilesetChangedEventHandler(object sender, BitmapImageBundle texture);
         public event TilesetSelectionEventHandler TilesetSelectionChanged;
         public delegate void TilesetSelectionEventHandler(object sender, Rectangle selection);
 
@@ -43,7 +43,7 @@ namespace GameMapEditor
 
             this.tilesetOrigin = new Point();
             this.tilesetSelection = new Rectangle();
-            this.textures = new List<BitmapImage>();
+            this.textures = new List<BitmapImageBundle>();
             this.CursorColor = new Pen(Color.FromArgb(255, 0, 100, 0), 2);
             this.CursorColor.DashStyle = DashStyle.Dash;
             this.CursorColor.Alignment = PenAlignment.Inset;
@@ -168,7 +168,7 @@ namespace GameMapEditor
             this.IsGridActived = !this.IsGridActived;
         }
 
-        private void RaiseTilesetChangedEvent(BitmapImage texture)
+        private void RaiseTilesetChangedEvent(BitmapImageBundle texture)
         {
             if(this.TilesetChanged != null)
             {
@@ -176,7 +176,7 @@ namespace GameMapEditor
             }
         }
 
-        private void RaiseTilesetSelectionChangedEvent(BitmapImage texture)
+        private void RaiseTilesetSelectionChangedEvent(BitmapImageBundle texture)
         {
             if(this.TilesetSelectionChanged != null)
             {
@@ -193,7 +193,7 @@ namespace GameMapEditor
                 string[] tilesetFiles = Directory.GetFiles(GlobalData.TEXTURES_DIRECTORY_PATH, "*.png", SearchOption.AllDirectories);
                 foreach (string file in tilesetFiles)
                 {
-                    this.textures.Add(new BitmapImage(file, Bitmap.FromFile(file) as Bitmap));
+                    this.textures.Add(new BitmapImageBundle(file, Bitmap.FromFile(file) as Bitmap));
                     this.comboTilesetFileSelecter.Items.Add(file);
                 }
             }
@@ -283,7 +283,7 @@ namespace GameMapEditor
             get { return this.tilesetSelection; }
         }
 
-        public BitmapImage TilesetImage
+        public BitmapImageBundle TilesetImage
         {
             get { return this.currentTexture; }
         }

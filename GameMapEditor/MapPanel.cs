@@ -24,7 +24,7 @@ namespace GameMapEditor
         private Point mouseLocation;
 
         private Rectangle tilesetSelection;
-        private BitmapImage texture;
+        private BitmapImageBundle texture;
         private int selectedLayerIndex;
 
         private GameMap gameMap;
@@ -38,7 +38,7 @@ namespace GameMapEditor
             this.mapOrigin = new Point();
             this.IsGridActived = true;
             this.IsSaved = false;
-            this.IsTilesetSelectionShowProcessActived = true;
+            this.IsTilesetSelectionShowed = true;
             this.gridColor = new Pen(Color.FromArgb(255, 130, 130, 130), 2);
             this.mouseLocation = new Point();
             this.location = new Point();
@@ -64,7 +64,6 @@ namespace GameMapEditor
         {
             this.RefreshScrollComponents(this.hScrollBarPicMap.Value, this.vScrollBarPicMap.Value);
 
-            // TODO : Réviser
             /**** Centre la map ****/
             if(!this.hScrollBarPicMap.Enabled)
                 this.mapOrigin.X = ((GlobalData.TileSize.Width * GlobalData.MapSize.Width) / 2) - (this.picMap.Size.Width / 2);
@@ -84,7 +83,10 @@ namespace GameMapEditor
 
         private void picMap_MouseDown(object sender, MouseEventArgs e)
         {
-            this.gameMap.SetTiles(this.selectedLayerIndex, this.location.X, this.location.Y, this.texture);
+            if(e.Button == MouseButtons.Left)
+                this.gameMap.SetTiles(this.selectedLayerIndex, this.location.X, this.location.Y, this.texture);
+            else if(e.Button == MouseButtons.Right)
+                this.gameMap.SetTiles(this.selectedLayerIndex, this.location.X, this.location.Y, null);
         }
 
         private void picMap_MouseMove(object sender, MouseEventArgs e)
@@ -94,17 +96,24 @@ namespace GameMapEditor
             location.X = (int)((e.Location.X + this.mapOrigin.X) / GlobalData.TileSize.Width);
             location.Y = (int)((e.Location.Y + this.mapOrigin.Y) / GlobalData.TileSize.Height);
 
-            // Si le bouton gauche de la souris est actuellement pressé,
-            // si la position de la souris à évolué (ref : tile) et
+            // Si la position de la souris à évolué (ref : tile) et
             // s'il existe une selection du tileset et une texture courante pour le tileset
-            if (e.Button == MouseButtons.Left &&
-                (oldLocation.X != location.X || oldLocation.Y != location.Y) &&
-                this.tilesetSelection != null && this.texture != null)
+            if (oldLocation.X != location.X || oldLocation.Y != location.Y)
             {
-                this.oldLocation.X = this.location.X;
-                this.oldLocation.Y = this.location.Y;
+                if (e.Button == MouseButtons.Left && this.tilesetSelection != null && this.texture != null)
+                {
+                    this.oldLocation.X = this.location.X;
+                    this.oldLocation.Y = this.location.Y;
 
-                this.gameMap.SetTiles(this.selectedLayerIndex, this.location.X, this.location.Y, this.texture);
+                    this.gameMap.SetTiles(this.selectedLayerIndex, this.location.X, this.location.Y, this.texture);
+                }
+                else if(e.Button == MouseButtons.Right)
+                {
+                    this.oldLocation.X = this.location.X;
+                    this.oldLocation.Y = this.location.Y;
+
+                    this.gameMap.SetTiles(this.selectedLayerIndex, this.location.X, this.location.Y, null);
+                }
             }
 
             this.picMap.Refresh();
@@ -135,7 +144,7 @@ namespace GameMapEditor
 
         private void toolStripBtnTilesetSelection_Click(object sender, EventArgs e)
         {
-            this.IsTilesetSelectionShowProcessActived = !this.IsTilesetSelectionShowProcessActived;
+            this.IsTilesetSelectionShowed = !this.IsTilesetSelectionShowed;
         }
         #endregion
 
@@ -147,7 +156,7 @@ namespace GameMapEditor
         /// <param name="mapPanels">La liste des documents de map</param>
         /// <param name="tilesetImage">La texture du tileset courant</param>
         /// <param name="tilesetSelection">La selection du tileset courant</param>
-        public static MapPanel OpenNewDocument(DockPanel dockPanel, List<MapPanel> mapPanels, BitmapImage tilesetImage, Rectangle tilesetSelection, string mapName)
+        public static MapPanel OpenNewDocument(DockPanel dockPanel, List<MapPanel> mapPanels, BitmapImageBundle tilesetImage, Rectangle tilesetSelection, string mapName)
         {
             dockPanel.SuspendLayout(true);
             MapPanel mapPanel = new MapPanel();
@@ -174,7 +183,7 @@ namespace GameMapEditor
         /// <param name="mapPanels">La liste des documents de map</param>
         /// <param name="tilesetImage">La texture du tileset courant</param>
         /// <param name="tilesetSelection">La selection du tileset courant</param>
-        public static MapPanel OpenNewDocument(DockPanel dockPanel, List<MapPanel> mapPanels, BitmapImage tilesetImage, Rectangle tilesetSelection, GameMap map)
+        public static MapPanel OpenNewDocument(DockPanel dockPanel, List<MapPanel> mapPanels, BitmapImageBundle tilesetImage, Rectangle tilesetSelection, GameMap map)
         {
             dockPanel.SuspendLayout(true);
             MapPanel mapPanel = new MapPanel();
@@ -259,8 +268,8 @@ namespace GameMapEditor
         {
             if (!state || this.tilesetSelection == null || this.texture == null) return;
 
-            int xLocation = (int)((this.mouseLocation.X + this.mapOrigin.X) / GlobalData.TileSize.Width);
-            int yLocation = (int)((this.mouseLocation.Y + this.mapOrigin.Y) / GlobalData.TileSize.Height);
+            int xLocation = (this.mouseLocation.X + this.mapOrigin.X) / GlobalData.TileSize.Width;
+            int yLocation = (this.mouseLocation.Y + this.mapOrigin.Y) / GlobalData.TileSize.Height;
 
             if (xLocation >= 0 && xLocation < GlobalData.MapSize.Width && yLocation >= 0 && yLocation < GlobalData.MapSize.Height)
             {
@@ -291,17 +300,17 @@ namespace GameMapEditor
             this.vScrollBarPicMap.Enabled = this.picMap.Size.Height <= GlobalData.TileSize.Height * GlobalData.MapSize.Height;
 
             this.vScrollBarPicMap.Minimum = 0;
-            this.vScrollBarPicMap.SmallChange = GlobalData.MapSize.Height * GlobalData.TileSize.Height / 20;
+            this.vScrollBarPicMap.SmallChange = GlobalData.MapSize.Height * GlobalData.TileSize.Height / 10;
             this.vScrollBarPicMap.LargeChange = GlobalData.MapSize.Height * GlobalData.TileSize.Height / 5;
-            int scrollHeightValue = GlobalData.MapSize.Height * GlobalData.TileSize.Height + 100 - this.picMap.Size.Height;
+            int scrollHeightValue = GlobalData.MapSize.Height * GlobalData.TileSize.Height + 100 - this.picMap.Size.Height + this.mapOrigin.Y;
             this.vScrollBarPicMap.Maximum = scrollHeightValue > 0 ? scrollHeightValue : 1;
             this.vScrollBarPicMap.Maximum += this.vScrollBarPicMap.LargeChange;
             this.vScrollBarPicMap.Value = scrollY < this.vScrollBarPicMap.Maximum ? scrollY : this.vScrollBarPicMap.Maximum;
 
             this.hScrollBarPicMap.Minimum = 0;
-            this.hScrollBarPicMap.SmallChange = GlobalData.MapSize.Width * GlobalData.TileSize.Width / 20;
+            this.hScrollBarPicMap.SmallChange = GlobalData.MapSize.Width * GlobalData.TileSize.Width / 10;
             this.hScrollBarPicMap.LargeChange = GlobalData.MapSize.Width * GlobalData.TileSize.Width / 5;
-            int scrollWidthValue = GlobalData.MapSize.Width * GlobalData.TileSize.Width + 100 - this.picMap.Size.Width;
+            int scrollWidthValue = GlobalData.MapSize.Width * GlobalData.TileSize.Width + 100 - this.picMap.Size.Width + this.mapOrigin.X;
             this.hScrollBarPicMap.Maximum = scrollWidthValue > 0 ? scrollWidthValue : 1;
             this.hScrollBarPicMap.Maximum += this.hScrollBarPicMap.LargeChange;
             this.hScrollBarPicMap.Value = scrollX < this.hScrollBarPicMap.Maximum ? scrollX : this.hScrollBarPicMap.Maximum;
@@ -335,13 +344,13 @@ namespace GameMapEditor
             set { this.gridColor = value; this.picMap.Refresh(); }
         }
 
-        public bool IsTilesetSelectionShowProcessActived
+        public bool IsTilesetSelectionShowed
         {
             get { return this.isTilesetSelectionShowProcessActived; }
             set
             {
                 this.isTilesetSelectionShowProcessActived = value;
-                this.toolStripBtnTilesetSelection.Checked = this.IsTilesetSelectionShowProcessActived;
+                this.toolStripBtnTilesetSelection.Checked = this.IsTilesetSelectionShowed;
                 this.picMap.Refresh();
             }
         }
@@ -351,7 +360,7 @@ namespace GameMapEditor
             set { this.tilesetSelection = value; }
         }
 
-        public BitmapImage Texture
+        public BitmapImageBundle Texture
         {
             set { this.texture = value; }
         }
@@ -371,7 +380,11 @@ namespace GameMapEditor
         public bool IsSaved
         {
             get { return this.isSaved; }
-            private set { this.isSaved = value; this.Text = (this.isSaved ? string.Empty : UNSAVED_DOCUMENT_MARK) + this.gameMap?.Name; }
+            private set
+            {
+                this.isSaved = value;
+                this.Text = (this.isSaved ? string.Empty : UNSAVED_DOCUMENT_MARK) + this.gameMap?.Name;
+            }
         }
 
         public new string Name

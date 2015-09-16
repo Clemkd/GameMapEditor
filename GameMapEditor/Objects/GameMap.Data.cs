@@ -14,13 +14,18 @@ namespace GameMapEditor
 {
     public partial class GameMap
     {
-        private static Dictionary<String, Bitmap> Textures = new Dictionary<string, Bitmap>();
+        private static Dictionary<string, Bitmap> Textures = new Dictionary<string, Bitmap>();
         private static Dictionary<int, Bitmap> CroppedTextures = new Dictionary<int, Bitmap>();
 
+        /// <summary>
+        /// Obtient la texture avec le nom spécifié
+        /// </summary>
+        /// <param name="filename">Le nom de la texture</param>
+        /// <returns>La texture</returns>
         private static Bitmap GetTexture(string filename)
         {
             if(!Textures.ContainsKey(filename) && File.Exists(filename))
-                Textures.Add(filename, Bitmap.FromFile(filename) as Bitmap);
+                Textures.Add(filename, Image.FromFile(filename) as Bitmap);
 
             Bitmap resultBitmap;
             if (Textures.TryGetValue(filename, out resultBitmap))
@@ -28,15 +33,22 @@ namespace GameMapEditor
             else throw new FileNotFoundException("La ressource \"" + filename + "\" est inexistante.");
         }
 
-        private static Bitmap GetCroppedTexture(int index, Bitmap palette)
+        /// <summary>
+        /// Obtient le tile à l'index spécifié sur la texture donnée
+        /// </summary>
+        /// <param name="index">L'index du tile</param>
+        /// <param name="texture">La texture</param>
+        /// <returns>Le tile</returns>
+        private static Bitmap GetCroppedTexture(int index, Bitmap texture)
         {
             if (index == GameTile.EMPTY)
                 return null;
 
+            // Si le tile n'est pas en dictionnaire de données, on l'ajoute pour une utilisation future (évite de recharger la même texture)
             if (!CroppedTextures.ContainsKey(index))
             {
-                GameVector2 vector = GameTile.DecodeFormattedIndex(index, palette.Width / GlobalData.TileSize.Width) * 32;
-                CroppedTextures.Add(index, palette.Clone(new Rectangle(vector.X, vector.Y, GlobalData.TileSize.Width, GlobalData.TileSize.Height),
+                GameVector2 vector = GameTile.DecodeFormattedIndex(index, texture.Width / GlobalData.TileSize.Width) * GlobalData.TileSize;
+                CroppedTextures.Add(index, texture.Clone(new Rectangle(vector.X, vector.Y, GlobalData.TileSize.Width, GlobalData.TileSize.Height),
                     System.Drawing.Imaging.PixelFormat.DontCare));
             }
 
@@ -46,9 +58,13 @@ namespace GameMapEditor
             return null;
         }
 
+        /// <summary>
+        /// Charge les dépendances de la carte et la retourne en fin de chargement
+        /// </summary>
+        /// <returns>La carte chargée</returns>
         private async Task<GameMap> LoadDependences()
         {
-            Task<Exception> task = Task<Exception>.Run(() =>
+            Task<Exception> task = Task.Run(() =>
             {
                 foreach (GameMapLayer layer in layers)
                 {
@@ -80,6 +96,9 @@ namespace GameMapEditor
             {
                 throw task.Result;
             }
+
+            // TODO : Debug only
+            Console.WriteLine("Textures : {0}, CroppedTextures : {1}", Textures.Count, CroppedTextures.Count);
 
             return this;
         }

@@ -42,11 +42,13 @@ namespace GameMapEditor.Objects.Controls
 
         private void LayerControl_Load(object sender, EventArgs e)
         {
-            this.RefreshSize();
+            this.Refresh();
         }
 
-        public void RefreshSize()
+        public override void Refresh()
         {
+            base.Refresh();
+
             // Limitation effectuée par la propriété MinimumSize du control
             this.Width = this.Parent.Width - 20;
         }
@@ -63,7 +65,6 @@ namespace GameMapEditor.Objects.Controls
             set { this.labelIndex.Text = value; }
         }
 
-        // TODO : Reviser
         public new bool Visible
         {
             get { return this.visible; }
@@ -71,11 +72,10 @@ namespace GameMapEditor.Objects.Controls
             {
                 this.visible = value;
                 this.pictureBoxVisibleState.Image = this.Visible ? Resources.eye : Resources.eye_close;
-                //this.LayerVisibleStateChanged?.Invoke(this);
+                this.LayerVisibleStateChanged?.Invoke(this);
             }
         }
 
-        // TODO : Reviser
         public LayerType Type
         {
             get
@@ -86,7 +86,7 @@ namespace GameMapEditor.Objects.Controls
             {
                 this.type = value;
                 this.pictureBoxLayerType.Image = value == LayerType.Lower ? Resources.category_access_lower : Resources.category_access_upper;
-                //this.LayerTypeChanged?.Invoke(this);
+                this.LayerTypeChanged?.Invoke(this);
             }
         }
 
@@ -110,18 +110,14 @@ namespace GameMapEditor.Objects.Controls
             this.LayerDoubleClicked?.Invoke(this);
         }
 
-        // TODO : Reviser
         private void pictureBoxLayerType_Click(object sender, EventArgs e)
         {
-            //this.Type = this.Type == LayerType.Lower ? LayerType.Upper : LayerType.Lower;
-            this.LayerTypeChanged?.Invoke(this);
+            this.Type = this.type == LayerType.Lower ? LayerType.Upper : LayerType.Lower;
         }
 
-        // TODO : Reviser
         private void pictureBoxVisibleState_Click(object sender, EventArgs e)
         {
-            //this.Visible = !this.Visible;
-            this.LayerVisibleStateChanged?.Invoke(this);
+            this.Visible = !this.visible;
         }
     }
 }
