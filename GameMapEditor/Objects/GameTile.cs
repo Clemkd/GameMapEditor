@@ -12,7 +12,6 @@ namespace GameMapEditor
     {
         public const int EMPTY = -1;
 
-        // TODO : Protobuf ?
         [ProtoMember(1)]
         private int formattedIndex;
         [ProtoMember(2)]
@@ -104,7 +103,6 @@ namespace GameMapEditor
             set { this.texturesetIndex = value; }
         }
 
-        // TODO : Modifier en [field: NonSerialized] et charger la texture lors de l'ouverture
         public Bitmap Texture
         {
             get;

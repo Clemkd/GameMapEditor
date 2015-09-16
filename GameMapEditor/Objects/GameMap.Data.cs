@@ -56,7 +56,6 @@ namespace GameMapEditor
 
                     foreach (GameTile tile in layer.Tiles)
                     {
-                        System.Threading.Thread.Sleep(1);
                         string texturesFilename = this.RetrieveTextureName(tile.TextureIndex);
                         if (texturesFilename != null)
                         {

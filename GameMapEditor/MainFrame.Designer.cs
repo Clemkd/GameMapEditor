@@ -149,7 +149,6 @@ namespace GameMapEditor
             dockPaneStripToolWindowGradient1.InactiveTabGradient = tabGradient7;
             dockPaneStripSkin1.ToolWindowGradient = dockPaneStripToolWindowGradient1;
             dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
-            this.DockPanel.Skin = dockPanelSkin1;
             this.DockPanel.SupportDeeplyNestedContent = true;
             this.DockPanel.TabIndex = 0;
             this.DockPanel.Theme = this.OriginalTheme;

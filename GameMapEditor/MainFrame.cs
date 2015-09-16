@@ -68,7 +68,7 @@ namespace GameMapEditor
                 MapPanels, 
                 TilesetPanel.Instance.TilesetImage,
                 TilesetPanel.Instance.TilesetSelection, 
-                new GameMap(mapName));
+                mapName);
         }
 
         private void nouveauToolStripMenuItem_Click(object sender, EventArgs e)
@@ -96,7 +96,6 @@ namespace GameMapEditor
             this.LoadConsolePanel();
         }
 
-        // TODO : Verifier si le fichier existe déjà et proposer un overwrite
         private void PanelToolsSaveCurrent_Click(object sender, EventArgs e)
         {
             // Sauvegarder map courante
@@ -108,7 +107,6 @@ namespace GameMapEditor
             }
         }
 
-        // TODO : Verifier si le fichier existe déjà et proposer un overwrite
         private void PanelToolsSaveAll_Click(object sender, EventArgs e)
         {
             try
@@ -146,9 +144,6 @@ namespace GameMapEditor
                         TilesetPanel.Instance.TilesetImage,
                         TilesetPanel.Instance.TilesetSelection,
                         map);
-
-                    // TODO : Debug only
-                    mapPanel.Map.FilesDependences.ForEach(x => ConsolePanel.Instance.WriteLine(x));
 
                     LayerPanel.Instance.LoadLayers(map);
                 }

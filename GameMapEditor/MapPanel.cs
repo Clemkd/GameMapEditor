@@ -37,7 +37,7 @@ namespace GameMapEditor
             this.InitializeComponent();
             this.mapOrigin = new Point();
             this.IsGridActived = true;
-            this.isSaved = true;
+            this.IsSaved = false;
             this.IsTilesetSelectionShowProcessActived = true;
             this.gridColor = new Pen(Color.FromArgb(255, 130, 130, 130), 2);
             this.mouseLocation = new Point();
@@ -64,13 +64,13 @@ namespace GameMapEditor
         {
             this.RefreshScrollComponents(this.hScrollBarPicMap.Value, this.vScrollBarPicMap.Value);
 
+            // TODO : Réviser
             /**** Centre la map ****/
-            /*if (!this.hScrollBarPicMap.Enabled && !this.vScrollBarPicMap.Enabled)
-            {
-                this.mapOrigin = new Point(
-                    ((GlobalData.TileSize.Width * GlobalData.MapSize.Width) / 2) - (this.picMap.Size.Width / 2),
-                    ((GlobalData.TileSize.Height * GlobalData.MapSize.Height) / 2) - (this.picMap.Size.Height / 2));
-            }*/
+            if(!this.hScrollBarPicMap.Enabled)
+                this.mapOrigin.X = ((GlobalData.TileSize.Width * GlobalData.MapSize.Width) / 2) - (this.picMap.Size.Width / 2);
+
+            if (!this.vScrollBarPicMap.Enabled)
+                this.mapOrigin.Y = ((GlobalData.TileSize.Height * GlobalData.MapSize.Height) / 2) - (this.picMap.Size.Height / 2);
             /***********************/
         }
 
@@ -147,6 +147,33 @@ namespace GameMapEditor
         /// <param name="mapPanels">La liste des documents de map</param>
         /// <param name="tilesetImage">La texture du tileset courant</param>
         /// <param name="tilesetSelection">La selection du tileset courant</param>
+        public static MapPanel OpenNewDocument(DockPanel dockPanel, List<MapPanel> mapPanels, BitmapImage tilesetImage, Rectangle tilesetSelection, string mapName)
+        {
+            dockPanel.SuspendLayout(true);
+            MapPanel mapPanel = new MapPanel();
+
+            mapPanel.Texture = tilesetImage;
+            mapPanel.TilesetSelection = tilesetSelection;
+            mapPanel.Create(mapName);
+
+            mapPanel.Show(dockPanel);
+            mapPanel.DockState = DockState.Document;
+            mapPanel.Dock = DockStyle.Fill;
+
+            mapPanels.Add(mapPanel);
+
+            dockPanel.ResumeLayout(true, true);
+
+            return mapPanel;
+        }
+
+        /// <summary>
+        /// Ouvre un nouveau document de map
+        /// </summary>
+        /// <param name="dockPanel">Le panel de gestion du document</param>
+        /// <param name="mapPanels">La liste des documents de map</param>
+        /// <param name="tilesetImage">La texture du tileset courant</param>
+        /// <param name="tilesetSelection">La selection du tileset courant</param>
         public static MapPanel OpenNewDocument(DockPanel dockPanel, List<MapPanel> mapPanels, BitmapImage tilesetImage, Rectangle tilesetSelection, GameMap map)
         {
             dockPanel.SuspendLayout(true);
@@ -190,6 +217,13 @@ namespace GameMapEditor
             this.Map = map;
             this.Map.MapChanged += GameMap_MapChanged;
             this.IsSaved = true;
+        }
+
+        public void Create(string mapName)
+        {
+            this.Map = new GameMap(mapName);
+            this.Map.MapChanged += GameMap_MapChanged;
+            this.IsSaved = false;
         }
 
         /// <summary>
@@ -337,7 +371,12 @@ namespace GameMapEditor
         public bool IsSaved
         {
             get { return this.isSaved; }
-            private set { this.isSaved = value; this.Text = this.Text = (this.isSaved ? string.Empty : UNSAVED_DOCUMENT_MARK) + this.gameMap.Name; }
+            private set { this.isSaved = value; this.Text = (this.isSaved ? string.Empty : UNSAVED_DOCUMENT_MARK) + this.gameMap?.Name; }
+        }
+
+        public new string Name
+        {
+            get { return this.Map.Name; }
         }
         #endregion
     }
