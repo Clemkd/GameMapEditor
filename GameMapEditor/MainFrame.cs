@@ -1,6 +1,7 @@
 ﻿using GameMapEditor.Frames;
 using GameMapEditor.Objects;
 using GameMapEditor.Objects.Controls;
+using GameMapEditor.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -246,6 +247,13 @@ namespace GameMapEditor
                 }
                 return false;
             }
+        }
+
+        private void toolStripButtonErase_Click(object sender, EventArgs e)
+        {
+            MapPanel panel = DockPanel.ActiveDocument as MapPanel;
+            if(panel != null)
+                panel.Cursor = new Cursor(Resources.eraser.GetHicon());
         }
     }
 }

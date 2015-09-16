@@ -71,7 +71,7 @@ namespace GameMapEditor.Objects.Controls
             set
             {
                 this.visible = value;
-                this.pictureBoxVisibleState.Image = this.Visible ? Resources.eye : Resources.eye_close;
+                this.pictureBoxVisibleState.Image = this.Visible ? Resources.eye : Resources.eyeclose;
                 this.LayerVisibleStateChanged?.Invoke(this);
             }
         }
@@ -85,7 +85,7 @@ namespace GameMapEditor.Objects.Controls
             set
             {
                 this.type = value;
-                this.pictureBoxLayerType.Image = value == LayerType.Lower ? Resources.category_access_lower : Resources.category_access_upper;
+                this.pictureBoxLayerType.Image = value == LayerType.Lower ? Resources.categoryaccesslower : Resources.categoryaccessupper;
                 this.LayerTypeChanged?.Invoke(this);
             }
         }

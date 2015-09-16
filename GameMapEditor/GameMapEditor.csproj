@@ -86,7 +86,7 @@
     <Compile Include="Frames\IndefinedWaitingFrame.Designer.cs">
       <DependentUpon>IndefinedWaitingFrame.cs</DependentUpon>
     </Compile>
-    <Compile Include="Objects\Controls\ConsoleStreamWriter.cs" />
+    <Compile Include="Objects\ConsoleStreamWriter.cs" />
     <Compile Include="Objects\Controls\LayerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -125,9 +125,9 @@
     <Compile Include="Objects\GameMapLayer.cs" />
     <Compile Include="Objects\GameTile.cs" />
     <Compile Include="Objects\GameVector2.cs" />
-    <Compile Include="Objects\IDrawable.cs" />
+    <Compile Include="Objects\Interfaces\IDrawable.cs" />
     <Compile Include="Objects\ImageAttrExtension.cs" />
-    <Compile Include="Objects\LayerType.cs" />
+    <Compile Include="Objects\Enumerations\LayerType.cs" />
     <Compile Include="LayerPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -136,6 +136,11 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="TilesetPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -174,14 +179,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="TilesetPanel.resx">
       <DependentUpon>TilesetPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -228,6 +228,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\category-access-lower.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\eraser.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\eraser.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cursor.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

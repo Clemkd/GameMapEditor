@@ -50,7 +50,7 @@
             // pictureBoxLayerType
             // 
             this.pictureBoxLayerType.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pictureBoxLayerType.Image = global::GameMapEditor.Properties.Resources.category_access_upper;
+            this.pictureBoxLayerType.Image = global::GameMapEditor.Properties.Resources.categoryaccessupper;
             this.pictureBoxLayerType.Location = new System.Drawing.Point(33, 6);
             this.pictureBoxLayerType.Name = "pictureBoxLayerType";
             this.pictureBoxLayerType.Size = new System.Drawing.Size(20, 20);

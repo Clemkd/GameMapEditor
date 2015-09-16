@@ -63,9 +63,9 @@ namespace GameMapEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap category_access_lower {
+        internal static System.Drawing.Bitmap categoryaccesslower {
             get {
-                object obj = ResourceManager.GetObject("category-access-lower", resourceCulture);
+                object obj = ResourceManager.GetObject("categoryaccesslower", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,19 @@ namespace GameMapEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap category_access_upper {
+        internal static System.Drawing.Bitmap categoryaccessupper {
             get {
-                object obj = ResourceManager.GetObject("category-access-upper", resourceCulture);
+                object obj = ResourceManager.GetObject("categoryaccessupper", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap eraser {
+            get {
+                object obj = ResourceManager.GetObject("eraser", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +103,9 @@ namespace GameMapEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap eye_close {
+        internal static System.Drawing.Bitmap eyeclose {
             get {
-                object obj = ResourceManager.GetObject("eye-close", resourceCulture);
+                object obj = ResourceManager.GetObject("eyeclose", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

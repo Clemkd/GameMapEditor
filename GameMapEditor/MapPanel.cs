@@ -146,6 +146,17 @@ namespace GameMapEditor
         {
             this.IsTilesetSelectionShowed = !this.IsTilesetSelectionShowed;
         }
+
+        private void MapPanel_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!this.IsSaved)
+            {
+                DialogResult result = MessageBox.Show(this, "Le document n'a pas été sauvegardé !\nQuitter sans sauvegarder ?",
+                        "Sauvegarde", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+                if (result != DialogResult.OK)
+                    e.Cancel = true;
+            }
+        }
         #endregion
 
         #region Methodes
