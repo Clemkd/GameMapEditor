@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameMapEditor.Objects;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -51,7 +52,19 @@ namespace GameMapEditor
             item.SubItems.Add(DateTime.Now.ToString());
             item.SubItems.Add(message);
             item.ForeColor = ColorList.ElementAt(((int)type < this.ColorList.Count - 1) ? (int)type + 1 : 0);
-            this.ListViewConsole.Items.Add(item);
+            this.ListViewConsole.Items.Add(item).EnsureVisible();
+        }
+
+        public void WriteLine(Exception ex)
+        {
+            ListViewItem item = new ListViewItem();
+            item.ImageIndex = 0;
+            item.SubItems.Add(string.Format("[{0}] {1}", ex.Source, DateTime.Now.ToString()));
+            item.SubItems.Add(ex.Message);
+            item.ForeColor = ErrorColor;
+            this.ListViewConsole.Items.Add(item).EnsureVisible();
+
+            ErrorLog.Write(ex);
         }
 
         /// <summary>

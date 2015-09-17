@@ -75,9 +75,9 @@ namespace GameMapEditor
         }
 
         /// <summary>
-        /// Obtient le layer à l'index spécifié et retourne null si inexistante
+        /// Obtient le layer à l'index spécifié et retourne null si inexistant
         /// </summary>
-        /// <param name="index">L'index de le layer</param>
+        /// <param name="index">L'index du layer</param>
         /// <returns>Le layer</returns>
         public GameMapLayer GetLayerAt(int index)
         {

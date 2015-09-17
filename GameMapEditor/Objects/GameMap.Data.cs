@@ -15,14 +15,25 @@ namespace GameMapEditor
     public partial class GameMap
     {
         private static Dictionary<string, Bitmap> Textures = new Dictionary<string, Bitmap>();
-        private static Dictionary<int, Bitmap> CroppedTextures = new Dictionary<int, Bitmap>();
+        private static Dictionary<string, Bitmap> CroppedTextures = new Dictionary<string, Bitmap>();
+
+        /// <summary>
+        /// Génère la clé de la texture en fonction de son index et de sa palette de textures parente 
+        /// </summary>
+        /// <param name="tileIndex">L'index de la texture</param>
+        /// <param name="textureIndex">L'index de la palette de textures</param>
+        /// <returns>La clé de la texture</returns>
+        private static string RetrieveCroppedKey(int tileIndex, int textureIndex)
+        {
+            return string.Format("{0}:{1}", tileIndex, textureIndex);
+        }
 
         /// <summary>
         /// Obtient la texture avec le nom spécifié
         /// </summary>
         /// <param name="filename">Le nom de la texture</param>
         /// <returns>La texture</returns>
-        private static Bitmap GetTexture(string filename)
+        private Bitmap GetTexture(string filename)
         {
             if(!Textures.ContainsKey(filename) && File.Exists(filename))
                 Textures.Add(filename, Image.FromFile(filename) as Bitmap);
@@ -30,30 +41,35 @@ namespace GameMapEditor
             Bitmap resultBitmap;
             if (Textures.TryGetValue(filename, out resultBitmap))
                 return resultBitmap;
-            else throw new FileNotFoundException("La ressource \"" + filename + "\" est inexistante.");
+            else throw new FileNotFoundException("La ressource \"" + filename + "\" est introuvable");
         }
 
         /// <summary>
         /// Obtient le tile à l'index spécifié sur la texture donnée
         /// </summary>
-        /// <param name="index">L'index du tile</param>
+        /// <param name="tileIndex">L'index du tile</param>
         /// <param name="texture">La texture</param>
         /// <returns>Le tile</returns>
-        private static Bitmap GetCroppedTexture(int index, Bitmap texture)
+        private Bitmap GetCroppedTexture(int tileIndex, string textureName)
         {
-            if (index == GameTile.EMPTY)
+            if (tileIndex == GameTile.EMPTY)
                 return null;
 
+            int textureIndex = this.RetrieveTextureIndex(textureName);
+            string croppedKey = RetrieveCroppedKey(tileIndex, textureIndex);
+
             // Si le tile n'est pas en dictionnaire de données, on l'ajoute pour une utilisation future (évite de recharger la même texture)
-            if (!CroppedTextures.ContainsKey(index))
+            if (!CroppedTextures.ContainsKey(croppedKey))
             {
-                GameVector2 vector = GameTile.DecodeFormattedIndex(index, texture.Width / GlobalData.TileSize.Width) * GlobalData.TileSize;
-                CroppedTextures.Add(index, texture.Clone(new Rectangle(vector.X, vector.Y, GlobalData.TileSize.Width, GlobalData.TileSize.Height),
+                Bitmap texture = this.GetTexture(textureName);
+
+                GameVector2 vector = GameTile.DecodeFormattedIndex(tileIndex, texture.Width / GlobalData.TileSize.Width) * GlobalData.TileSize;
+                CroppedTextures.Add(croppedKey, texture.Clone(new Rectangle(vector.X, vector.Y, GlobalData.TileSize.Width, GlobalData.TileSize.Height),
                     System.Drawing.Imaging.PixelFormat.DontCare));
             }
 
             Bitmap resultBitmap;
-            if (CroppedTextures.TryGetValue(index, out resultBitmap))
+            if (CroppedTextures.TryGetValue(croppedKey, out resultBitmap))
                 return resultBitmap;
             return null;
         }
@@ -64,7 +80,7 @@ namespace GameMapEditor
         /// <returns>La carte chargée</returns>
         private async Task<GameMap> LoadDependences()
         {
-            Task<Exception> task = Task.Run(() =>
+            await Task.Run(() =>
             {
                 foreach (GameMapLayer layer in layers)
                 {
@@ -75,27 +91,11 @@ namespace GameMapEditor
                         string texturesFilename = this.RetrieveTextureName(tile.TextureIndex);
                         if (texturesFilename != null)
                         {
-                            try
-                            {
-                                tile.Texture = GetCroppedTexture(tile.FormattedIndex, GetTexture(texturesFilename));
-                            }
-                            catch (Exception ex)
-                            {
-                                return ex;
-                            }
+                            tile.Texture = GetCroppedTexture(tile.FormattedIndex, texturesFilename);
                         }
                     }
                 }
-                return null;
             });
-
-            await task;
-
-            // Si le resultat de la tâche est une exception
-            if (task.Result != null)
-            {
-                throw task.Result;
-            }
 
             // TODO : Debug only
             Console.WriteLine("Textures : {0}, CroppedTextures : {1}", Textures.Count, CroppedTextures.Count);

@@ -61,8 +61,6 @@ namespace GameMapEditor
             this.quitterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.éditionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tilesetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.historiqueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.consoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -89,6 +87,8 @@ namespace GameMapEditor
             this.sauvegarderToutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.annulerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refaireToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tilesetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuStrip.SuspendLayout();
             this.ToolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -101,10 +101,11 @@ namespace GameMapEditor
             this.DockPanel.DockRightPortion = 0.2D;
             this.DockPanel.DockTopPortion = 0.2D;
             this.DockPanel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
-            this.DockPanel.Location = new System.Drawing.Point(0, 57);
+            this.DockPanel.Location = new System.Drawing.Point(0, 77);
+            this.DockPanel.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.DockPanel.Name = "DockPanel";
             this.DockPanel.ShowDocumentIcon = true;
-            this.DockPanel.Size = new System.Drawing.Size(1184, 663);
+            this.DockPanel.Size = new System.Drawing.Size(1184, 643);
             dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
             dockPanelGradient1.StartColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
             autoHideStripSkin1.DockStripGradient = dockPanelGradient1;
@@ -158,7 +159,9 @@ namespace GameMapEditor
             // 
             // MenuStrip
             // 
-            this.MenuStrip.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.MenuStrip.BackColor = System.Drawing.Color.Transparent;
+            this.MenuStrip.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MenuStrip.GripMargin = new System.Windows.Forms.Padding(5);
             this.MenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fichierToolStripMenuItem,
             this.éditionToolStripMenuItem,
@@ -166,9 +169,11 @@ namespace GameMapEditor
             this.toolsToolStripMenuItem,
             this.baseDeDonnéesToolStripMenuItem,
             this.aideToolStripMenuItem});
+            this.MenuStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             this.MenuStrip.Location = new System.Drawing.Point(0, 0);
             this.MenuStrip.Name = "MenuStrip";
-            this.MenuStrip.Size = new System.Drawing.Size(1184, 24);
+            this.MenuStrip.Padding = new System.Windows.Forms.Padding(5);
+            this.MenuStrip.Size = new System.Drawing.Size(1184, 34);
             this.MenuStrip.TabIndex = 1;
             this.MenuStrip.Text = "Menu";
             // 
@@ -182,18 +187,18 @@ namespace GameMapEditor
             this.toolStripSeparator1,
             this.quitterToolStripMenuItem});
             this.fichierToolStripMenuItem.Name = "fichierToolStripMenuItem";
-            this.fichierToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
+            this.fichierToolStripMenuItem.Size = new System.Drawing.Size(64, 24);
             this.fichierToolStripMenuItem.Text = "&Fichier";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(161, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(189, 6);
             // 
             // quitterToolStripMenuItem
             // 
             this.quitterToolStripMenuItem.Name = "quitterToolStripMenuItem";
-            this.quitterToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.quitterToolStripMenuItem.Size = new System.Drawing.Size(192, 24);
             this.quitterToolStripMenuItem.Text = "Quitter";
             this.quitterToolStripMenuItem.Click += new System.EventHandler(this.quitterToolStripMenuItem_Click);
             // 
@@ -204,7 +209,7 @@ namespace GameMapEditor
             this.refaireToolStripMenuItem});
             this.éditionToolStripMenuItem.Enabled = false;
             this.éditionToolStripMenuItem.Name = "éditionToolStripMenuItem";
-            this.éditionToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
+            this.éditionToolStripMenuItem.Size = new System.Drawing.Size(68, 24);
             this.éditionToolStripMenuItem.Text = "&Édition";
             // 
             // viewToolStripMenuItem
@@ -215,34 +220,22 @@ namespace GameMapEditor
             this.historiqueToolStripMenuItem,
             this.consoleToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(85, 24);
             this.viewToolStripMenuItem.Text = "&Affichage";
-            // 
-            // tilesetToolStripMenuItem
-            // 
-            this.tilesetToolStripMenuItem.Name = "tilesetToolStripMenuItem";
-            this.tilesetToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            this.tilesetToolStripMenuItem.Text = "Tileset";
-            this.tilesetToolStripMenuItem.Click += new System.EventHandler(this.tilesetToolStripMenuItem_Click);
-            // 
-            // mapToolStripMenuItem
-            // 
-            this.mapToolStripMenuItem.Name = "mapToolStripMenuItem";
-            this.mapToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            this.mapToolStripMenuItem.Text = "Explorateur";
-            this.mapToolStripMenuItem.Click += new System.EventHandler(this.explorateurToolStripMenuItem_Click);
             // 
             // historiqueToolStripMenuItem
             // 
+            this.historiqueToolStripMenuItem.Image = global::GameMapEditor.Properties.Resources.layers_stack;
             this.historiqueToolStripMenuItem.Name = "historiqueToolStripMenuItem";
-            this.historiqueToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.historiqueToolStripMenuItem.Size = new System.Drawing.Size(154, 24);
             this.historiqueToolStripMenuItem.Text = "Couches";
             this.historiqueToolStripMenuItem.Click += new System.EventHandler(this.couchesToolStripMenuItem_Click);
             // 
             // consoleToolStripMenuItem
             // 
+            this.consoleToolStripMenuItem.Image = global::GameMapEditor.Properties.Resources.application_get;
             this.consoleToolStripMenuItem.Name = "consoleToolStripMenuItem";
-            this.consoleToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.consoleToolStripMenuItem.Size = new System.Drawing.Size(154, 24);
             this.consoleToolStripMenuItem.Text = "Console";
             this.consoleToolStripMenuItem.Click += new System.EventHandler(this.consoleToolStripMenuItem_Click);
             // 
@@ -250,14 +243,14 @@ namespace GameMapEditor
             // 
             this.toolsToolStripMenuItem.Enabled = false;
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(59, 24);
             this.toolsToolStripMenuItem.Text = "&Outils";
             // 
             // baseDeDonnéesToolStripMenuItem
             // 
             this.baseDeDonnéesToolStripMenuItem.Enabled = false;
             this.baseDeDonnéesToolStripMenuItem.Name = "baseDeDonnéesToolStripMenuItem";
-            this.baseDeDonnéesToolStripMenuItem.Size = new System.Drawing.Size(107, 20);
+            this.baseDeDonnéesToolStripMenuItem.Size = new System.Drawing.Size(133, 24);
             this.baseDeDonnéesToolStripMenuItem.Text = "&Base de données";
             // 
             // aideToolStripMenuItem
@@ -268,24 +261,24 @@ namespace GameMapEditor
             this.àProposToolStripMenuItem});
             this.aideToolStripMenuItem.Enabled = false;
             this.aideToolStripMenuItem.Name = "aideToolStripMenuItem";
-            this.aideToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
+            this.aideToolStripMenuItem.Size = new System.Drawing.Size(52, 24);
             this.aideToolStripMenuItem.Text = "&Aide";
             // 
             // contactToolStripMenuItem
             // 
             this.contactToolStripMenuItem.Name = "contactToolStripMenuItem";
-            this.contactToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.contactToolStripMenuItem.Size = new System.Drawing.Size(139, 24);
             this.contactToolStripMenuItem.Text = "Contact";
             // 
             // toolStripSeparator
             // 
             this.toolStripSeparator.Name = "toolStripSeparator";
-            this.toolStripSeparator.Size = new System.Drawing.Size(119, 6);
+            this.toolStripSeparator.Size = new System.Drawing.Size(136, 6);
             // 
             // àProposToolStripMenuItem
             // 
             this.àProposToolStripMenuItem.Name = "àProposToolStripMenuItem";
-            this.àProposToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.àProposToolStripMenuItem.Size = new System.Drawing.Size(139, 24);
             this.àProposToolStripMenuItem.Text = "À propos";
             // 
             // ToolStrip
@@ -302,10 +295,11 @@ namespace GameMapEditor
             this.toolStripButtonUndo,
             this.toolStripButtonRedo,
             this.toolStripSeparator5});
-            this.ToolStrip.Location = new System.Drawing.Point(0, 24);
+            this.ToolStrip.Location = new System.Drawing.Point(0, 34);
             this.ToolStrip.Name = "ToolStrip";
-            this.ToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.ToolStrip.Size = new System.Drawing.Size(1184, 33);
+            this.ToolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 5, 10);
+            this.ToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
+            this.ToolStrip.Size = new System.Drawing.Size(1184, 43);
             this.ToolStrip.TabIndex = 2;
             this.ToolStrip.Text = "Tools";
             // 
@@ -409,7 +403,7 @@ namespace GameMapEditor
             // 
             this.nouveauToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("nouveauToolStripMenuItem.Image")));
             this.nouveauToolStripMenuItem.Name = "nouveauToolStripMenuItem";
-            this.nouveauToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.nouveauToolStripMenuItem.Size = new System.Drawing.Size(192, 24);
             this.nouveauToolStripMenuItem.Text = "Nouveau";
             this.nouveauToolStripMenuItem.Click += new System.EventHandler(this.nouveauToolStripMenuItem_Click);
             // 
@@ -417,7 +411,7 @@ namespace GameMapEditor
             // 
             this.ouvrirToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("ouvrirToolStripMenuItem.Image")));
             this.ouvrirToolStripMenuItem.Name = "ouvrirToolStripMenuItem";
-            this.ouvrirToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.ouvrirToolStripMenuItem.Size = new System.Drawing.Size(192, 24);
             this.ouvrirToolStripMenuItem.Text = "Ouvrir";
             this.ouvrirToolStripMenuItem.Click += new System.EventHandler(this.ouvrirToolStripMenuItem_Click);
             // 
@@ -425,7 +419,7 @@ namespace GameMapEditor
             // 
             this.sauvegarderToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("sauvegarderToolStripMenuItem.Image")));
             this.sauvegarderToolStripMenuItem.Name = "sauvegarderToolStripMenuItem";
-            this.sauvegarderToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.sauvegarderToolStripMenuItem.Size = new System.Drawing.Size(192, 24);
             this.sauvegarderToolStripMenuItem.Text = "Sauvegarder";
             this.sauvegarderToolStripMenuItem.Click += new System.EventHandler(this.PanelToolsSaveCurrent_Click);
             // 
@@ -433,7 +427,7 @@ namespace GameMapEditor
             // 
             this.sauvegarderToutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("sauvegarderToutToolStripMenuItem.Image")));
             this.sauvegarderToutToolStripMenuItem.Name = "sauvegarderToutToolStripMenuItem";
-            this.sauvegarderToutToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.sauvegarderToutToolStripMenuItem.Size = new System.Drawing.Size(192, 24);
             this.sauvegarderToutToolStripMenuItem.Text = "Sauvegarder tout";
             this.sauvegarderToutToolStripMenuItem.Click += new System.EventHandler(this.PanelToolsSaveAll_Click);
             // 
@@ -442,7 +436,7 @@ namespace GameMapEditor
             this.annulerToolStripMenuItem.Enabled = false;
             this.annulerToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("annulerToolStripMenuItem.Image")));
             this.annulerToolStripMenuItem.Name = "annulerToolStripMenuItem";
-            this.annulerToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.annulerToolStripMenuItem.Size = new System.Drawing.Size(130, 24);
             this.annulerToolStripMenuItem.Text = "Annuler";
             // 
             // refaireToolStripMenuItem
@@ -450,8 +444,24 @@ namespace GameMapEditor
             this.refaireToolStripMenuItem.Enabled = false;
             this.refaireToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("refaireToolStripMenuItem.Image")));
             this.refaireToolStripMenuItem.Name = "refaireToolStripMenuItem";
-            this.refaireToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.refaireToolStripMenuItem.Size = new System.Drawing.Size(130, 24);
             this.refaireToolStripMenuItem.Text = "Rétablir";
+            // 
+            // tilesetToolStripMenuItem
+            // 
+            this.tilesetToolStripMenuItem.Image = global::GameMapEditor.Properties.Resources.table_heatmap;
+            this.tilesetToolStripMenuItem.Name = "tilesetToolStripMenuItem";
+            this.tilesetToolStripMenuItem.Size = new System.Drawing.Size(154, 24);
+            this.tilesetToolStripMenuItem.Text = "Tileset";
+            this.tilesetToolStripMenuItem.Click += new System.EventHandler(this.tilesetToolStripMenuItem_Click);
+            // 
+            // mapToolStripMenuItem
+            // 
+            this.mapToolStripMenuItem.Image = global::GameMapEditor.Properties.Resources.package;
+            this.mapToolStripMenuItem.Name = "mapToolStripMenuItem";
+            this.mapToolStripMenuItem.Size = new System.Drawing.Size(154, 24);
+            this.mapToolStripMenuItem.Text = "Explorateur";
+            this.mapToolStripMenuItem.Click += new System.EventHandler(this.explorateurToolStripMenuItem_Click);
             // 
             // MainFrame
             // 

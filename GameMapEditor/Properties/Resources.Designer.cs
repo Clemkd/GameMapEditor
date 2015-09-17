@@ -63,6 +63,16 @@ namespace GameMapEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap application_get {
+            get {
+                object obj = ResourceManager.GetObject("application_get", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap categoryaccesslower {
             get {
                 object obj = ResourceManager.GetObject("categoryaccesslower", resourceCulture);
@@ -106,6 +116,36 @@ namespace GameMapEditor.Properties {
         internal static System.Drawing.Bitmap eyeclose {
             get {
                 object obj = ResourceManager.GetObject("eyeclose", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap layers_stack {
+            get {
+                object obj = ResourceManager.GetObject("layers-stack", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap package {
+            get {
+                object obj = ResourceManager.GetObject("package", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap table_heatmap {
+            get {
+                object obj = ResourceManager.GetObject("table-heatmap", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

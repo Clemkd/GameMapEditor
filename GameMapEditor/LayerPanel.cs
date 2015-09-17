@@ -39,6 +39,7 @@ namespace GameMapEditor
             {
                 this.layerPanelCTM.Add(layer);
             }
+            this.layerPanelCTM.SelectedIndex = 0;
         }
 
         public override void Refresh()
@@ -50,9 +51,7 @@ namespace GameMapEditor
             if (mapPanel != null)
             {
                 this.LoadLayers(mapPanel.Map);
-
-                //if (mapPanel.SelectedLayerIndex < this.layerPanelCTM.Controls.Count)
-                    this.layerPanelCTM.SelectedIndex = mapPanel.SelectedLayerIndex;
+                this.layerPanelCTM.SelectedIndex = mapPanel.SelectedLayerIndex;
             }
         }
 
@@ -112,7 +111,7 @@ namespace GameMapEditor
             {
                 this.RemoveLayer(this.layerPanelCTM.SelectedIndex);
             }
-            else throw new AccessViolationException("Impossible de supprimer la dernière couche de la carte");
+            else ConsolePanel.Instance.WriteLine("Impossible de supprimer la dernière couche de la carte", RowType.Error);
         }
 
         private void toolStripButtonSetVisibleState_Click(object sender, EventArgs e)

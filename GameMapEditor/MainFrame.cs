@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -112,15 +113,18 @@ namespace GameMapEditor
         {
             try
             {
-                // Sauvegarder tout
-                foreach (MapPanel document in this.DockPanel.Documents)
-                    document.Save();
-                ConsolePanel.Instance.WriteLine( "Cartes de jeu enregistrées avec succés.", RowType.Information);
+                if (this.DockPanel.DocumentsCount > 0)
+                {
+                    // Sauvegarder tout
+                    foreach (MapPanel document in this.DockPanel.Documents)
+                        document.Save();
+                    ConsolePanel.Instance.WriteLine("Cartes de jeu enregistrées avec succés.", RowType.Information);
+                }
             }
             catch (Exception ex)
             {
-                ConsolePanel.Instance.WriteLine("Une erreur est survenue lors de la sauvegarde de la carte : " + ex.Message, RowType.Error);
-                ErrorLog.Write(ex);
+                ConsolePanel.Instance.WriteLine(ex.Message);
+                
             }
         }
 
@@ -150,8 +154,7 @@ namespace GameMapEditor
                 }
                 catch (Exception ex)
                 {
-                    ConsolePanel.Instance.WriteLine("Une erreur est survenue lors du chargement de la carte : " + ex.Message, RowType.Error);
-                    ErrorLog.Write(ex);
+                    ConsolePanel.Instance.WriteLine(ex);
                 }
                 finally
                 {
@@ -186,7 +189,7 @@ namespace GameMapEditor
 
         private void quitterToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Environment.Exit(0);
+            this.Close();
         }
 
         private void LoadTilesetPanel()
@@ -251,9 +254,9 @@ namespace GameMapEditor
 
         private void toolStripButtonErase_Click(object sender, EventArgs e)
         {
-            MapPanel panel = DockPanel.ActiveDocument as MapPanel;
-            if(panel != null)
-                panel.Cursor = new Cursor(Resources.eraser.GetHicon());
+            MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
+            if(mapPanel != null)
+                mapPanel.Cursor = new Cursor(Resources.eraser.GetHicon());
         }
     }
 }

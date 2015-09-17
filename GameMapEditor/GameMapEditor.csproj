@@ -233,10 +233,16 @@
     <None Include="Resources\eraser.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\eraser.cur" />
+    <None Include="Resources\table-heatmap.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\cursor.png" />
+    <None Include="Resources\package.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\layers-stack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\application_get.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
