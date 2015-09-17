@@ -1,5 +1,6 @@
 ﻿using ProtoBuf;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -29,6 +30,17 @@ namespace GameMapEditor
         {
             this.FormattedIndex = EMPTY;
             this.Position = DecodeFormattedIndex(formattedPosition, GlobalData.MapSize.Width);
+        }
+
+        public GameTile Clone()
+        {
+            GameTile tile = new GameTile();
+            tile.formattedIndex = this.formattedIndex;
+            tile.texturesetIndex = this.texturesetIndex;
+            tile.position = this.position;
+            tile.Texture = this.Texture;
+
+            return tile;
         }
 
         /// <summary>

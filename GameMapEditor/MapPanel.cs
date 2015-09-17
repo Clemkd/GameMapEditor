@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -30,9 +32,45 @@ namespace GameMapEditor
         private GameMap gameMap;
         private Point location;
         private Point oldLocation;
+
+        private UndoRedoManager undoRedoManager;
         #endregion
 
-        public MapPanel()
+        public MapPanel(DockPanel dockPanel, List<MapPanel> mapPanels, BitmapImageBundle tilesetImage, Rectangle tilesetSelection, string mapName)
+        {
+            this.Initialize();
+
+            this.Texture = tilesetImage;
+            this.TilesetSelection = tilesetSelection;
+            this.Create(mapName);
+
+            dockPanel.SuspendLayout();
+            this.Show(dockPanel);
+            this.DockState = DockState.Document;
+            this.Dock = DockStyle.Fill;
+            dockPanel.ResumeLayout(true, true);
+
+            mapPanels.Add(this);
+        }
+
+        public MapPanel(DockPanel dockPanel, List<MapPanel> mapPanels, BitmapImageBundle tilesetImage, Rectangle tilesetSelection, GameMap map)
+        {
+            this.Initialize();
+
+            this.Texture = tilesetImage;
+            this.TilesetSelection = tilesetSelection;
+            this.Open(map);
+
+            dockPanel.SuspendLayout();
+            this.Show(dockPanel);
+            this.DockState = DockState.Document;
+            this.Dock = DockStyle.Fill;
+            dockPanel.ResumeLayout(true, true);
+
+            mapPanels.Add(this);
+        }
+
+        private void Initialize()
         {
             this.InitializeComponent();
             this.mapOrigin = new Point();
@@ -45,7 +83,23 @@ namespace GameMapEditor
             this.oldLocation = new Point();
             this.selectedLayerIndex = 0;
 
+            this.undoRedoManager = new UndoRedoManager();
+            this.undoRedoManager.UndoHappened += UndoRedoSystem_UndoHappened;
+            this.undoRedoManager.RedoHappened += UndoRedoSystem_RedoHappened;
+
             this.RefreshScrollComponents();
+        }
+
+        private void UndoRedoSystem_RedoHappened(object sender, UndoRedoEventArgs e)
+        {
+            this.Map = e.CurrentItem as GameMap;
+            this.picMap.Refresh();
+        }
+
+        private void UndoRedoSystem_UndoHappened(object sender, UndoRedoEventArgs e)
+        {
+            this.Map = e.CurrentItem as GameMap;
+            this.picMap.Refresh();
         }
 
         #region FrameEvents
@@ -59,6 +113,7 @@ namespace GameMapEditor
             this.IsSaved = false;
             this.picMap.Refresh();
         }
+
 
         private void picMap_Resize(object sender, EventArgs e)
         {
@@ -122,7 +177,7 @@ namespace GameMapEditor
         private void picMap_MouseUp(object sender, MouseEventArgs e)
         {
             // Save gameMap state (Undo / Redo list)
-            //Debug.WriteLine(this.gameMap.ToString());
+            this.undoRedoManager.Add(this.Map.Clone());
         }
 
         private void vScrollBarPicMap_Scroll(object sender, ScrollEventArgs e)
@@ -160,59 +215,6 @@ namespace GameMapEditor
         #endregion
 
         #region Methodes
-        /// <summary>
-        /// Ouvre un nouveau document de map
-        /// </summary>
-        /// <param name="dockPanel">Le panel de gestion du document</param>
-        /// <param name="mapPanels">La liste des documents de map</param>
-        /// <param name="tilesetImage">La texture du tileset courant</param>
-        /// <param name="tilesetSelection">La selection du tileset courant</param>
-        public static MapPanel OpenNewDocument(DockPanel dockPanel, List<MapPanel> mapPanels, BitmapImageBundle tilesetImage, Rectangle tilesetSelection, string mapName)
-        {
-            dockPanel.SuspendLayout(true);
-            MapPanel mapPanel = new MapPanel();
-
-            mapPanel.Texture = tilesetImage;
-            mapPanel.TilesetSelection = tilesetSelection;
-            mapPanel.Create(mapName);
-
-            mapPanel.Show(dockPanel);
-            mapPanel.DockState = DockState.Document;
-            mapPanel.Dock = DockStyle.Fill;
-
-            mapPanels.Add(mapPanel);
-
-            dockPanel.ResumeLayout(true, true);
-
-            return mapPanel;
-        }
-
-        /// <summary>
-        /// Ouvre un nouveau document de map
-        /// </summary>
-        /// <param name="dockPanel">Le panel de gestion du document</param>
-        /// <param name="mapPanels">La liste des documents de map</param>
-        /// <param name="tilesetImage">La texture du tileset courant</param>
-        /// <param name="tilesetSelection">La selection du tileset courant</param>
-        public static MapPanel OpenNewDocument(DockPanel dockPanel, List<MapPanel> mapPanels, BitmapImageBundle tilesetImage, Rectangle tilesetSelection, GameMap map)
-        {
-            dockPanel.SuspendLayout(true);
-            MapPanel mapPanel = new MapPanel();
-
-            mapPanel.Texture = tilesetImage;
-            mapPanel.TilesetSelection = tilesetSelection;
-            mapPanel.Open(map);
-
-            mapPanel.Show(dockPanel);
-            mapPanel.DockState = DockState.Document;
-            mapPanel.Dock = DockStyle.Fill;
-
-            mapPanels.Add(mapPanel);
-
-            dockPanel.ResumeLayout(true, true);
-
-            return mapPanel;
-        }
 
         /// <summary>
         /// Remplis la map par la texture selectionnée du tileset
@@ -401,6 +403,26 @@ namespace GameMapEditor
         public new string Name
         {
             get { return this.Map.Name; }
+        }
+
+        public bool CanUndo
+        {
+            get { return this.undoRedoManager.CanUndo; }
+        }
+
+        public bool CanRedo
+        {
+            get { return this.undoRedoManager.CanRedo; }
+        }
+
+        public void Undo()
+        {
+            this.undoRedoManager.Undo();
+        }
+
+        public void Redo()
+        {
+            this.undoRedoManager.Redo();
         }
         #endregion
     }

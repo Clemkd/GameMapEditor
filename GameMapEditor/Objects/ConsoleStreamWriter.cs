@@ -19,7 +19,7 @@ namespace GameMapEditor.Objects.Controls
         public override void WriteLine(string value)
         {
             base.WriteLine(value);
-            this.output.WriteLine(value);
+            this.output.Invoke((Action)delegate  { this.output.WriteLine(value); });
         }
 
         public override Encoding Encoding

@@ -1,4 +1,5 @@
 ﻿
+using GameMapEditor;
 using GameMapEditor.Objects;
 using ProtoBuf;
 using System;
@@ -45,6 +46,16 @@ namespace GameMapEditor
             this.textures = new Dictionary<string, int>();
             this.layers = new List<GameMapLayer>();
             this.InitializeComponents();
+        }
+
+        public GameMap Clone()
+        {
+            GameMap map = new GameMap();
+            map.name = this.name.ToCharArray().ToString();
+            map.textures = this.textures.ToDictionary(k => k.Key, c => c.Value);
+            map.layers = this.layers.Clone();
+
+            return map;
         }
 
         /// <summary>
@@ -110,7 +121,10 @@ namespace GameMapEditor
             {
                 layer.LayerChanged += Layer_LayerChanged;
                 this.layers.Insert(index, layer);
-                this.RaiseMapChangedEvent();
+
+                // TODO : Reviser
+                this.MapChanged?.Invoke(this);
+
                 return true;
             }
             return false;
@@ -127,7 +141,10 @@ namespace GameMapEditor
             {
                 this.layers.ElementAt(index).LayerChanged -= Layer_LayerChanged;
                 this.layers.RemoveAt(index);
-                this.RaiseMapChangedEvent();
+
+                // TODO : Reviser
+                this.MapChanged?.Invoke(this);
+
                 return true;
             }
 
@@ -188,7 +205,7 @@ namespace GameMapEditor
                     for (int x = 0; x < GlobalData.MapSize.Width; x += tmpWidth)
                         this.SetTiles(layerIndex, x, y, texture, false);
 
-                this.RaiseMapChangedEvent();
+                this.MapChanged?.Invoke(this);
             }
         }
 
@@ -250,7 +267,7 @@ namespace GameMapEditor
                 }
 
                 if(raiseChanged)
-                    this.RaiseMapChangedEvent();
+                    this.MapChanged?.Invoke(this);
             }
         }
 
@@ -311,7 +328,7 @@ namespace GameMapEditor
 
         private void Layer_LayerChanged(object sender)
         {
-            this.RaiseMapChangedEvent();
+            this.MapChanged?.Invoke(this);
         }
 
         /// <summary>
@@ -320,11 +337,6 @@ namespace GameMapEditor
         public List<string> FilesDependences
         {
             get { return textures.Keys.ToList(); }
-        }
-
-        private void RaiseMapChangedEvent()
-        {
-            this.MapChanged?.Invoke(this);
         }
 
         // TODO : Debug Only

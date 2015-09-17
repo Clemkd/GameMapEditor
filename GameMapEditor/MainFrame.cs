@@ -65,12 +65,7 @@ namespace GameMapEditor
 
         private void NewMapFrame_Validated(string mapName)
         {
-            MapPanel.OpenNewDocument(
-                this.DockPanel,
-                MapPanels, 
-                TilesetPanel.Instance.TilesetImage,
-                TilesetPanel.Instance.TilesetSelection, 
-                mapName);
+            new MapPanel(this.DockPanel, MapPanels, TilesetPanel.Instance.TilesetImage, TilesetPanel.Instance.TilesetSelection, mapName);
         }
 
         private void nouveauToolStripMenuItem_Click(object sender, EventArgs e)
@@ -143,12 +138,7 @@ namespace GameMapEditor
 
                     GameMap map = await GameMap.Load(openFileDialog.FileName);
                     
-                    MapPanel mapPanel = MapPanel.OpenNewDocument(
-                        this.DockPanel,
-                        MapPanels,
-                        TilesetPanel.Instance.TilesetImage,
-                        TilesetPanel.Instance.TilesetSelection,
-                        map);
+                    new MapPanel(this.DockPanel, MapPanels, TilesetPanel.Instance.TilesetImage, TilesetPanel.Instance.TilesetSelection, map);
 
                     LayerPanel.Instance.LoadLayers(map);
                 }
@@ -257,6 +247,24 @@ namespace GameMapEditor
             MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
             if(mapPanel != null)
                 mapPanel.Cursor = new Cursor(Resources.eraser.GetHicon());
+        }
+
+        private void toolStripButtonUndo_Click(object sender, EventArgs e)
+        {
+            MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
+            if (mapPanel != null && mapPanel.CanUndo)
+            {
+                mapPanel.Undo();
+            }
+        }
+
+        private void toolStripButtonRedo_Click(object sender, EventArgs e)
+        {
+            MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
+            if (mapPanel != null && mapPanel.CanRedo)
+            {
+                mapPanel.Redo();
+            }
         }
     }
 }

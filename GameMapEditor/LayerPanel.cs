@@ -60,7 +60,7 @@ namespace GameMapEditor
             this.layerPanelCTM.Insert(0, layer);
         }
 
-        public void RemoveLayer(int index)
+        public void Remove(int index)
         {
             MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
             if (mapPanel != null)
@@ -109,7 +109,7 @@ namespace GameMapEditor
         {
             if (this.layerPanelCTM.Controls.Count > 1)
             {
-                this.RemoveLayer(this.layerPanelCTM.SelectedIndex);
+                this.Remove(this.layerPanelCTM.SelectedIndex);
             }
             else ConsolePanel.Instance.WriteLine("Impossible de supprimer la dernière couche de la carte", RowType.Error);
         }

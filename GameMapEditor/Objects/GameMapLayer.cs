@@ -1,5 +1,5 @@
-﻿using ProtoBuf;
-using System;
+﻿using GameMapEditor.Objects;
+using ProtoBuf;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
@@ -46,6 +46,17 @@ namespace GameMapEditor
             {
                 this.tiles.Add(new GameTile(index));
             }
+        }
+
+        public GameMapLayer Clone()
+        {
+            GameMapLayer layer = new GameMapLayer();
+            layer.name = this.name;
+            layer.type = this.type;
+            layer.visible = this.visible;
+            layer.tiles = this.tiles.Clone();
+
+            return layer;
         }
 
         /// <summary>
