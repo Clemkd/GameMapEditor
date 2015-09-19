@@ -5,6 +5,6 @@ namespace GameMapEditor
 {
     internal interface IDrawable
     {
-        void Draw(Point origin, PaintEventArgs e);
+        void Draw(GameVector2 origin, PaintEventArgs e);
     }
 }

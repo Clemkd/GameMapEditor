@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace GameMapEditor.Objects
 {
-    public class BitmapImageBundle
+    public class TextureInfo
     {
-        public BitmapImageBundle(string path, Bitmap bitmap)
+        public TextureInfo(string path, Bitmap bitmap)
         {
             this.Path = path;
             this.BitmapSource = bitmap;
@@ -43,9 +43,9 @@ namespace GameMapEditor.Objects
         }
 
         /// <summary>
-        /// La position de la selection du tileset, identifiée par le point supérieur gauche
+        /// Le rectangle définissant la zone de selection du tileset
         /// </summary>
-        public Point SelectionLocation
+        public Point Selection
         {
             get;
             set;

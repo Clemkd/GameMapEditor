@@ -74,7 +74,7 @@ namespace GameMapEditor
         /// </summary>
         /// <param name="origin">L'origine de dessin, définie par le point supérieur gauche</param>
         /// <param name="e">L'évènement du control de dessin</param>
-        public void Draw(Point origin, PaintEventArgs e)
+        public void Draw(GameVector2 origin, PaintEventArgs e)
         {
             /* v0.1 */
             if (this.Texture != null)

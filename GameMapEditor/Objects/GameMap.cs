@@ -20,7 +20,7 @@ namespace GameMapEditor
     public partial class GameMap : IDrawable
     {
         public event MapChangedEventArgs MapChanged;
-
+        public const string DEFAULT_LAYER_NAME = "Couche 1";
         public const byte MAX_LAYER_COUNT = 10;
 
         #region Fields
@@ -63,7 +63,7 @@ namespace GameMapEditor
         /// </summary>
         private void InitializeComponents()
         {
-            GameMapLayer layer = new GameMapLayer("Couche 1")
+            GameMapLayer layer = new GameMapLayer(DEFAULT_LAYER_NAME)
             {
                 Type = LayerType.Lower,
                 Visible = true
@@ -77,7 +77,7 @@ namespace GameMapEditor
         /// </summary>
         /// <param name="origin">L'origine de dessin, définie par le point supérieur gauche</param>
         /// <param name="e">L'évènement du control de dessin</param>
-        public void Draw(Point origin, PaintEventArgs e)
+        public void Draw(GameVector2 origin, PaintEventArgs e)
         {
             for(int i = this.layers.Count - 1; i >= 0; i--)
             {
@@ -193,7 +193,7 @@ namespace GameMapEditor
         /// <summary>
         /// Remplis la map par la texture selectionnée du tileset
         /// </summary>
-        public void Fill(int layerIndex, BitmapImageBundle texture)
+        public void Fill(int layerIndex, TextureInfo texture)
         {
             if (texture.BitmapSelection.Width >= GlobalData.TileSize.Width &&
                 texture.BitmapSelection.Height >= GlobalData.TileSize.Height)
@@ -203,7 +203,7 @@ namespace GameMapEditor
 
                 for (int y = 0; y < GlobalData.MapSize.Height; y += tmpHeight)
                     for (int x = 0; x < GlobalData.MapSize.Width; x += tmpWidth)
-                        this.SetTiles(layerIndex, x, y, texture, false);
+                        this.SetTiles(layerIndex, new GameVector2(x, y), texture, false);
 
                 this.MapChanged?.Invoke(this);
             }
@@ -214,7 +214,7 @@ namespace GameMapEditor
         /// Modifie de façon intelligente les données de la carte selon la selection du tileset, à partir de la position donnée
         /// </summary>
         /// <param name="position">La position du premier tile en haut à gauche à modifier</param>
-        public void SetTiles(int layerIndex, int xPosition, int yPosition, BitmapImageBundle texture, bool raiseChanged = true)
+        public void SetTiles(int layerIndex, GameVector2 position, TextureInfo texture, bool raiseChanged = true)
         {
             if (layerIndex >= 0 && layerIndex < this.layers.Count)
             {
@@ -228,7 +228,7 @@ namespace GameMapEditor
                     {
                         for (int y = 0; y < tmpHeight; y++)
                         {
-                            GameTile tile = this.layers.ElementAt(layerIndex)[xPosition + x, yPosition + y];
+                            GameTile tile = this.layers.ElementAt(layerIndex)[position.X + x, position.Y + y];
                             if (tile != null)
                             {
                                 Rectangle selection = new Rectangle(
@@ -246,8 +246,8 @@ namespace GameMapEditor
                                     tile.Texture = texture.BitmapSelection.Clone(selection, PixelFormat.DontCare);
 
                                     Point location = new Point(
-                                        (selection.Location.X + texture.SelectionLocation.X) / GlobalData.TileSize.Width,
-                                        (selection.Location.Y + texture.SelectionLocation.Y) / GlobalData.TileSize.Height);
+                                        (selection.Location.X + texture.Selection.X) / GlobalData.TileSize.Width,
+                                        (selection.Location.Y + texture.Selection.Y) / GlobalData.TileSize.Height);
 
                                     tile.FormattedIndex = GameTile.EncodeFormattedIndex(location, tilesCount);
                                     tile.TextureIndex = this.RetrieveTextureIndex(texture.Path);
@@ -258,7 +258,7 @@ namespace GameMapEditor
                 }
                 else
                 {
-                    GameTile tile = this.layers.ElementAt(layerIndex)[xPosition, yPosition];
+                    GameTile tile = this.layers.ElementAt(layerIndex)[position.X, position.Y];
                     if (tile != null)
                     {
                         tile.FormattedIndex = GameTile.EMPTY;
@@ -312,6 +312,15 @@ namespace GameMapEditor
                 Serializer.Serialize(file, this);
             }
         }
+
+        // TODO : Non testé
+        /*
+        public MemoryStream SaveToMemoryStream()
+        {
+            MemoryStream stream = new MemoryStream();
+            Serializer.Serialize(stream, this);
+            return stream; 
+        }*/
 
         /// <summary>
         /// Charge la carte de jeu depuis un fichier de données

@@ -16,7 +16,7 @@ namespace GameMapEditor
         [ProtoMember(2)]
         public int Y { get; set; }
 
-        private GameVector2()
+        public GameVector2()
         {
         }
 
@@ -40,6 +40,6 @@ namespace GameMapEditor
             return vector1;
         }
 
-        public override string ToString() => $"[{X}, {Y}]";
+        public override string ToString() => $"GameVector2 [{X}, {Y}]";
     }
 }

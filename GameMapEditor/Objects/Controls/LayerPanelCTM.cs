@@ -37,7 +37,6 @@ namespace GameMapEditor.Objects.Controls
             layerControl.LayerTypeChanged += LayerControl_LayerTypeChanged;
 
             this.Controls.Add(layerControl);
-            this.Refresh();
         }
 
         /// <summary>

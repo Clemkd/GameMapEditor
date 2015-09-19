@@ -13,28 +13,24 @@ namespace GameMapEditor.Objects
         // TODO : Implémenter la limite
         private const int MAX_LENGHT = 6;
 
-        private GameMap currentItem;
-        private Stack<GameMap> undoList;
-        private Stack<GameMap> redoList;
+        private Stack<GameMap> undoStack;
+        private Stack<GameMap> redoStack;
 
         public event EventHandler<UndoRedoEventArgs> UndoHappened;
         public event EventHandler<UndoRedoEventArgs> RedoHappened;
 
         public UndoRedoManager()
         {
-            this.undoList = new Stack<GameMap>();
-            this.redoList = new Stack<GameMap>();
+            this.undoStack = new Stack<GameMap>();
+            this.redoStack = new Stack<GameMap>();
         }
 
         public void Add(GameMap map)
         {
-            if (this.currentItem != null)
-            {
-                this.undoList.Push(map);
-            }
+            GameMap mapCloned = map.Clone();
 
-            this.currentItem = map;
-            this.redoList.Clear();
+            this.undoStack.Push(mapCloned);
+            this.redoStack.Clear();
         }
 
         public void Undo()
@@ -44,9 +40,9 @@ namespace GameMapEditor.Objects
                 throw new IndexOutOfRangeException("Impossible d'effectuer l'opération d'annulation");
             }
 
-            this.redoList.Push(this.currentItem);
-            this.currentItem = this.undoList.Pop();
-            this.UndoHappened?.Invoke(this, new UndoRedoEventArgs(this.currentItem));
+            var value = this.undoStack.Pop();
+            this.redoStack.Push(value);
+            this.UndoHappened?.Invoke(this, new UndoRedoEventArgs(value));
         }
 
         public void Redo()
@@ -56,19 +52,22 @@ namespace GameMapEditor.Objects
                 throw new IndexOutOfRangeException("Impossible d'effectuer l'opération de refonte");
             }
 
-            this.undoList.Push(this.currentItem);
-            this.currentItem = this.redoList.Pop();
-            this.RedoHappened?.Invoke(this, new UndoRedoEventArgs(this.currentItem));
+            var value = this.redoStack.Pop();
+            this.undoStack.Push(value);
+            this.RedoHappened?.Invoke(this, new UndoRedoEventArgs(value));
         }
+
+        // TODO : Debug only
+        public override string ToString() => $"Undo : {this.undoStack.Count}\nRedo : {this.redoStack.Count}";
 
         public bool CanUndo
         {
-            get { return this.undoList.Count > 0; }
+            get { return this.undoStack.Count > 0; }
         }
 
         public bool CanRedo
         {
-            get { return this.redoList.Count > 0; }
+            get { return this.redoStack.Count > 0; }
         }
     }
 }

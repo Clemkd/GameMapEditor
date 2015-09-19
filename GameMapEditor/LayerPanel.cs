@@ -31,7 +31,7 @@ namespace GameMapEditor
             this.layerPanelCTM.Controls.Clear();
         }
 
-        public void LoadLayers(GameMap map)
+        public void LoadLayers(GameMap map, int index = 0)
         {
             this.Clear();
 
@@ -39,7 +39,8 @@ namespace GameMapEditor
             {
                 this.layerPanelCTM.Add(layer);
             }
-            this.layerPanelCTM.SelectedIndex = 0;
+            this.layerPanelCTM.SelectedIndex = index;
+            this.layerPanelCTM.Refresh();
         }
 
         public override void Refresh()
@@ -50,8 +51,8 @@ namespace GameMapEditor
             this.Enabled = mapPanel != null;
             if (mapPanel != null)
             {
-                this.LoadLayers(mapPanel.Map);
-                this.layerPanelCTM.SelectedIndex = mapPanel.SelectedLayerIndex;
+                // TODO : Réviser
+                this.LoadLayers(mapPanel.Map, mapPanel.SelectedLayerIndex);
             }
         }
 

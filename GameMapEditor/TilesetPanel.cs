@@ -16,15 +16,15 @@ namespace GameMapEditor
     {
         private Point tilesetOrigin;
         private Rectangle tilesetSelection;
-        private List<BitmapImageBundle> textures;
+        private List<TextureInfo> textures;
         
-        private BitmapImageBundle currentTexture;
+        private TextureInfo textureInfo;
         private bool isGridActived;
         private Pen gridColor;
         private SolidBrush fillBrush;
 
         public event TilesetChangedEventHandler TilesetChanged;
-        public delegate void TilesetChangedEventHandler(object sender, BitmapImageBundle texture);
+        public delegate void TilesetChangedEventHandler(object sender, TextureInfo texture);
         public event TilesetSelectionEventHandler TilesetSelectionChanged;
         public delegate void TilesetSelectionEventHandler(object sender, Rectangle selection);
 
@@ -43,7 +43,7 @@ namespace GameMapEditor
 
             this.tilesetOrigin = new Point();
             this.tilesetSelection = new Rectangle();
-            this.textures = new List<BitmapImageBundle>();
+            this.textures = new List<TextureInfo>();
             this.CursorColor = new Pen(Color.FromArgb(255, 0, 100, 0), 2);
             this.CursorColor.DashStyle = DashStyle.Dash;
             this.CursorColor.Alignment = PenAlignment.Inset;
@@ -52,16 +52,16 @@ namespace GameMapEditor
             this.IsSelectingTiles = false;
             this.IsGridActived = true;
 
-            this.LoadTilesetFileList();
+            this.TryLoadTilesetFileList();
         }
 
         private void picTileset_Paint(object sender, PaintEventArgs e)
         {
-            if (this.currentTexture != null)
+            if (this.textureInfo != null)
             {
                 e.Graphics.Clear(Color.WhiteSmoke);
             
-                e.Graphics.DrawImage(this.currentTexture.BitmapSource, e.ClipRectangle,
+                e.Graphics.DrawImage(this.textureInfo.BitmapSource, e.ClipRectangle,
                     this.tilesetOrigin.X,
                     this.tilesetOrigin.Y,
                     e.ClipRectangle.Width,
@@ -84,10 +84,10 @@ namespace GameMapEditor
 
         private void picTileset_MouseDown(object sender, MouseEventArgs e)
         {
-            if (this.currentTexture != null)
+            if (this.textureInfo != null)
             {
                 Point pt = new Point(e.Location.X + this.TilesetOrigin.X, e.Location.Y + this.TilesetOrigin.Y);
-                Rectangle rect = new Rectangle(Point.Empty, this.TilesetImage.BitmapSource.Size);
+                Rectangle rect = new Rectangle(Point.Empty, this.TilesetInfo.BitmapSource.Size);
 
                 if (rect.Contains(pt))
                 {
@@ -104,10 +104,10 @@ namespace GameMapEditor
 
         private void picTileset_MouseMove(object sender, MouseEventArgs e)
         {
-            if (this.currentTexture != null)
+            if (this.textureInfo != null)
             {
                 Point pt = new Point(e.Location.X + this.TilesetOrigin.X, e.Location.Y + this.TilesetOrigin.Y);
-                Rectangle rect = new Rectangle(Point.Empty, this.TilesetImage.BitmapSource.Size);
+                Rectangle rect = new Rectangle(Point.Empty, this.TilesetInfo.BitmapSource.Size);
 
                 if (rect.Contains(pt) && this.IsSelectingTiles && pt.X > this.TilesetSelection.Location.X && pt.Y > this.TilesetSelection.Location.Y)
                 {
@@ -116,23 +116,23 @@ namespace GameMapEditor
 
                     this.tilesetSelection.Size = new Size(tmpWidth * GlobalData.TileSize.Width, tmpHeight * GlobalData.TileSize.Height);
                     this.picTileset.Refresh();
-
                 }
             }
         }
 
         private void picTileset_MouseUp(object sender, MouseEventArgs e)
         {
-            if (this.currentTexture != null)
+            if (this.textureInfo != null)
             {
                 this.IsSelectingTiles = false;
-                if (this.tilesetSelection.Size.Height + this.tilesetSelection.Location.Y > this.currentTexture.BitmapSource.Height)
+                if (this.tilesetSelection.Size.Height + this.tilesetSelection.Location.Y > this.textureInfo.BitmapSource.Height)
                 {
-                    this.tilesetSelection.Height -= this.tilesetSelection.Size.Height + this.tilesetSelection.Location.Y - this.currentTexture.BitmapSource.Height;
+                    this.tilesetSelection.Height -= this.tilesetSelection.Size.Height + this.tilesetSelection.Location.Y - this.textureInfo.BitmapSource.Height;
                 }
-                this.currentTexture.SelectionLocation = this.TilesetSelection.Location;
-                this.currentTexture.BitmapSelection = this.currentTexture.BitmapSource.Clone(this.tilesetSelection, PixelFormat.DontCare);
-                this.RaiseTilesetSelectionChangedEvent(this.currentTexture);
+
+                this.textureInfo.Selection = this.TilesetSelection.Location;
+                this.textureInfo.BitmapSelection = this.textureInfo.BitmapSource.Clone(this.tilesetSelection, PixelFormat.DontCare);
+                this.RaiseTilesetSelectionChangedEvent(this.textureInfo);
             }
         }
 
@@ -157,8 +157,8 @@ namespace GameMapEditor
         {
             if (this.textures.Count > this.comboTilesetFileSelecter.SelectedIndex)
             {
-                this.currentTexture = this.textures[this.comboTilesetFileSelecter.SelectedIndex];
-                this.RaiseTilesetChangedEvent(this.currentTexture);
+                this.textureInfo = this.textures[this.comboTilesetFileSelecter.SelectedIndex];
+                this.RaiseTilesetChangedEvent(this.textureInfo);
                 this.RefreshScrollComponents();
             }
         }
@@ -168,7 +168,7 @@ namespace GameMapEditor
             this.IsGridActived = !this.IsGridActived;
         }
 
-        private void RaiseTilesetChangedEvent(BitmapImageBundle texture)
+        private void RaiseTilesetChangedEvent(TextureInfo texture)
         {
             if(this.TilesetChanged != null)
             {
@@ -176,7 +176,7 @@ namespace GameMapEditor
             }
         }
 
-        private void RaiseTilesetSelectionChangedEvent(BitmapImageBundle texture)
+        private void RaiseTilesetSelectionChangedEvent(TextureInfo texture)
         {
             if(this.TilesetSelectionChanged != null)
             {
@@ -186,14 +186,17 @@ namespace GameMapEditor
         #endregion
 
         #region Methods
-        private void LoadTilesetFileList()
+        /// <summary>
+        /// Essai de charger la liste des fichiers de textures présents dans le dossier de ressources s'il existe, sinon créer le dossier
+        /// </summary>
+        private void TryLoadTilesetFileList()
         {
             if (Directory.Exists(GlobalData.TEXTURES_DIRECTORY_PATH))
             {
                 string[] tilesetFiles = Directory.GetFiles(GlobalData.TEXTURES_DIRECTORY_PATH, "*.png", SearchOption.AllDirectories);
                 foreach (string file in tilesetFiles)
                 {
-                    this.textures.Add(new BitmapImageBundle(file, Bitmap.FromFile(file) as Bitmap));
+                    this.textures.Add(new TextureInfo(file, Image.FromFile(file) as Bitmap));
                     this.comboTilesetFileSelecter.Items.Add(file);
                 }
             }
@@ -210,25 +213,33 @@ namespace GameMapEditor
         /// <param name="scrollY">Ancienne valeur de la scrollbar verticale</param>
         private void RefreshScrollComponents(int scrollX = 0, int scrollY = 0)
         {
-            if (this.currentTexture != null)
+            if (this.textureInfo != null)
             {
+                this.vPicTilesetScrollBar.Enabled = this.picTileset.Size.Height < this.textureInfo.BitmapSource.Size.Height;
+                this.hPicTilesetScrollBar.Enabled = this.picTileset.Size.Width < this.textureInfo.BitmapSource.Size.Width;
+
                 this.vPicTilesetScrollBar.Minimum = 0;
-                this.vPicTilesetScrollBar.SmallChange = this.currentTexture.BitmapSource.Size.Height / 20;
-                this.vPicTilesetScrollBar.LargeChange = this.currentTexture.BitmapSource.Size.Height / 5;
-                int scrollHeightValue = this.currentTexture.BitmapSource.Size.Height + 50 - this.picTileset.Size.Height;
+                this.vPicTilesetScrollBar.SmallChange = this.textureInfo.BitmapSource.Size.Height / 20;
+                this.vPicTilesetScrollBar.LargeChange = this.textureInfo.BitmapSource.Size.Height / 5;
+                int scrollHeightValue = this.textureInfo.BitmapSource.Size.Height + 50 - this.picTileset.Size.Height;
                 this.vPicTilesetScrollBar.Maximum = scrollHeightValue > 0 ? scrollHeightValue : 1;
                 this.vPicTilesetScrollBar.Maximum += this.vPicTilesetScrollBar.LargeChange;
                 this.vPicTilesetScrollBar.Value = scrollY < this.vPicTilesetScrollBar.Maximum ? scrollY : this.vPicTilesetScrollBar.Maximum;
 
                 this.hPicTilesetScrollBar.Minimum = 0;
-                this.hPicTilesetScrollBar.SmallChange = this.currentTexture.BitmapSource.Size.Width / 20;
-                this.hPicTilesetScrollBar.LargeChange = this.currentTexture.BitmapSource.Size.Width / 5;
-                int scrollWidthValue = this.currentTexture.BitmapSource.Size.Width + 50 - this.picTileset.Size.Width;
+                this.hPicTilesetScrollBar.SmallChange = this.textureInfo.BitmapSource.Size.Width / 20;
+                this.hPicTilesetScrollBar.LargeChange = this.textureInfo.BitmapSource.Size.Width / 5;
+                int scrollWidthValue = this.textureInfo.BitmapSource.Size.Width + 50 - this.picTileset.Size.Width;
                 this.hPicTilesetScrollBar.Maximum = scrollWidthValue > 0 ? scrollWidthValue : 1;
                 this.hPicTilesetScrollBar.Maximum += this.hPicTilesetScrollBar.LargeChange;
                 this.hPicTilesetScrollBar.Value = scrollX < this.hPicTilesetScrollBar.Maximum ? scrollX : this.hPicTilesetScrollBar.Maximum;
 
                 this.picTileset.Refresh();
+            }
+            else
+            {
+                this.vPicTilesetScrollBar.Enabled = false;
+                this.hPicTilesetScrollBar.Enabled = false;
             }
         }
 
@@ -241,8 +252,8 @@ namespace GameMapEditor
         {
             if (!state) return;
 
-            int tmpWidth = this.currentTexture.BitmapSource.Width / GlobalData.TileSize.Width;
-            int tmpHeight = this.currentTexture.BitmapSource.Height / GlobalData.TileSize.Height + 1;
+            int tmpWidth = this.textureInfo.BitmapSource.Width / GlobalData.TileSize.Width;
+            int tmpHeight = this.textureInfo.BitmapSource.Height / GlobalData.TileSize.Height + 1;
 
             for (int x = 0; x < tmpWidth + 1; x++)
                 e.Graphics.DrawLine(this.GridColor,
@@ -283,9 +294,9 @@ namespace GameMapEditor
             get { return this.tilesetSelection; }
         }
 
-        public BitmapImageBundle TilesetImage
+        public TextureInfo TilesetInfo
         {
-            get { return this.currentTexture; }
+            get { return this.textureInfo; }
         }
 
         public bool IsGridActived

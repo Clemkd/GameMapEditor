@@ -47,9 +47,9 @@ namespace GameMapEditor
             LayerPanel.Instance.Refresh();
         }
 
-        private void TilesetPanel_TilesetChanged(object sender, BitmapImageBundle texture)
+        private void TilesetPanel_TilesetChanged(object sender, TextureInfo texture)
         {
-            MapPanels.ForEach(x => x.Texture = texture);
+            MapPanels.ForEach(x => x.TextureInfo = texture);
         }
 
         private void TilesetPanel_TilesetSelectionChanged(object sender, Rectangle selection)
@@ -65,7 +65,14 @@ namespace GameMapEditor
 
         private void NewMapFrame_Validated(string mapName)
         {
-            new MapPanel(this.DockPanel, MapPanels, TilesetPanel.Instance.TilesetImage, TilesetPanel.Instance.TilesetSelection, mapName);
+            MapPanel mapPanel = new MapPanel(TilesetPanel.Instance.TilesetInfo, TilesetPanel.Instance.TilesetSelection, mapName);
+            this.DockPanel.SuspendLayout();
+            mapPanel.Show(this.DockPanel);
+            mapPanel.DockState = DockState.Document;
+            mapPanel.Dock = DockStyle.Fill;
+            this.DockPanel.ResumeLayout(true, true);
+
+            MapPanels.Add(mapPanel);
         }
 
         private void nouveauToolStripMenuItem_Click(object sender, EventArgs e)
@@ -138,7 +145,14 @@ namespace GameMapEditor
 
                     GameMap map = await GameMap.Load(openFileDialog.FileName);
                     
-                    new MapPanel(this.DockPanel, MapPanels, TilesetPanel.Instance.TilesetImage, TilesetPanel.Instance.TilesetSelection, map);
+                    MapPanel mapPanel = new MapPanel(TilesetPanel.Instance.TilesetInfo, TilesetPanel.Instance.TilesetSelection, map);
+                    this.DockPanel.SuspendLayout();
+                    mapPanel.Show(this.DockPanel);
+                    mapPanel.DockState = DockState.Document;
+                    mapPanel.Dock = DockStyle.Fill;
+                    this.DockPanel.ResumeLayout(true, true);
+
+                    MapPanels.Add(mapPanel);
 
                     LayerPanel.Instance.LoadLayers(map);
                 }
@@ -255,6 +269,8 @@ namespace GameMapEditor
             if (mapPanel != null && mapPanel.CanUndo)
             {
                 mapPanel.Undo();
+                this.toolStripButtonRedo.Enabled = mapPanel.CanRedo;
+                this.toolStripButtonUndo.Enabled = mapPanel.CanUndo;
             }
         }
 
@@ -264,6 +280,8 @@ namespace GameMapEditor
             if (mapPanel != null && mapPanel.CanRedo)
             {
                 mapPanel.Redo();
+                this.toolStripButtonRedo.Enabled = mapPanel.CanRedo;
+                this.toolStripButtonUndo.Enabled = mapPanel.CanUndo;
             }
         }
     }

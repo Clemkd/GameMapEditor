@@ -120,7 +120,7 @@
     <Compile Include="Frames\MapPanelFrame.Designer.cs">
       <DependentUpon>MapPanelFrame.cs</DependentUpon>
     </Compile>
-    <Compile Include="Objects\BitmapImage.cs" />
+    <Compile Include="Objects\TextureInfo.cs" />
     <Compile Include="Objects\ErrorLog.cs" />
     <Compile Include="Objects\GameMap.cs" />
     <Compile Include="Objects\GameMapLayer.cs" />
