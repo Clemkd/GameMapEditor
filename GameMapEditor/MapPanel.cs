@@ -1,4 +1,6 @@
 ﻿using GameMapEditor.Objects;
+using GameMapEditor.Objects.Enumerations;
+using GameMapEditor.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,11 +19,14 @@ namespace GameMapEditor
         #region Fields
         private const string UNSAVED_DOCUMENT_MARK = "*";
         private static new GameVector2 Margin = new GameVector2(100, 100);
+        private static Pen GridPenColor = new Pen(Color.FromArgb(255, 130, 130, 130), 1);
+        private static Cursor EraseCursor = new Cursor(Resources.eraser.GetHicon());
 
         private GameVector2 mapOrigin;
         private bool isGridActived;
         private bool isTilesetSelectionShowProcessActived;
         private bool isSaved;
+        private GameEditorState state;
         
         private Pen gridColor;
         private Point mouseLocation;
@@ -63,7 +68,8 @@ namespace GameMapEditor
             this.IsGridActived = true;
             this.IsSaved = false;
             this.IsTilesetSelectionShowed = true;
-            this.gridColor = new Pen(Color.FromArgb(255, 130, 130, 130), 1);
+            this.State = GameEditorState.Default;
+            this.gridColor = GridPenColor;
             this.mouseLocation = new Point();
             this.location = new GameVector2();
             this.oldLocation = new Point();
@@ -133,9 +139,20 @@ namespace GameMapEditor
             this.mouseReleased = false;
 
             if (e.Button == MouseButtons.Left)
-                this.gameMap.SetTiles(this.selectedLayerIndex, this.location, this.texture);
-            else if(e.Button == MouseButtons.Right)
+            {
+                if (this.State == GameEditorState.Erase)
+                {
+                    this.gameMap.SetTiles(this.selectedLayerIndex, this.location, null);
+                }
+                else if(this.texture != null)
+                {
+                    this.gameMap.SetTiles(this.selectedLayerIndex, this.location, this.texture);
+                }
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
                 this.gameMap.SetTiles(this.selectedLayerIndex, this.location, null);
+            }
         }
 
         private void picMap_MouseMove(object sender, MouseEventArgs e)
@@ -147,12 +164,19 @@ namespace GameMapEditor
             // s'il existe une selection du tileset et une texture courante pour le tileset
             if (oldLocation.X != location.X || oldLocation.Y != location.Y)
             {
-                if (e.Button == MouseButtons.Left && this.tilesetSelection != null && this.texture != null)
+                if (e.Button == MouseButtons.Left)
                 {
                     this.oldLocation.X = this.location.X;
                     this.oldLocation.Y = this.location.Y;
 
-                    this.gameMap.SetTiles(this.selectedLayerIndex, this.location, this.texture);
+                    if (this.State == GameEditorState.Erase)
+                    {
+                        this.gameMap.SetTiles(this.selectedLayerIndex, this.location, null);
+                    }
+                    else if (this.texture != null)
+                    {
+                        this.gameMap.SetTiles(this.selectedLayerIndex, this.location, this.texture);
+                    }
                 }
                 else if(e.Button == MouseButtons.Right)
                 {
@@ -266,6 +290,49 @@ namespace GameMapEditor
         }
 
         /// <summary>
+        /// Dessine la selection du tileset si l'état du document est par défaut, sinon dessine l'effet de l'état courant du document
+        /// </summary>
+        /// <param name="state">L'état de dessin</param>
+        /// <param name="e">Les données de dessin</param>
+        private void DrawSelection(bool state, PaintEventArgs e)
+        {
+            if (state)
+            {
+                GameVector2 location = this.GetTilePosition(this.mouseLocation.X + this.mapOrigin.X, this.mouseLocation.Y + this.mapOrigin.Y);
+
+                if (this.State == GameEditorState.Default)
+                {
+                    if (this.tilesetSelection == null && this.texture == null)
+                    {
+                        ImageAttributes attributes = new ImageAttributes();
+                        attributes.SetOpacity(0.5f);
+
+                        e.Graphics.DrawImage(this.texture.BitmapSource,
+                            new Rectangle(
+                                location.X * GlobalData.TileSize.Width - this.mapOrigin.X,
+                                location.Y * GlobalData.TileSize.Height - this.mapOrigin.Y,
+                                this.tilesetSelection.Width,
+                                this.tilesetSelection.Height),
+                                this.tilesetSelection.Location.X,
+                                this.tilesetSelection.Location.Y,
+                                this.tilesetSelection.Width,
+                                this.tilesetSelection.Height,
+                                GraphicsUnit.Pixel,
+                                attributes);
+                    }
+                }
+                else if (this.State == GameEditorState.Erase)
+                {
+                    e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(100, 255, 45, 45)),
+                        location.X * GlobalData.TileSize.Width - this.mapOrigin.X,
+                        location.Y * GlobalData.TileSize.Height - this.mapOrigin.Y,
+                        GlobalData.TileSize.Width,
+                        GlobalData.TileSize.Height);
+                }
+            }
+        }
+
+        /// <summary>
         /// Obtient la position relative en nombre de tiles depuis la position absolue en pixel
         /// </summary>
         /// <param name="absoluteX">La position absolue verticale</param>
@@ -289,36 +356,7 @@ namespace GameMapEditor
         }
 
         /// <summary>
-        /// Dessine la selection du tileset
-        /// </summary>
-        /// <param name="state">L'état de dessin</param>
-        /// <param name="e">Les données de dessin</param>
-        private void DrawSelection(bool state, PaintEventArgs e)
-        {
-            if (!state || this.tilesetSelection == null || this.texture == null)
-                return;
-
-            GameVector2 location = this.GetTilePosition(this.mouseLocation.X + this.mapOrigin.X, this.mouseLocation.Y + this.mapOrigin.Y);
-
-            ImageAttributes attributes = new ImageAttributes();
-            attributes.SetOpacity(0.5f);
-
-            e.Graphics.DrawImage(this.texture.BitmapSource,
-                new Rectangle(
-                    location.X * GlobalData.TileSize.Width - this.mapOrigin.X,
-                    location.Y * GlobalData.TileSize.Height - this.mapOrigin.Y,
-                    this.tilesetSelection.Width,
-                    this.tilesetSelection.Height),
-                    this.tilesetSelection.Location.X,
-                    this.tilesetSelection.Location.Y,
-                    this.tilesetSelection.Width,
-                    this.tilesetSelection.Height,
-                    GraphicsUnit.Pixel,
-                    attributes);
-        }
-
-        /// <summary>
-        /// Met à jour les données des scrollbars
+        /// Met à jour les données des scrollbars du document
         /// </summary>
         private void RefreshScrollComponents()
         {
@@ -356,6 +394,9 @@ namespace GameMapEditor
             this.picMap.Refresh();
         }
 
+        /// <summary>
+        /// Libère les ressources et liens employés par le document
+        /// </summary>
         public new void Dispose()
         {
             this.Map.MapChanged -= GameMap_MapChanged;
@@ -365,6 +406,9 @@ namespace GameMapEditor
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Obtient ou définit l'état d'affichage de la grille
+        /// </summary>
         public bool IsGridActived
         {
             get { return this.isGridActived; }
@@ -376,9 +420,12 @@ namespace GameMapEditor
             }
         }
 
+        /// <summary>
+        /// Obtient ou définit la couleur de la grille
+        /// </summary>
         public Pen GridColor
         {
-            get { return this.gridColor ?? Pens.Black; }
+            get { return this.gridColor ?? GridPenColor; }
             set { this.gridColor = value; this.picMap.Refresh(); }
         }
 
@@ -407,6 +454,20 @@ namespace GameMapEditor
         {
             get { return this.selectedLayerIndex; }
             set { this.selectedLayerIndex = value; }
+        }
+
+        /// <summary>
+        /// Obtient ou définit l'état actuel du document
+        /// </summary>
+        public GameEditorState State
+        {
+            get { return this.state; }
+            set
+            {
+                this.state = value;
+                this.Cursor = value == GameEditorState.Erase ? EraseCursor : Cursors.Default;
+
+            }
         }
 
         public GameMap Map

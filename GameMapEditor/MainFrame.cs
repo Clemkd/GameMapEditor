@@ -1,6 +1,7 @@
 ﻿using GameMapEditor.Frames;
 using GameMapEditor.Objects;
 using GameMapEditor.Objects.Controls;
+using GameMapEditor.Objects.Enumerations;
 using GameMapEditor.Properties;
 using System;
 using System.Collections.Generic;
@@ -70,6 +71,7 @@ namespace GameMapEditor
             mapPanel.Show(this.DockPanel);
             mapPanel.DockState = DockState.Document;
             mapPanel.Dock = DockStyle.Fill;
+            mapPanel.State = this.toolStripButtonErase.Checked ? GameEditorState.Erase : GameEditorState.Default;
             this.DockPanel.ResumeLayout(true, true);
 
             MapPanels.Add(mapPanel);
@@ -150,6 +152,7 @@ namespace GameMapEditor
                     mapPanel.Show(this.DockPanel);
                     mapPanel.DockState = DockState.Document;
                     mapPanel.Dock = DockStyle.Fill;
+                    mapPanel.State = this.toolStripButtonErase.Checked ? GameEditorState.Erase : GameEditorState.Default;
                     this.DockPanel.ResumeLayout(true, true);
 
                     MapPanels.Add(mapPanel);
@@ -258,9 +261,18 @@ namespace GameMapEditor
 
         private void toolStripButtonErase_Click(object sender, EventArgs e)
         {
-            MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
-            if(mapPanel != null)
-                mapPanel.Cursor = new Cursor(Resources.eraser.GetHicon());
+            this.toolStripButtonErase.Checked = !this.toolStripButtonErase.Checked;
+            foreach (MapPanel mapPanel in this.DockPanel.Documents)
+            {
+                if (this.toolStripButtonErase.Checked)
+                {
+                    mapPanel.State = GameEditorState.Erase;
+                }
+                else
+                {
+                    mapPanel.State = GameEditorState.Default;
+                }
+            }
         }
 
         private void toolStripButtonUndo_Click(object sender, EventArgs e)

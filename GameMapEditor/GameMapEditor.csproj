@@ -96,6 +96,7 @@
     <Compile Include="Objects\Controls\LayerPanelCTM.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Objects\Enumerations\GameEditorState.cs" />
     <Compile Include="Objects\Extensions.cs" />
     <Compile Include="Objects\GameMap.Data.cs" />
     <Compile Include="GlobalData.cs" />

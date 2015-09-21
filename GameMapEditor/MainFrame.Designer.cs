@@ -17,9 +17,10 @@ namespace GameMapEditor
         {
             if (disposing && (components != null))
             {
-                components.Dispose();
-                
+                this.components.Dispose();
             }
+
+            this.consoleSW.Dispose();
 
             TilesetPanel.Instance.TilesetSelectionChanged -= TilesetPanel_TilesetSelectionChanged;
             TilesetPanel.Instance.TilesetChanged -= TilesetPanel_TilesetChanged;
