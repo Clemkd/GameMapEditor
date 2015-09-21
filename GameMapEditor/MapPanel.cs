@@ -64,6 +64,7 @@ namespace GameMapEditor
         private void Initialize()
         {
             this.InitializeComponent();
+            this.HideOnClose = false;
             this.mapOrigin = new GameVector2();
             this.IsGridActived = true;
             this.IsSaved = false;
@@ -272,21 +273,22 @@ namespace GameMapEditor
         /// <param name="e">Les données de dessin</param>
         private void DrawGrid(bool state, PaintEventArgs e)
         {
-            if (!state) return;
+            if (state)
+            {
+                for (int x = 0; x < GlobalData.MapSize.Width + 1; x++)
+                    e.Graphics.DrawLine(this.GridColor,
+                        x * GlobalData.TileSize.Width - this.mapOrigin.X,
+                        -this.mapOrigin.Y,
+                        x * GlobalData.TileSize.Width - this.mapOrigin.X,
+                        GlobalData.MapSize.Height * GlobalData.TileSize.Height - this.mapOrigin.Y);
 
-            for (int x = 0; x < GlobalData.MapSize.Width + 1; x++)
-                e.Graphics.DrawLine(this.GridColor,
-                    x * GlobalData.TileSize.Width - this.mapOrigin.X,
-                    -this.mapOrigin.Y,
-                    x * GlobalData.TileSize.Width - this.mapOrigin.X,
-                    GlobalData.MapSize.Height * GlobalData.TileSize.Height - this.mapOrigin.Y);
-
-            for (int y = 0; y < GlobalData.MapSize.Height + 1; y++)
-                e.Graphics.DrawLine(this.GridColor,
-                    -this.mapOrigin.X,
-                    y * GlobalData.TileSize.Height - this.mapOrigin.Y,
-                    GlobalData.MapSize.Width * GlobalData.TileSize.Width - this.mapOrigin.X,
-                    y * GlobalData.TileSize.Height - this.mapOrigin.Y);
+                for (int y = 0; y < GlobalData.MapSize.Height + 1; y++)
+                    e.Graphics.DrawLine(this.GridColor,
+                        -this.mapOrigin.X,
+                        y * GlobalData.TileSize.Height - this.mapOrigin.Y,
+                        GlobalData.MapSize.Width * GlobalData.TileSize.Width - this.mapOrigin.X,
+                        y * GlobalData.TileSize.Height - this.mapOrigin.Y);
+            }
         }
 
         /// <summary>
@@ -400,8 +402,13 @@ namespace GameMapEditor
         public new void Dispose()
         {
             this.Map.MapChanged -= GameMap_MapChanged;
-            this.gridColor.Dispose();
             base.Dispose(true);
+        }
+
+        private void MapPanel_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Dispose();
+            this.Close();
         }
         #endregion
 
@@ -489,7 +496,6 @@ namespace GameMapEditor
         public new string Name
         {
             get { return this.Map.Name; }
-            private set { this.Name = value; }
         }
 
         public bool CanUndo

@@ -112,6 +112,7 @@ namespace GameMapEditor
             this.MinimumSize = new System.Drawing.Size(300, 300);
             this.Text = "Map";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MapPanel_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MapPanel_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).EndInit();
             this.ToolStrip.ResumeLayout(false);
             this.ToolStrip.PerformLayout();
