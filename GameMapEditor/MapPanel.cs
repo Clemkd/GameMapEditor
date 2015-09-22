@@ -31,7 +31,6 @@ namespace GameMapEditor
         private Pen gridColor;
         private Point mouseLocation;
 
-        private Rectangle tilesetSelection;
         private TextureInfo texture;
         private int selectedLayerIndex;
 
@@ -43,21 +42,19 @@ namespace GameMapEditor
         private bool mouseReleased;
         #endregion
 
-        public MapPanel(TextureInfo tilesetInfo, Rectangle tilesetSelection, string mapName)
+        public MapPanel(TextureInfo tilesetInfo, string mapName)
         {
             this.Initialize();
 
             this.TextureInfo = tilesetInfo;
-            this.TilesetSelection = tilesetSelection;
             this.Create(mapName);
         }
 
-        public MapPanel(TextureInfo tilesetImage, Rectangle tilesetSelection, GameMap map)
+        public MapPanel(TextureInfo tilesetImage, GameMap map)
         {
             this.Initialize();
 
             this.TextureInfo = tilesetImage;
-            this.TilesetSelection = tilesetSelection;
             this.Open(map);
         }
 
@@ -139,20 +136,20 @@ namespace GameMapEditor
             }
             this.mouseReleased = false;
 
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Right || (e.Button == MouseButtons.Left && this.State == GameEditorState.Erase))
             {
-                if (this.State == GameEditorState.Erase)
-                {
-                    this.gameMap.SetTiles(this.selectedLayerIndex, this.location, null);
-                }
-                else if(this.texture != null)
+                this.gameMap.SetTiles(this.selectedLayerIndex, this.location, null);
+                this.Cursor = EraseCursor;
+            }
+            else if (e.Button == MouseButtons.Left)
+            {
+                if (this.state != GameEditorState.Erase)
+                    this.Cursor = Cursors.Default;
+
+                if (this.texture?.BitmapSelection != null)
                 {
                     this.gameMap.SetTiles(this.selectedLayerIndex, this.location, this.texture);
                 }
-            }
-            else if (e.Button == MouseButtons.Right)
-            {
-                this.gameMap.SetTiles(this.selectedLayerIndex, this.location, null);
             }
         }
 
@@ -161,30 +158,25 @@ namespace GameMapEditor
             this.mouseLocation = e.Location;
             this.location = this.GetTilePosition(e.Location.X + this.mapOrigin.X, e.Location.Y + this.mapOrigin.Y);
 
-            // Si la position de la souris à évolué (ref : tile) et
-            // s'il existe une selection du tileset et une texture courante pour le tileset
+            // Si la position de la souris à évolué (ref : tile)
             if (oldLocation.X != location.X || oldLocation.Y != location.Y)
             {
-                if (e.Button == MouseButtons.Left)
-                {
-                    this.oldLocation.X = this.location.X;
-                    this.oldLocation.Y = this.location.Y;
+                this.oldLocation.X = this.location.X;
+                this.oldLocation.Y = this.location.Y;
 
-                    if (this.State == GameEditorState.Erase)
-                    {
-                        this.gameMap.SetTiles(this.selectedLayerIndex, this.location, null);
-                    }
-                    else if (this.texture != null)
-                    {
-                        this.gameMap.SetTiles(this.selectedLayerIndex, this.location, this.texture);
-                    }
-                }
-                else if(e.Button == MouseButtons.Right)
+                if (e.Button == MouseButtons.Right || (e.Button == MouseButtons.Left && this.State == GameEditorState.Erase))
                 {
-                    this.oldLocation.X = this.location.X;
-                    this.oldLocation.Y = this.location.Y;
-
                     this.gameMap.SetTiles(this.selectedLayerIndex, this.location, null);
+                    this.Cursor = EraseCursor;
+                }
+                else if (e.Button == MouseButtons.Left)
+                {
+                    if(this.state != GameEditorState.Erase)
+                        this.Cursor = Cursors.Default;
+                    if (this.TextureInfo?.BitmapSelection != null)
+                    {
+                        this.gameMap.SetTiles(this.selectedLayerIndex, this.location, this.TextureInfo);
+                    }
                 }
             }
 
@@ -193,6 +185,9 @@ namespace GameMapEditor
 
         private void picMap_MouseUp(object sender, MouseEventArgs e)
         {
+            if (this.state != GameEditorState.Erase)
+                this.Cursor = Cursors.Default;
+
             // Save gameMap state (Undo / Redo list)
             this.mouseReleased = true;
             
@@ -304,26 +299,55 @@ namespace GameMapEditor
 
                 if (this.State == GameEditorState.Default)
                 {
-                    if (this.tilesetSelection == null && this.texture == null)
+                    if (this.texture?.BitmapSelection != null)
                     {
                         ImageAttributes attributes = new ImageAttributes();
                         attributes.SetOpacity(0.5f);
 
-                        e.Graphics.DrawImage(this.texture.BitmapSource,
+                        /*************** Affichage uniquement à l'interieur de la carte *****************/
+                        /*int limitX = this.texture.BitmapSelection.Width / GlobalData.TileSize.Width;
+                        int limitY = this.texture.BitmapSelection.Height / GlobalData.TileSize.Height;
+
+                        for (int x = 0; x < limitX; x++)
+                        {
+                            for (int y = 0; y < limitY; y++)
+                            {
+                                if (location.X + x >= 0 && location.X + x < GlobalData.MapSize.Width &&
+                                    location.Y + y >= 0 && location.Y + y < GlobalData.MapSize.Height)
+                                {
+                                    e.Graphics.DrawImage(this.texture.BitmapSelection,
+                                        new Rectangle(
+                                            (location.X + x) * GlobalData.TileSize.Width - this.mapOrigin.X,
+                                            (location.Y + y) * GlobalData.TileSize.Height - this.mapOrigin.Y,
+                                            GlobalData.TileSize.Width,
+                                            GlobalData.TileSize.Height),
+                                                x * GlobalData.TileSize.Width,
+                                                y * GlobalData.TileSize.Height,
+                                                GlobalData.TileSize.Width,
+                                                GlobalData.TileSize.Height,
+                                                GraphicsUnit.Pixel,
+                                                attributes);
+                                }
+                            }
+                        }*/
+
+                        /*************** Affichage possible à l'exterieur de la carte *****************/
+                        e.Graphics.DrawImage(this.texture.BitmapSelection,
                             new Rectangle(
                                 location.X * GlobalData.TileSize.Width - this.mapOrigin.X,
                                 location.Y * GlobalData.TileSize.Height - this.mapOrigin.Y,
-                                this.tilesetSelection.Width,
-                                this.tilesetSelection.Height),
-                                this.tilesetSelection.Location.X,
-                                this.tilesetSelection.Location.Y,
-                                this.tilesetSelection.Width,
-                                this.tilesetSelection.Height,
-                                GraphicsUnit.Pixel,
-                                attributes);
+                                this.texture.BitmapSelection.Width,
+                                this.texture.BitmapSelection.Height),
+                                    0, 0,
+                                    this.texture.BitmapSelection.Width,
+                                    this.texture.BitmapSelection.Height,
+                                    GraphicsUnit.Pixel,
+                                    attributes);
                     }
                 }
-                else if (this.State == GameEditorState.Erase)
+                else if (this.State == GameEditorState.Erase && 
+                    location.X >= 0 && location.X < GlobalData.MapSize.Width &&
+                    location.Y >= 0 && location.Y < GlobalData.MapSize.Height)
                 {
                     e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(100, 255, 45, 45)),
                         location.X * GlobalData.TileSize.Width - this.mapOrigin.X,
@@ -447,13 +471,9 @@ namespace GameMapEditor
             }
         }
 
-        public Rectangle TilesetSelection
-        {
-            set { this.tilesetSelection = value; }
-        }
-
         public TextureInfo TextureInfo
         {
+            get { return this.texture; }
             set { this.texture = value; }
         }
 

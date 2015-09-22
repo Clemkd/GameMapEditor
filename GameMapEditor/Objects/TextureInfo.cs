@@ -9,10 +9,16 @@ namespace GameMapEditor.Objects
 {
     public class TextureInfo
     {
+        /// <summary>
+        /// Le rectangle définissant la zone de selection du tileset
+        /// </summary>
+        public Rectangle Selection;
+
         public TextureInfo(string path, Bitmap bitmap)
         {
             this.Path = path;
             this.BitmapSource = bitmap;
+            this.Selection = new Rectangle();
         }
 
         /// <summary>
@@ -37,15 +43,6 @@ namespace GameMapEditor.Objects
         /// La texture correspondant à la selection du tileset
         /// </summary>
         public Bitmap BitmapSelection
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Le rectangle définissant la zone de selection du tileset
-        /// </summary>
-        public Point Selection
         {
             get;
             set;

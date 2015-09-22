@@ -15,7 +15,6 @@ namespace GameMapEditor
     public partial class TilesetPanel : DockContent
     {
         private Point tilesetOrigin;
-        private Rectangle tilesetSelection;
         private List<TextureInfo> textures;
         
         private TextureInfo textureInfo;
@@ -42,7 +41,6 @@ namespace GameMapEditor
             this.InitializeComponent();
 
             this.tilesetOrigin = new Point();
-            this.tilesetSelection = new Rectangle();
             this.textures = new List<TextureInfo>();
             this.CursorColor = new Pen(Color.FromArgb(255, 0, 100, 0), 2);
             this.CursorColor.DashStyle = DashStyle.Dash;
@@ -71,10 +69,10 @@ namespace GameMapEditor
                 this.DrawGrid(this.isGridActived, e);
 
                 Rectangle selection = new Rectangle(
-                    this.TilesetSelection.Location.X - this.tilesetOrigin.X,
-                    this.tilesetSelection.Location.Y - this.tilesetOrigin.Y,
-                    this.tilesetSelection.Size.Width,
-                    this.tilesetSelection.Size.Height);
+                    this.textureInfo.Selection.Location.X - this.tilesetOrigin.X,
+                    this.textureInfo.Selection.Location.Y - this.tilesetOrigin.Y,
+                    this.textureInfo.Selection.Size.Width,
+                    this.textureInfo.Selection.Size.Height);
 
                 e.Graphics.FillRectangle(fillBrush, selection);
                 e.Graphics.DrawRectangle(CursorColor, selection);
@@ -94,8 +92,8 @@ namespace GameMapEditor
                     pt.X = (pt.X / GlobalData.TileSize.Width) * GlobalData.TileSize.Width;
                     pt.Y = (pt.Y / GlobalData.TileSize.Height) * GlobalData.TileSize.Height;
 
-                    this.tilesetSelection.Location = pt;
-                    this.tilesetSelection.Size = GlobalData.TileSize;
+                    this.textureInfo.Selection.Location = pt;
+                    this.textureInfo.Selection.Size = GlobalData.TileSize;
                     this.IsSelectingTiles = true;
                     this.picTileset.Refresh();
                 }
@@ -109,12 +107,12 @@ namespace GameMapEditor
                 Point pt = new Point(e.Location.X + this.TilesetOrigin.X, e.Location.Y + this.TilesetOrigin.Y);
                 Rectangle rect = new Rectangle(Point.Empty, this.TilesetInfo.BitmapSource.Size);
 
-                if (rect.Contains(pt) && this.IsSelectingTiles && pt.X > this.TilesetSelection.Location.X && pt.Y > this.TilesetSelection.Location.Y)
+                if (rect.Contains(pt) && this.IsSelectingTiles && pt.X > this.textureInfo.Selection.Location.X && pt.Y > this.textureInfo.Selection.Location.Y)
                 {
-                    int tmpWidth = (int)((pt.X - this.TilesetSelection.X) / GlobalData.TileSize.Width) + 1;
-                    int tmpHeight = (int)((pt.Y - this.TilesetSelection.Location.Y) / GlobalData.TileSize.Height) + 1;
+                    int tmpWidth = (int)((pt.X - this.textureInfo.Selection.X) / GlobalData.TileSize.Width) + 1;
+                    int tmpHeight = (int)((pt.Y - this.textureInfo.Selection.Location.Y) / GlobalData.TileSize.Height) + 1;
 
-                    this.tilesetSelection.Size = new Size(tmpWidth * GlobalData.TileSize.Width, tmpHeight * GlobalData.TileSize.Height);
+                    this.textureInfo.Selection.Size = new Size(tmpWidth * GlobalData.TileSize.Width, tmpHeight * GlobalData.TileSize.Height);
                     this.picTileset.Refresh();
                 }
             }
@@ -125,14 +123,13 @@ namespace GameMapEditor
             if (this.textureInfo != null)
             {
                 this.IsSelectingTiles = false;
-                if (this.tilesetSelection.Size.Height + this.tilesetSelection.Location.Y > this.textureInfo.BitmapSource.Height)
+                if (this.textureInfo.Selection.Size.Height + this.textureInfo.Selection.Location.Y > this.textureInfo.BitmapSource.Height)
                 {
-                    this.tilesetSelection.Height -= this.tilesetSelection.Size.Height + this.tilesetSelection.Location.Y - this.textureInfo.BitmapSource.Height;
+                    this.textureInfo.Selection.Height -= this.textureInfo.Selection.Size.Height + this.textureInfo.Selection.Location.Y - this.textureInfo.BitmapSource.Height;
                 }
 
-                this.textureInfo.Selection = this.TilesetSelection.Location;
-                this.textureInfo.BitmapSelection = this.textureInfo.BitmapSource.Clone(this.tilesetSelection, PixelFormat.DontCare);
-                this.RaiseTilesetSelectionChangedEvent(this.textureInfo);
+                this.textureInfo.BitmapSelection = this.textureInfo.BitmapSource.Clone(this.textureInfo.Selection, PixelFormat.DontCare);
+                this.TilesetChanged?.Invoke(this, this.textureInfo);
             }
         }
 
@@ -158,7 +155,10 @@ namespace GameMapEditor
             if (this.textures.Count > this.comboTilesetFileSelecter.SelectedIndex)
             {
                 this.textureInfo = this.textures[this.comboTilesetFileSelecter.SelectedIndex];
-                this.RaiseTilesetChangedEvent(this.textureInfo);
+                this.textureInfo.BitmapSelection = null;
+                this.textureInfo.Selection = new Rectangle();
+                this.TilesetChanged?.Invoke(this, this.textureInfo);
+                this.TilesetSelectionChanged?.Invoke(this, this.textureInfo.Selection);
                 this.RefreshScrollComponents();
             }
         }
@@ -166,22 +166,6 @@ namespace GameMapEditor
         private void toolStripButtonGrid_Click(object sender, EventArgs e)
         {
             this.IsGridActived = !this.IsGridActived;
-        }
-
-        private void RaiseTilesetChangedEvent(TextureInfo texture)
-        {
-            if(this.TilesetChanged != null)
-            {
-                this.TilesetChanged(this, texture);
-            }
-        }
-
-        private void RaiseTilesetSelectionChangedEvent(TextureInfo texture)
-        {
-            if(this.TilesetSelectionChanged != null)
-            {
-                this.TilesetSelectionChanged(this, this.tilesetSelection);
-            }
         }
         #endregion
 
@@ -287,11 +271,6 @@ namespace GameMapEditor
         public Point TilesetOrigin
         {
             get { return this.tilesetOrigin; }
-        }
-
-        public Rectangle TilesetSelection
-        {
-            get { return this.tilesetSelection; }
         }
 
         public TextureInfo TilesetInfo

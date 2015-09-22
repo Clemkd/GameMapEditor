@@ -218,7 +218,7 @@ namespace GameMapEditor
         {
             if (layerIndex >= 0 && layerIndex < this.layers.Count)
             {
-                if (texture != null && texture.BitmapSelection != null)
+                if (texture?.BitmapSelection != null && texture?.BitmapSource != null)
                 {
                     int tmpWidth = texture.BitmapSelection.Width / GlobalData.TileSize.Width;
                     int tmpHeight = texture.BitmapSelection.Height / GlobalData.TileSize.Height;

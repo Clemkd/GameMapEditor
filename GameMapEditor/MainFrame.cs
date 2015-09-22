@@ -55,7 +55,7 @@ namespace GameMapEditor
 
         private void TilesetPanel_TilesetSelectionChanged(object sender, Rectangle selection)
         {
-            MapPanels.ForEach(x => x.TilesetSelection = selection);
+            MapPanels.ForEach(x => x.TextureInfo.Selection = selection);
         }
 
         private void toolStripBtnFill_Click(object sender, EventArgs e)
@@ -66,7 +66,7 @@ namespace GameMapEditor
 
         private void NewMapFrame_Validated(string mapName)
         {
-            MapPanel mapPanel = new MapPanel(TilesetPanel.Instance.TilesetInfo, TilesetPanel.Instance.TilesetSelection, mapName);
+            MapPanel mapPanel = new MapPanel(TilesetPanel.Instance.TilesetInfo, mapName);
             this.DockPanel.SuspendLayout();
             mapPanel.Show(this.DockPanel);
             mapPanel.DockState = DockState.Document;
@@ -147,7 +147,7 @@ namespace GameMapEditor
 
                     GameMap map = await GameMap.Load(openFileDialog.FileName);
                     
-                    MapPanel mapPanel = new MapPanel(TilesetPanel.Instance.TilesetInfo, TilesetPanel.Instance.TilesetSelection, map);
+                    MapPanel mapPanel = new MapPanel(TilesetPanel.Instance.TilesetInfo, map);
                     this.DockPanel.SuspendLayout();
                     mapPanel.Show(this.DockPanel);
                     mapPanel.DockState = DockState.Document;
