@@ -100,15 +100,10 @@ namespace GameMapEditor
                     if (index < this.tiles.Count)
                     {
                         this.tiles[index] = value;
-                        RaiseLayerChangedEvent();
+                        this.LayerChanged?.Invoke(this);
                     }
                 }
             }
-        }
-
-        private void RaiseLayerChangedEvent()
-        {
-            this.LayerChanged?.Invoke(this);
         }
 
         // TODO : Debug Only
@@ -134,7 +129,7 @@ namespace GameMapEditor
         public string Name
         {
             get { return this.name; }
-            set { this.name = value; RaiseLayerChangedEvent(); }
+            set { this.name = value; this.LayerChanged?.Invoke(this); }
         }
 
         /// <summary>
@@ -143,7 +138,7 @@ namespace GameMapEditor
         public LayerType Type
         {
             get { return this.type; }
-            set { this.type = value; this.RaiseLayerChangedEvent(); }
+            set { this.type = value; this.LayerChanged?.Invoke(this); }
         }
 
         /// <summary>
@@ -152,7 +147,7 @@ namespace GameMapEditor
         public bool Visible
         {
             get { return this.visible; }
-            set { this.visible = value; this.RaiseLayerChangedEvent(); }
+            set { this.visible = value; this.LayerChanged?.Invoke(this); }
         }
 
         public List<GameTile> Tiles

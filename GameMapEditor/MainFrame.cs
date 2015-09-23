@@ -18,7 +18,7 @@ namespace GameMapEditor
     {
         private static List<MapPanel> MapPanels = new List<MapPanel>();
 
-        private ConsoleStreamWriter consoleSW;
+        private ConsoleStreamWriter consoleStreamWriter;
 
         public MainFrame()
         {
@@ -30,8 +30,8 @@ namespace GameMapEditor
             base.OnLoad(e);
 
             // Redirection du flux Console vers ConsolePanel
-            this.consoleSW = new ConsoleStreamWriter(ConsolePanel.Instance);
-            Console.SetOut(this.consoleSW);
+            this.consoleStreamWriter = new ConsoleStreamWriter(ConsolePanel.Instance);
+            Console.SetOut(this.consoleStreamWriter);
 
             // Chargement des panels
             this.LoadTilesetPanel();
@@ -40,7 +40,7 @@ namespace GameMapEditor
             this.LoadLayerPanel();
 
             // Création des liens
-            MapPanelFrame.Instance.MapValidated += NewMapFrame_Validated;
+            MapPanelFrame.Instance.MapValidated += MapFrame_CreationValidated;
             TilesetPanel.Instance.TilesetSelectionChanged += TilesetPanel_TilesetSelectionChanged;
             TilesetPanel.Instance.TilesetChanged += TilesetPanel_TilesetChanged;
             LayerPanel.Instance.MapLayerAdded += LayerPanel_MapLayerAdded;
@@ -64,7 +64,7 @@ namespace GameMapEditor
             if (mapPanel != null) mapPanel.Fill();
         }
 
-        private void NewMapFrame_Validated(string mapName)
+        private void MapFrame_CreationValidated(string mapName)
         {
             MapPanel mapPanel = new MapPanel(TilesetPanel.Instance.TilesetInfo, mapName);
             this.DockPanel.SuspendLayout();
@@ -72,6 +72,7 @@ namespace GameMapEditor
             mapPanel.DockState = DockState.Document;
             mapPanel.Dock = DockStyle.Fill;
             mapPanel.State = this.toolStripButtonErase.Checked ? GameEditorState.Erase : GameEditorState.Default;
+            mapPanel.UndoRedoUpdated += MapPanel_UndoRedoUpdated;
             this.DockPanel.ResumeLayout(true, true);
 
             MapPanels.Add(mapPanel);
@@ -153,6 +154,7 @@ namespace GameMapEditor
                     mapPanel.DockState = DockState.Document;
                     mapPanel.Dock = DockStyle.Fill;
                     mapPanel.State = this.toolStripButtonErase.Checked ? GameEditorState.Erase : GameEditorState.Default;
+                    mapPanel.UndoRedoUpdated += MapPanel_UndoRedoUpdated;
                     this.DockPanel.ResumeLayout(true, true);
 
                     MapPanels.Add(mapPanel);
@@ -196,9 +198,13 @@ namespace GameMapEditor
 
         private void quitterToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            this.Dispose();
             this.Close();
         }
 
+        /// <summary>
+        /// Réinitialise la position de la fenêtre Tileset et l'affiche
+        /// </summary>
         private void LoadTilesetPanel()
         {
             TilesetPanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
@@ -206,6 +212,9 @@ namespace GameMapEditor
             TilesetPanel.Instance.DockTo(this.DockPanel, DockStyle.Left);
         }
 
+        /// <summary>
+        /// Réinitialise la position de la fenêtre Console et l'affiche
+        /// </summary>
         private void LoadConsolePanel()
         {
             ConsolePanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
@@ -213,6 +222,9 @@ namespace GameMapEditor
             ConsolePanel.Instance.DockTo(this.DockPanel, DockStyle.Bottom);
         }
 
+        /// <summary>
+        /// Réinitialise la position de la fenêtre Explorateur et l'affiche
+        /// </summary>
         private void LoadBrowserPanel()
         {
             BrowserPanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
@@ -230,6 +242,22 @@ namespace GameMapEditor
         private void DockPanel_ActiveDocumentChanged(object sender, EventArgs e)
         {
             LayerPanel.Instance.Refresh();
+
+            MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
+            if (mapPanel != null)
+            {
+                this.toolStripButtonUndo.Enabled = mapPanel.CanUndo;
+                this.toolStripButtonRedo.Enabled = mapPanel.CanRedo;
+            }
+        }
+
+        /// <summary>
+        /// Libère les ressources associées
+        /// </summary>
+        private new void Dispose()
+        {
+            MapPanels.ForEach(mapPanel => mapPanel.UndoRedoUpdated -= MapPanel_UndoRedoUpdated);
+            this.Dispose(true);
         }
 
         private void MainFrame_FormClosing(object sender, FormClosingEventArgs e)
@@ -240,12 +268,17 @@ namespace GameMapEditor
                     "Sauvegarde", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                 if (result == DialogResult.OK)
                 {
-                    Environment.Exit(0);
+                    this.Dispose();
+                    this.Close();
                 }
                 else e.Cancel = true;
             }
         }
+        
 
+        /// <summary>
+        /// Obtient la valeur informant s'il existe des documents ouverts non sauvegardés
+        /// </summary>
         private bool ExistsUnsavedDocuments
         {
             get
@@ -275,12 +308,19 @@ namespace GameMapEditor
             }
         }
 
+        private void MapPanel_UndoRedoUpdated(object sender, UndoRedoManager manager)
+        {
+            this.toolStripButtonUndo.Enabled = manager.CanUndo;
+            this.toolStripButtonRedo.Enabled = manager.CanRedo;
+        }
+
         private void toolStripButtonUndo_Click(object sender, EventArgs e)
         {
             MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
             if (mapPanel != null && mapPanel.CanUndo)
             {
                 mapPanel.Undo();
+                LayerPanel.Instance.Refresh();
                 this.toolStripButtonRedo.Enabled = mapPanel.CanRedo;
                 this.toolStripButtonUndo.Enabled = mapPanel.CanUndo;
             }
@@ -292,6 +332,7 @@ namespace GameMapEditor
             if (mapPanel != null && mapPanel.CanRedo)
             {
                 mapPanel.Redo();
+                LayerPanel.Instance.Refresh();
                 this.toolStripButtonRedo.Enabled = mapPanel.CanRedo;
                 this.toolStripButtonUndo.Enabled = mapPanel.CanUndo;
             }

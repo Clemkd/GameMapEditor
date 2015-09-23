@@ -31,6 +31,11 @@ namespace GameMapEditor
             this.layerPanelCTM.Controls.Clear();
         }
 
+        /// <summary>
+        /// Vide la liste et charge les layers de la carte
+        /// </summary>
+        /// <param name="map">La carte parente des layers à charger</param>
+        /// <param name="index">L'index du layer selectionné (0 par défaut)</param>
         public void LoadLayers(GameMap map, int index = 0)
         {
             this.Clear();
@@ -43,6 +48,9 @@ namespace GameMapEditor
             this.layerPanelCTM.Refresh();
         }
 
+        /// <summary>
+        /// Met à jour le panel et recharge la liste de layers
+        /// </summary>
         public override void Refresh()
         {
             base.Refresh();
@@ -165,6 +173,7 @@ namespace GameMapEditor
             }
         }
 
+        // TODO : Corriger (disfonctionnement survenu après un Undo, l'état d'affichage ne se modifi pas)
         private void layerPanelCTM_LayerVisibleStateChanged(object sender)
         {
             if (this.layerPanelCTM.Controls.Count > 0)

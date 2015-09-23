@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GameMapEditor.Objects
 {
-    public static class Extensions
+    public static class ListExtensions
     {
         public static List<GameTile> Clone(this List<GameTile> list)
         {

@@ -20,7 +20,7 @@ namespace GameMapEditor
                 this.components.Dispose();
             }
 
-            this.consoleSW.Dispose();
+            this.consoleStreamWriter.Dispose();
 
             TilesetPanel.Instance.TilesetSelectionChanged -= TilesetPanel_TilesetSelectionChanged;
             TilesetPanel.Instance.TilesetChanged -= TilesetPanel_TilesetChanged;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameMapEditor.Objects.Class;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,29 +11,33 @@ namespace GameMapEditor.Objects
     // TODO : Corriger 
     public class UndoRedoManager
     {
-        // TODO : Implémenter la limite
-        private const int MAX_LENGHT = 6;
+        private const int MAX_LENGHT = 20;
 
-        private Stack<GameMap> undoStack;
-        private Stack<GameMap> redoStack;
+        private LimitedStack<GameMap> undoStack;
+        private LimitedStack<GameMap> redoStack;
 
         public event EventHandler<UndoRedoEventArgs> UndoHappened;
         public event EventHandler<UndoRedoEventArgs> RedoHappened;
 
         public UndoRedoManager()
         {
-            this.undoStack = new Stack<GameMap>();
-            this.redoStack = new Stack<GameMap>();
+            this.undoStack = new LimitedStack<GameMap>(MAX_LENGHT);
+            this.redoStack = new LimitedStack<GameMap>(MAX_LENGHT);
         }
 
+        /// <summary>
+        /// Ajoute une nouvelle étape dans l'historique
+        /// </summary>
+        /// <param name="map"></param>
         public void Add(GameMap map)
         {
-            GameMap mapCloned = map.Clone();
-
-            this.undoStack.Push(mapCloned);
+            this.undoStack.Push(map.Clone());
             this.redoStack.Clear();
         }
 
+        /// <summary>
+        /// Effectue un "Annuler"
+        /// </summary>
         public void Undo()
         {
             if (!this.CanUndo)
@@ -45,6 +50,10 @@ namespace GameMapEditor.Objects
             this.UndoHappened?.Invoke(this, new UndoRedoEventArgs(value));
         }
 
+        // TODO : Réviser
+        /// <summary>
+        /// Effectue un "Refaire"
+        /// </summary>
         public void Redo()
         {
             if (!this.CanRedo)

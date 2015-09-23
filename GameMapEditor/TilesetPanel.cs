@@ -128,8 +128,11 @@ namespace GameMapEditor
                     this.textureInfo.Selection.Height -= this.textureInfo.Selection.Size.Height + this.textureInfo.Selection.Location.Y - this.textureInfo.BitmapSource.Height;
                 }
 
-                this.textureInfo.BitmapSelection = this.textureInfo.BitmapSource.Clone(this.textureInfo.Selection, PixelFormat.DontCare);
-                this.TilesetChanged?.Invoke(this, this.textureInfo);
+                if (this.textureInfo.Selection.Width > 0 && this.textureInfo.Selection.Height > 0)
+                {
+                    this.textureInfo.BitmapSelection = this.textureInfo.BitmapSource.Clone(this.textureInfo.Selection, PixelFormat.DontCare);
+                    this.TilesetSelectionChanged?.Invoke(this, this.textureInfo.Selection);
+                }
             }
         }
 

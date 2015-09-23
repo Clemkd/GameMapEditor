@@ -40,12 +40,14 @@ namespace GameMapEditor
 
         private UndoRedoManager undoRedoManager;
         private bool mouseReleased;
+
+        public delegate void UndoRedoUpdatedEventArgs(object sender, UndoRedoManager manager);
+        public event UndoRedoUpdatedEventArgs UndoRedoUpdated;
         #endregion
 
         public MapPanel(TextureInfo tilesetInfo, string mapName)
         {
             this.Initialize();
-
             this.TextureInfo = tilesetInfo;
             this.Create(mapName);
         }
@@ -53,11 +55,13 @@ namespace GameMapEditor
         public MapPanel(TextureInfo tilesetImage, GameMap map)
         {
             this.Initialize();
-
             this.TextureInfo = tilesetImage;
             this.Open(map);
         }
 
+        /// <summary>
+        /// Initialise tous les attributs de l'objet et créer les liens
+        /// </summary>
         private void Initialize()
         {
             this.InitializeComponent();
@@ -65,7 +69,7 @@ namespace GameMapEditor
             this.mapOrigin = new GameVector2();
             this.IsGridActived = true;
             this.IsSaved = false;
-            this.IsTilesetSelectionShowed = true;
+            this.IsTilesetSelectionShown = true;
             this.State = GameEditorState.Default;
             this.gridColor = GridPenColor;
             this.mouseLocation = new Point();
@@ -84,12 +88,14 @@ namespace GameMapEditor
         private void UndoRedoSystem_RedoHappened(object sender, UndoRedoEventArgs e)
         {
             this.Map = e.CurrentItem as GameMap;
+            this.Map.MapChanged += GameMap_MapChanged;
             this.picMap.Refresh();
         }
 
         private void UndoRedoSystem_UndoHappened(object sender, UndoRedoEventArgs e)
         {
             this.Map = e.CurrentItem as GameMap;
+            this.Map.MapChanged += GameMap_MapChanged;
             this.picMap.Refresh();
         }
 
@@ -103,6 +109,7 @@ namespace GameMapEditor
         {
             this.IsSaved = false;
             this.picMap.Refresh();
+            //this.UndoRedoUpdated?.Invoke(this, this.undoRedoManager);
         }
 
 
@@ -133,6 +140,7 @@ namespace GameMapEditor
             if (this.mouseReleased)
             {
                 this.undoRedoManager.Add(this.Map);
+                this.UndoRedoUpdated?.Invoke(this, this.undoRedoManager);
             }
             this.mouseReleased = false;
 
@@ -212,7 +220,7 @@ namespace GameMapEditor
 
         private void toolStripBtnTilesetSelection_Click(object sender, EventArgs e)
         {
-            this.IsTilesetSelectionShowed = !this.IsTilesetSelectionShowed;
+            this.IsTilesetSelectionShown = !this.IsTilesetSelectionShown;
         }
 
         private void MapPanel_FormClosing(object sender, FormClosingEventArgs e)
@@ -236,17 +244,26 @@ namespace GameMapEditor
         {
             if (this.texture != null)
             {
+                this.undoRedoManager.Add(this.Map);
                 this.gameMap.Fill(this.selectedLayerIndex, this.texture);
                 this.picMap.Refresh();
+                this.UndoRedoUpdated?.Invoke(this, this.undoRedoManager);
             }
         }
 
+        /// <summary>
+        /// Sauvegarde la carte
+        /// </summary>
         public void Save()
         {
             this.Map.Save();
             this.IsSaved = true;
         }
 
+        /// <summary>
+        /// Ouvre la carte
+        /// </summary>
+        /// <param name="map"></param>
         public void Open(GameMap map)
         {
             this.Map = map;
@@ -254,6 +271,10 @@ namespace GameMapEditor
             this.IsSaved = true;
         }
 
+        /// <summary>
+        /// Créer la nouvelle carte
+        /// </summary>
+        /// <param name="mapName"></param>
         public void Create(string mapName)
         {
             this.Map = new GameMap(mapName);
@@ -426,6 +447,8 @@ namespace GameMapEditor
         public new void Dispose()
         {
             this.Map.MapChanged -= GameMap_MapChanged;
+            this.undoRedoManager.UndoHappened -= UndoRedoSystem_UndoHappened;
+            this.undoRedoManager.RedoHappened -= UndoRedoSystem_RedoHappened;
             base.Dispose(true);
         }
 
@@ -460,13 +483,13 @@ namespace GameMapEditor
             set { this.gridColor = value; this.picMap.Refresh(); }
         }
 
-        public bool IsTilesetSelectionShowed
+        public bool IsTilesetSelectionShown
         {
             get { return this.isTilesetSelectionShowProcessActived; }
             set
             {
                 this.isTilesetSelectionShowProcessActived = value;
-                this.toolStripBtnTilesetSelection.Checked = this.IsTilesetSelectionShowed;
+                this.toolStripBtnTilesetSelection.Checked = this.IsTilesetSelectionShown;
                 this.picMap.Refresh();
             }
         }

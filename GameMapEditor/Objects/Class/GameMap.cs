@@ -51,7 +51,7 @@ namespace GameMapEditor
         public GameMap Clone()
         {
             GameMap map = new GameMap();
-            map.name = this.name.ToCharArray().ToString();
+            map.name = this.name;
             map.textures = this.textures.ToDictionary(k => k.Key, c => c.Value);
             map.layers = this.layers.Clone();
 

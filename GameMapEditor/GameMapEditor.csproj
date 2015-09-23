@@ -86,7 +86,8 @@
     <Compile Include="Frames\IndefinedWaitingFrame.Designer.cs">
       <DependentUpon>IndefinedWaitingFrame.cs</DependentUpon>
     </Compile>
-    <Compile Include="Objects\ConsoleStreamWriter.cs" />
+    <Compile Include="Objects\Class\ConsoleStreamWriter.cs" />
+    <Compile Include="Objects\Class\LimitedStack.cs" />
     <Compile Include="Objects\Controls\LayerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -97,8 +98,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Objects\Enumerations\GameEditorState.cs" />
-    <Compile Include="Objects\Extensions.cs" />
-    <Compile Include="Objects\GameMap.Data.cs" />
+    <Compile Include="Objects\Extensions\ListExtensions.cs" />
+    <Compile Include="Objects\Class\GameMap.Data.cs" />
     <Compile Include="GlobalData.cs" />
     <Compile Include="MainFrame.cs">
       <SubType>Form</SubType>
@@ -121,14 +122,14 @@
     <Compile Include="Frames\MapPanelFrame.Designer.cs">
       <DependentUpon>MapPanelFrame.cs</DependentUpon>
     </Compile>
-    <Compile Include="Objects\TextureInfo.cs" />
-    <Compile Include="Objects\ErrorLog.cs" />
-    <Compile Include="Objects\GameMap.cs" />
-    <Compile Include="Objects\GameMapLayer.cs" />
-    <Compile Include="Objects\GameTile.cs" />
-    <Compile Include="Objects\GameVector2.cs" />
+    <Compile Include="Objects\Class\TextureInfo.cs" />
+    <Compile Include="Objects\Class\ErrorLog.cs" />
+    <Compile Include="Objects\Class\GameMap.cs" />
+    <Compile Include="Objects\Class\GameMapLayer.cs" />
+    <Compile Include="Objects\Class\GameTile.cs" />
+    <Compile Include="Objects\Class\GameVector2.cs" />
     <Compile Include="Objects\Interfaces\IDrawable.cs" />
-    <Compile Include="Objects\ImageAttrExtension.cs" />
+    <Compile Include="Objects\Extensions\ImageAttrExtension.cs" />
     <Compile Include="Objects\Enumerations\LayerType.cs" />
     <Compile Include="LayerPanel.cs">
       <SubType>Form</SubType>
@@ -136,8 +137,8 @@
     <Compile Include="LayerPanel.Designer.cs">
       <DependentUpon>LayerPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Objects\UndoRedoEventArgs.cs" />
-    <Compile Include="Objects\UndoRedoManager.cs" />
+    <Compile Include="Objects\Events\UndoRedoEventArgs.cs" />
+    <Compile Include="Objects\Class\UndoRedoManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
