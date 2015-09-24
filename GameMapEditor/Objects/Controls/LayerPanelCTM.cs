@@ -154,20 +154,20 @@ namespace GameMapEditor.Objects.Controls
             }
         }
 
-        private void LayerControl_Click(object sender)
+        private void LayerControl_Click(object sender, EventArgs e)
         {
             LayerControl layerC = sender as LayerControl;
             this.SelectedIndex = this.Controls.IndexOf(layerC);
         }
 
-        private void LayerControl_LayerVisibleStateChanged(object sender)
+        private void LayerControl_LayerVisibleStateChanged(object sender, EventArgs e)
         {
-            this.LayerVisibleStateChanged?.Invoke(sender);
+            this.LayerVisibleStateChanged?.Invoke(sender, e);
         }
 
-        private void LayerControl_LayerTypeChanged(object sender)
+        private void LayerControl_LayerTypeChanged(object sender, EventArgs e)
         {
-            this.LayerTypeChanged?.Invoke(sender);
+            this.LayerTypeChanged?.Invoke(sender, e);
         }
 
         protected override void OnResize(EventArgs eventargs)

@@ -11,8 +11,8 @@ using GameMapEditor.Properties;
 
 namespace GameMapEditor.Objects.Controls
 {
-    public delegate void ItemClickedEventArgs(object sender);
-    public delegate void ItemChangedEventArgs(object sender);
+    public delegate void ItemClickedEventArgs(object sender, EventArgs e);
+    public delegate void ItemChangedEventArgs(object sender, EventArgs e);
 
     public partial class LayerControl : UserControl
     {
@@ -72,7 +72,7 @@ namespace GameMapEditor.Objects.Controls
             {
                 this.visible = value;
                 this.pictureBoxVisibleState.Image = this.Visible ? Resources.eye : Resources.eyeclose;
-                this.LayerVisibleStateChanged?.Invoke(this);
+                this.LayerVisibleStateChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -86,7 +86,7 @@ namespace GameMapEditor.Objects.Controls
             {
                 this.type = value;
                 this.pictureBoxLayerType.Image = value == LayerType.Lower ? Resources.categoryaccesslower : Resources.categoryaccessupper;
-                this.LayerTypeChanged?.Invoke(this);
+                this.LayerTypeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -102,12 +102,12 @@ namespace GameMapEditor.Objects.Controls
 
         private void LayerControl_Click(object sender, EventArgs e)
         {
-            this.LayerClicked?.Invoke(this);
+            this.LayerClicked?.Invoke(this, EventArgs.Empty);
         }
 
         private void LayerControl_DoubleClick(object sender, EventArgs e)
         {
-            this.LayerDoubleClicked?.Invoke(this);
+            this.LayerDoubleClicked?.Invoke(this, EventArgs.Empty);
         }
 
         private void pictureBoxLayerType_Click(object sender, EventArgs e)

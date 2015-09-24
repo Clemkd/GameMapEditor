@@ -228,7 +228,7 @@ namespace GameMapEditor
                     {
                         for (int y = 0; y < tmpHeight; y++)
                         {
-                            GameTile tile = this.layers.ElementAt(layerIndex)[position.X + x, position.Y + y];
+                            GameMapTile tile = this.layers.ElementAt(layerIndex)[position.X + x, position.Y + y];
                             if (tile != null)
                             {
                                 Rectangle selection = new Rectangle(
@@ -249,7 +249,7 @@ namespace GameMapEditor
                                         (selection.Location.X + texture.Selection.X) / GlobalData.TileSize.Width,
                                         (selection.Location.Y + texture.Selection.Y) / GlobalData.TileSize.Height);
 
-                                    tile.FormattedIndex = GameTile.EncodeFormattedIndex(location, tilesCount);
+                                    tile.FormattedIndex = GameMapTile.EncodeFormattedIndex(location, tilesCount);
                                     tile.TextureIndex = this.RetrieveTextureIndex(texture.Path);
                                 }
                             }
@@ -258,10 +258,10 @@ namespace GameMapEditor
                 }
                 else
                 {
-                    GameTile tile = this.layers.ElementAt(layerIndex)[position.X, position.Y];
+                    GameMapTile tile = this.layers.ElementAt(layerIndex)[position.X, position.Y];
                     if (tile != null)
                     {
-                        tile.FormattedIndex = GameTile.EMPTY;
+                        tile.FormattedIndex = GameMapTile.EMPTY;
                         tile.Texture = null;
                     }
                 }
@@ -335,7 +335,7 @@ namespace GameMapEditor
             }
         }
 
-        private void Layer_LayerChanged(object sender)
+        private void Layer_LayerChanged(object sender, EventArgs e)
         {
             this.MapChanged?.Invoke(this);
         }

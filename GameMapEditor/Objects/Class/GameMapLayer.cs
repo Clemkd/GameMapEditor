@@ -1,5 +1,6 @@
 ﻿using GameMapEditor.Objects;
 using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
@@ -7,7 +8,7 @@ using System.Windows.Forms;
 
 namespace GameMapEditor
 {
-    public delegate void LayerChangeEventArgs(object sender);
+    public delegate void LayerChangeEventArgs(object sender, EventArgs e);
 
     //[Serializable]
     [ProtoContract]
@@ -23,7 +24,7 @@ namespace GameMapEditor
         [ProtoMember(3)]
         private bool visible;
         [ProtoMember(4)]
-        private List<GameTile> tiles;
+        private List<GameMapTile> tiles;
 
         // Protobuf constructor
         private GameMapLayer()
@@ -41,10 +42,10 @@ namespace GameMapEditor
         /// </summary>
         private void InitializeComponent()
         {
-            this.tiles = new List<GameTile>();
+            this.tiles = new List<GameMapTile>();
             for (int index = 0; index < GlobalData.MapSize.Width * GlobalData.MapSize.Height; index++)
             {
-                this.tiles.Add(new GameTile(index));
+                this.tiles.Add(new GameMapTile(index));
             }
         }
 
@@ -78,13 +79,13 @@ namespace GameMapEditor
         /// <param name="x">La position horizontale X du tile</param>
         /// <param name="y">La position verticale Y du tile</param>
         /// <returns>La reférence vers le tile, ou null</returns>
-        public GameTile this[int x, int y]
+        public GameMapTile this[int x, int y]
         {
             get
             {
                 if (x >= 0 && x < GlobalData.MapSize.Width && y >= 0 && y < GlobalData.MapSize.Height)
                 {
-                    int index = GameTile.EncodeFormattedIndex(new Point(x, y), GlobalData.MapSize.Width);
+                    int index = GameMapTile.EncodeFormattedIndex(new Point(x, y), GlobalData.MapSize.Width);
                     if (index < this.tiles.Count)
                     {
                         return this.tiles[index];
@@ -96,11 +97,11 @@ namespace GameMapEditor
             {
                 if (x >= 0 && x < GlobalData.MapSize.Width && y >= 0 && y < GlobalData.MapSize.Height)
                 {
-                    int index = GameTile.EncodeFormattedIndex(new Point(x, y), GlobalData.MapSize.Width);
+                    int index = GameMapTile.EncodeFormattedIndex(new Point(x, y), GlobalData.MapSize.Width);
                     if (index < this.tiles.Count)
                     {
                         this.tiles[index] = value;
-                        this.LayerChanged?.Invoke(this);
+                        this.LayerChanged?.Invoke(this, EventArgs.Empty);
                     }
                 }
             }
@@ -129,7 +130,7 @@ namespace GameMapEditor
         public string Name
         {
             get { return this.name; }
-            set { this.name = value; this.LayerChanged?.Invoke(this); }
+            set { this.name = value; this.LayerChanged?.Invoke(this, EventArgs.Empty); }
         }
 
         /// <summary>
@@ -138,7 +139,7 @@ namespace GameMapEditor
         public LayerType Type
         {
             get { return this.type; }
-            set { this.type = value; this.LayerChanged?.Invoke(this); }
+            set { this.type = value; this.LayerChanged?.Invoke(this, EventArgs.Empty); }
         }
 
         /// <summary>
@@ -147,10 +148,10 @@ namespace GameMapEditor
         public bool Visible
         {
             get { return this.visible; }
-            set { this.visible = value; this.LayerChanged?.Invoke(this); }
+            set { this.visible = value; this.LayerChanged?.Invoke(this, EventArgs.Empty); }
         }
 
-        public List<GameTile> Tiles
+        public List<GameMapTile> Tiles
         {
             get { return this.tiles; }
         }

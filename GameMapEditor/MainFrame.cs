@@ -64,7 +64,7 @@ namespace GameMapEditor
             if (mapPanel != null) mapPanel.Fill();
         }
 
-        private void MapFrame_CreationValidated(string mapName)
+        private void MapFrame_CreationValidated(object sender, string mapName)
         {
             MapPanel mapPanel = new MapPanel(TilesetPanel.Instance.TilesetInfo, mapName);
             this.DockPanel.SuspendLayout();
@@ -172,7 +172,7 @@ namespace GameMapEditor
             }
         }
 
-        private void LayerPanel_MapLayerAdded(GameMapLayer layer)
+        private void LayerPanel_MapLayerAdded(object sender, GameMapLayer layer)
         {
             MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
             if (mapPanel != null)
@@ -182,7 +182,7 @@ namespace GameMapEditor
             }
         }
 
-        private void LayerPanel_MapLayerSelectionChanged(int index)
+        private void LayerPanel_MapLayerSelectionChanged(object sender, int index)
         {
             MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
             if (mapPanel != null)
@@ -198,7 +198,6 @@ namespace GameMapEditor
 
         private void quitterToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Dispose();
             this.Close();
         }
 
@@ -268,13 +267,16 @@ namespace GameMapEditor
                     "Sauvegarde", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                 if (result == DialogResult.OK)
                 {
-                    this.Dispose();
                     this.Close();
                 }
                 else e.Cancel = true;
             }
         }
-        
+
+        private void MainFrame_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Dispose();
+        }
 
         /// <summary>
         /// Obtient la valeur informant s'il existe des documents ouverts non sauvegardés

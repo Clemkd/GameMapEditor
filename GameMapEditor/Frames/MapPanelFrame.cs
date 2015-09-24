@@ -7,7 +7,7 @@ namespace GameMapEditor.Frames
 {
     public partial class MapPanelFrame : Form
     {
-        public delegate void NewMapEventArgs(string mapName);
+        public delegate void NewMapEventArgs(object sender, string mapName);
         public event NewMapEventArgs MapValidated;
 
         public static MapPanelFrame Instance = new MapPanelFrame();
@@ -40,7 +40,7 @@ namespace GameMapEditor.Frames
                     return;
             }
 
-            this.MapValidated?.Invoke(filename);
+            this.MapValidated?.Invoke(this, filename);
             this.Close();
                 
         }

@@ -34,17 +34,9 @@ namespace GameMapEditor.Frames
                 Visible = this.checkBoxLayerState.Checked,
                 Type = this.checkBoxLayerType.Checked ? LayerType.Upper : LayerType.Lower
             };
-            
-            this.RaiseMapLayerAddedEvent(layer);
-            this.Close();
-        }
 
-        private void RaiseMapLayerAddedEvent(GameMapLayer layer)
-        {
-            if(this.MapLayerAdded != null)
-            {
-                this.MapLayerAdded(layer);
-            }
+            this.MapLayerAdded?.Invoke(this, layer);
+            this.Close();
         }
     }
 }

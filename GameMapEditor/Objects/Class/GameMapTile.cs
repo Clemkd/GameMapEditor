@@ -9,7 +9,7 @@ namespace GameMapEditor
 {
     //[Serializable]
     [ProtoContract]
-    public class GameTile : IDrawable
+    public class GameMapTile : IDrawable
     {
         public const int EMPTY = -1;
 
@@ -22,19 +22,19 @@ namespace GameMapEditor
 
         #region Methods
         // Protobuf constructor
-        private GameTile()
+        private GameMapTile()
         {
         }
 
-        public GameTile(int formattedPosition)
+        public GameMapTile(int formattedPosition)
         {
             this.FormattedIndex = EMPTY;
             this.Position = DecodeFormattedIndex(formattedPosition, GlobalData.MapSize.Width);
         }
 
-        public GameTile Clone()
+        public GameMapTile Clone()
         {
-            GameTile tile = new GameTile();
+            GameMapTile tile = new GameMapTile();
             tile.formattedIndex = this.formattedIndex;
             tile.texturesetIndex = this.texturesetIndex;
             tile.position = this.position;

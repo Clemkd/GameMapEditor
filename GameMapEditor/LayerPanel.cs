@@ -10,8 +10,8 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace GameMapEditor
 {
-    public delegate void MapLayerAddedEventArgs(GameMapLayer layer);
-    public delegate void MapLayerSelectionChangedEventArgs(int index);
+    public delegate void MapLayerAddedEventArgs(object sender, GameMapLayer layer);
+    public delegate void MapLayerSelectionChangedEventArgs(object sender, int index);
 
     public partial class LayerPanel : DockContent, IDisposable
     {
@@ -125,15 +125,15 @@ namespace GameMapEditor
 
         private void toolStripButtonSetVisibleState_Click(object sender, EventArgs e)
         {
-            this.layerPanelCTM_LayerVisibleStateChanged(sender);
+            this.layerPanelCTM_LayerVisibleStateChanged(sender, EventArgs.Empty);
         }
 
-        private void Formular_MapLayerAdded(GameMapLayer layer)
+        private void Formular_MapLayerAdded(object sender, GameMapLayer layer)
         {
             if (this.layerPanelCTM.Controls.Count < GameMap.MAX_LAYER_COUNT)
             {
                 this.Add(layer);
-                RaiseLayerAddedEvent(layer);
+                this.MapLayerAdded?.Invoke(sender, layer);
             }
             else
                 ConsolePanel.Instance.
@@ -141,22 +141,12 @@ namespace GameMapEditor
                     GameMap.MAX_LAYER_COUNT + ")", RowType.Error);
         }
 
-        private void RaiseLayerAddedEvent(GameMapLayer layer)
-        {
-            this.MapLayerAdded?.Invoke(layer);
-        }
-
-        private void RaiseLayerSelectionChangedEvent(int index)
-        {
-            this.MapLayerSelectionChanged?.Invoke(index);
-        }
-
         private void layerPanelCTM_ItemSelectionChanged(object sender, int index)
         {
-            this.RaiseLayerSelectionChangedEvent(index);
+            this.MapLayerSelectionChanged?.Invoke(this, index);
         }
 
-        private void layerPanelCTM_LayerTypeChanged(object sender)
+        private void layerPanelCTM_LayerTypeChanged(object sender, EventArgs e)
         {
             if (this.layerPanelCTM.Controls.Count > 0)
             {
@@ -174,7 +164,7 @@ namespace GameMapEditor
         }
 
         // TODO : Corriger (disfonctionnement survenu après un Undo, l'état d'affichage ne se modifi pas)
-        private void layerPanelCTM_LayerVisibleStateChanged(object sender)
+        private void layerPanelCTM_LayerVisibleStateChanged(object sender, EventArgs e)
         {
             if (this.layerPanelCTM.Controls.Count > 0)
             {

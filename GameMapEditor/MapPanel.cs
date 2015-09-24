@@ -14,7 +14,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace GameMapEditor
 {
-    public partial class MapPanel : DockContent, IDisposable
+    public partial class MapPanel : DockContent
     {
         #region Fields
         private const string UNSAVED_DOCUMENT_MARK = "*";
@@ -144,6 +144,32 @@ namespace GameMapEditor
             }
             this.mouseReleased = false;
 
+            this.DoTileEdition(e);
+        }
+
+        private void picMap_MouseMove(object sender, MouseEventArgs e)
+        {
+            this.mouseLocation = e.Location;
+            this.location = this.GetTilePosition(e.Location.X + this.mapOrigin.X, e.Location.Y + this.mapOrigin.Y);
+
+            // Si la position de la souris à évolué (ref : tile)
+            if (oldLocation.X != location.X || oldLocation.Y != location.Y)
+            {
+                this.oldLocation.X = this.location.X;
+                this.oldLocation.Y = this.location.Y;
+
+                this.DoTileEdition(e);
+            }
+
+            this.picMap.Refresh();
+        }
+
+        /// <summary>
+        /// Réalise la modification des données de la carte selon 
+        /// </summary>
+        /// <param name="e"></param>
+        private void DoTileEdition(MouseEventArgs e)
+        {
             if (e.Button == MouseButtons.Right || (e.Button == MouseButtons.Left && this.State == GameEditorState.Erase))
             {
                 this.gameMap.SetTiles(this.selectedLayerIndex, this.location, null);
@@ -159,36 +185,6 @@ namespace GameMapEditor
                     this.gameMap.SetTiles(this.selectedLayerIndex, this.location, this.texture);
                 }
             }
-        }
-
-        private void picMap_MouseMove(object sender, MouseEventArgs e)
-        {
-            this.mouseLocation = e.Location;
-            this.location = this.GetTilePosition(e.Location.X + this.mapOrigin.X, e.Location.Y + this.mapOrigin.Y);
-
-            // Si la position de la souris à évolué (ref : tile)
-            if (oldLocation.X != location.X || oldLocation.Y != location.Y)
-            {
-                this.oldLocation.X = this.location.X;
-                this.oldLocation.Y = this.location.Y;
-
-                if (e.Button == MouseButtons.Right || (e.Button == MouseButtons.Left && this.State == GameEditorState.Erase))
-                {
-                    this.gameMap.SetTiles(this.selectedLayerIndex, this.location, null);
-                    this.Cursor = EraseCursor;
-                }
-                else if (e.Button == MouseButtons.Left)
-                {
-                    if(this.state != GameEditorState.Erase)
-                        this.Cursor = Cursors.Default;
-                    if (this.TextureInfo?.BitmapSelection != null)
-                    {
-                        this.gameMap.SetTiles(this.selectedLayerIndex, this.location, this.TextureInfo);
-                    }
-                }
-            }
-
-            this.picMap.Refresh();
         }
 
         private void picMap_MouseUp(object sender, MouseEventArgs e)
@@ -450,12 +446,12 @@ namespace GameMapEditor
             this.undoRedoManager.UndoHappened -= UndoRedoSystem_UndoHappened;
             this.undoRedoManager.RedoHappened -= UndoRedoSystem_RedoHappened;
             base.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         private void MapPanel_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.Dispose();
-            this.Close();
         }
         #endregion
 
