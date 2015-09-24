@@ -9,8 +9,11 @@ namespace GameMapEditor
 {
     //[Serializable]
     [ProtoContract]
-    public class GameMapTile : IDrawable
+    public class GameMapTile : IDrawable, ICloneable
     {
+        /// <summary>
+        /// Le tile vide
+        /// </summary>
         public const int EMPTY = -1;
 
         [ProtoMember(1)]
@@ -32,7 +35,11 @@ namespace GameMapEditor
             this.Position = DecodeFormattedIndex(formattedPosition, GlobalData.MapSize.Width);
         }
 
-        public GameMapTile Clone()
+        /// <summary>
+        /// Réalise et retourne une copie de l'objet
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
         {
             GameMapTile tile = new GameMapTile();
             tile.formattedIndex = this.formattedIndex;
@@ -76,7 +83,6 @@ namespace GameMapEditor
         /// <param name="e">L'évènement du control de dessin</param>
         public void Draw(GameVector2 origin, PaintEventArgs e)
         {
-            /* v0.1 */
             if (this.Texture != null)
             {
                 e.Graphics.DrawImage(this.Texture, new Rectangle(
@@ -85,8 +91,6 @@ namespace GameMapEditor
                     GlobalData.TileSize.Width,
                     GlobalData.TileSize.Height));
             }
-            /* v1.0 */
-
         }
 
         // TODO : Debug Only
@@ -115,12 +119,18 @@ namespace GameMapEditor
             set { this.texturesetIndex = value; }
         }
 
+        /// <summary>
+        /// Obtient ou définit la texture du tile
+        /// </summary>
         public Bitmap Texture
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// Obtient ou définit la position relative du tile sur la carte
+        /// </summary>
         public GameVector2 Position
         {
             get { return this.position; }

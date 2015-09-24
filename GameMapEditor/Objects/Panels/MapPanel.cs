@@ -85,6 +85,9 @@ namespace GameMapEditor
             this.RefreshScrollComponents();
         }
 
+        /// <summary>
+        /// Évènement appelé lorsqu'un Redo a été effectué
+        /// </summary>
         private void UndoRedoSystem_RedoHappened(object sender, UndoRedoEventArgs e)
         {
             this.Map = e.CurrentItem as GameMap;
@@ -92,6 +95,9 @@ namespace GameMapEditor
             this.picMap.Refresh();
         }
 
+        /// <summary>
+        /// Évènement appelé lorsqu'un Undo a été effectué
+        /// </summary>
         private void UndoRedoSystem_UndoHappened(object sender, UndoRedoEventArgs e)
         {
             this.Map = e.CurrentItem as GameMap;
@@ -109,9 +115,7 @@ namespace GameMapEditor
         {
             this.IsSaved = false;
             this.picMap.Refresh();
-            //this.UndoRedoUpdated?.Invoke(this, this.undoRedoManager);
         }
-
 
         private void picMap_Resize(object sender, EventArgs e)
         {
@@ -136,7 +140,6 @@ namespace GameMapEditor
 
         private void picMap_MouseDown(object sender, MouseEventArgs e)
         {
-            // TODO : UndoRedoManager
             if (this.mouseReleased)
             {
                 this.undoRedoManager.Add(this.Map);
@@ -167,7 +170,7 @@ namespace GameMapEditor
         /// <summary>
         /// Réalise la modification des données de la carte selon 
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="e">L'évènement souris</param>
         private void DoTileEdition(MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right || (e.Button == MouseButtons.Left && this.State == GameEditorState.Erase))
@@ -479,6 +482,9 @@ namespace GameMapEditor
             set { this.gridColor = value; this.picMap.Refresh(); }
         }
 
+        /// <summary>
+        /// Obtient ou définit l'état d'affichage de la texture selectionnée
+        /// </summary>
         public bool IsTilesetSelectionShown
         {
             get { return this.isTilesetSelectionShowProcessActived; }
@@ -490,12 +496,18 @@ namespace GameMapEditor
             }
         }
 
+        /// <summary>
+        /// Obtient ou définit le bundle de données de texture
+        /// </summary>
         public TextureInfo TextureInfo
         {
             get { return this.texture; }
             set { this.texture = value; }
         }
 
+        /// <summary>
+        /// Obtient ou définit l'index du layer selectionné associé à l'objet
+        /// </summary>
         public int SelectedLayerIndex
         {
             get { return this.selectedLayerIndex; }
@@ -516,12 +528,18 @@ namespace GameMapEditor
             }
         }
 
+        /// <summary>
+        /// Obtient ou définit la carte associée à l'objet
+        /// </summary>
         public GameMap Map
         {
             get { return this.gameMap; }
             private set { this.gameMap = value; }
         }
 
+        /// <summary>
+        /// Obtient ou définit l'état de sauvegarde courant du document
+        /// </summary>
         public bool IsSaved
         {
             get { return this.isSaved; }
@@ -532,6 +550,9 @@ namespace GameMapEditor
             }
         }
 
+        /// <summary>
+        /// Obtient le nom de la carte associée à l'objet
+        /// </summary>
         public new string Name
         {
             get { return this.Map.Name; }

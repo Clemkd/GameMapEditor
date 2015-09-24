@@ -187,5 +187,13 @@ namespace GameMapEditor
             if(!this.Enabled)
                 this.Clear();
         }
+
+        /// <summary>
+        /// Obtient le nombre de layers présents dans la liste du control
+        /// </summary>
+        public int LayersCount
+        {
+            get { return this.layerPanelCTM.Controls.Count; }
+        }
     }
 }

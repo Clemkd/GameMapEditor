@@ -17,7 +17,7 @@ namespace GameMapEditor
     public delegate void MapChangedEventArgs(object sender);
 
     [ProtoContract]
-    public partial class GameMap : IDrawable
+    public partial class GameMap : IDrawable, ICloneable
     {
         public event MapChangedEventArgs MapChanged;
         public const string DEFAULT_LAYER_NAME = "Couche 1";
@@ -48,7 +48,11 @@ namespace GameMapEditor
             this.InitializeComponents();
         }
 
-        public GameMap Clone()
+        /// <summary>
+        /// Réalise et retourne une copie de l'objet
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
         {
             GameMap map = new GameMap();
             map.name = this.name;

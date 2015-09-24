@@ -52,7 +52,7 @@ namespace GameMapEditor
         /// <returns>Le tile</returns>
         private Bitmap GetCroppedTexture(int tileIndex, string textureName)
         {
-            if (tileIndex == GameTile.EMPTY)
+            if (tileIndex == GameMapTile.EMPTY)
                 return null;
 
             int textureIndex = this.RetrieveTextureIndex(textureName);
@@ -63,7 +63,7 @@ namespace GameMapEditor
             {
                 Bitmap texture = this.GetTexture(textureName);
 
-                GameVector2 vector = GameTile.DecodeFormattedIndex(tileIndex, texture.Width / GlobalData.TileSize.Width) * GlobalData.TileSize;
+                GameVector2 vector = GameMapTile.DecodeFormattedIndex(tileIndex, texture.Width / GlobalData.TileSize.Width) * GlobalData.TileSize;
                 CroppedTextures.Add(croppedKey, texture.Clone(new Rectangle(vector.X, vector.Y, GlobalData.TileSize.Width, GlobalData.TileSize.Height),
                     System.Drawing.Imaging.PixelFormat.DontCare));
             }
@@ -86,7 +86,7 @@ namespace GameMapEditor
                 {
                     layer.LayerChanged += Layer_LayerChanged;
 
-                    foreach (GameTile tile in layer.Tiles)
+                    foreach (GameMapTile tile in layer.Tiles)
                     {
                         string texturesFilename = this.RetrieveTextureName(tile.TextureIndex);
                         if (texturesFilename != null)

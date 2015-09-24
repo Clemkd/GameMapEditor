@@ -19,6 +19,9 @@ namespace GameMapEditor.Objects
         public event EventHandler<UndoRedoEventArgs> UndoHappened;
         public event EventHandler<UndoRedoEventArgs> RedoHappened;
 
+        /// <summary>
+        /// Créer un nouveau manager d'historique de modifications
+        /// </summary>
         public UndoRedoManager()
         {
             this.undoStack = new LimitedStack<GameMap>(MAX_LENGHT);
@@ -31,7 +34,7 @@ namespace GameMapEditor.Objects
         /// <param name="map"></param>
         public void Add(GameMap map)
         {
-            this.undoStack.Push(map.Clone());
+            this.undoStack.Push(map.Clone() as GameMap);
             this.redoStack.Clear();
         }
 
@@ -69,11 +72,17 @@ namespace GameMapEditor.Objects
         // TODO : Debug only
         public override string ToString() => $"Undo : {this.undoStack.Count}\nRedo : {this.redoStack.Count}";
 
+        /// <summary>
+        /// Obtient l'état de possibilité d'action du Undo
+        /// </summary>
         public bool CanUndo
         {
             get { return this.undoStack.Count > 0; }
         }
 
+        /// <summary>
+        /// Obtient l'état de possibilité d'action du Redo
+        /// </summary>
         public bool CanRedo
         {
             get { return this.redoStack.Count > 0; }

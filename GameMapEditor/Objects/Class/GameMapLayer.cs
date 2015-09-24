@@ -10,11 +10,9 @@ namespace GameMapEditor
 {
     public delegate void LayerChangeEventArgs(object sender, EventArgs e);
 
-    //[Serializable]
     [ProtoContract]
-    public class GameMapLayer : IDrawable
+    public class GameMapLayer : IDrawable, ICloneable
     {
-        //[field: NonSerialized]
         public event LayerChangeEventArgs LayerChanged;
 
         [ProtoMember(1)]
@@ -49,7 +47,11 @@ namespace GameMapEditor
             }
         }
 
-        public GameMapLayer Clone()
+        /// <summary>
+        /// Réalise et retourne une copie de l'objet
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
         {
             GameMapLayer layer = new GameMapLayer();
             layer.name = this.name;
@@ -151,6 +153,9 @@ namespace GameMapEditor
             set { this.visible = value; this.LayerChanged?.Invoke(this, EventArgs.Empty); }
         }
 
+        /// <summary>
+        /// Obtient la liste de tiles du layer
+        /// </summary>
         public List<GameMapTile> Tiles
         {
             get { return this.tiles; }

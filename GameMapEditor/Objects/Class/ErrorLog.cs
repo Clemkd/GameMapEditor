@@ -8,7 +8,7 @@ namespace GameMapEditor.Objects
         private const string ERROR_LOG_FILE = "error-log.txt";
 
         /// <summary>
-        /// Écrit dans le fichier de logs, les informations sur l'exception jetée
+        /// Écrit dans le fichier de logs les informations sur l'exception jetée
         /// </summary>
         /// <param name="ex">L'exception jetée</param>
         public static void Write(Exception ex)

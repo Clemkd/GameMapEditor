@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapPanelFrame));
             this.lblMapName = new System.Windows.Forms.Label();
             this.grpMapInformation = new System.Windows.Forms.GroupBox();
-            this.txtMapName = new System.Windows.Forms.TextBox();
+            this.textBoxMapName = new System.Windows.Forms.TextBox();
             this.btnValidNewMap = new System.Windows.Forms.Button();
             this.grpMapInformation.SuspendLayout();
             this.SuspendLayout();
@@ -47,7 +47,7 @@
             // 
             // grpMapInformation
             // 
-            this.grpMapInformation.Controls.Add(this.txtMapName);
+            this.grpMapInformation.Controls.Add(this.textBoxMapName);
             this.grpMapInformation.Controls.Add(this.lblMapName);
             this.grpMapInformation.Location = new System.Drawing.Point(12, 12);
             this.grpMapInformation.Name = "grpMapInformation";
@@ -58,11 +58,11 @@
             // 
             // txtMapName
             // 
-            this.txtMapName.Location = new System.Drawing.Point(28, 59);
-            this.txtMapName.Name = "txtMapName";
-            this.txtMapName.Size = new System.Drawing.Size(364, 20);
-            this.txtMapName.TabIndex = 1;
-            this.txtMapName.Leave += new System.EventHandler(this.txtMapName_Leave);
+            this.textBoxMapName.Location = new System.Drawing.Point(28, 59);
+            this.textBoxMapName.Name = "txtMapName";
+            this.textBoxMapName.Size = new System.Drawing.Size(364, 20);
+            this.textBoxMapName.TabIndex = 1;
+            this.textBoxMapName.Leave += new System.EventHandler(this.txtMapName_Leave);
             // 
             // btnValidNewMap
             // 
@@ -89,6 +89,7 @@
             this.Name = "MapPanelFrame";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Nouvelle carte";
+            this.Load += new System.EventHandler(this.MapPanelFrame_Load);
             this.grpMapInformation.ResumeLayout(false);
             this.grpMapInformation.PerformLayout();
             this.ResumeLayout(false);
@@ -99,7 +100,7 @@
 
         private System.Windows.Forms.Label lblMapName;
         private System.Windows.Forms.GroupBox grpMapInformation;
-        private System.Windows.Forms.TextBox txtMapName;
+        private System.Windows.Forms.TextBox textBoxMapName;
         private System.Windows.Forms.Button btnValidNewMap;
     }
 }

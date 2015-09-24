@@ -5,12 +5,12 @@ namespace GameMapEditor.Objects
 {
     public static class ListExtensions
     {
-        public static List<GameTile> Clone(this List<GameTile> list)
+        public static List<GameMapTile> Clone(this List<GameMapTile> list)
         {
-            List<GameTile> result = new List<GameTile>();
-            foreach (GameTile tile in list)
+            List<GameMapTile> result = new List<GameMapTile>();
+            foreach (GameMapTile tile in list)
             {
-                result.Add(tile.Clone());
+                result.Add(tile.Clone() as GameMapTile);
             }
 
             return result;
@@ -22,7 +22,7 @@ namespace GameMapEditor.Objects
             List<GameMapLayer> result = new List<GameMapLayer>();
             foreach (GameMapLayer layer in list)
             {
-                result.Add(layer.Clone());
+                result.Add(layer.Clone() as GameMapLayer);
             }
 
             return result;

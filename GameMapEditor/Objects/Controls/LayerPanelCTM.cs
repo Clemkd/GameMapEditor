@@ -188,10 +188,14 @@ namespace GameMapEditor.Objects.Controls
             get { return this.selectedIndex; }
             set
             {
-                this.selectedIndex = value;
-                this.RefreshSelectionState(value);
-                this.ItemSelectionChanged?.Invoke(this, value);
-                //throw new IndexOutOfRangeException("Impossible de changer la selection, l'index spécifié est en dehors des limites du tableau.");
+                if (value >= 0 && value <= this.Controls.Count)
+                {
+                    this.selectedIndex = value;
+                    this.RefreshSelectionState(value);
+                    this.ItemSelectionChanged?.Invoke(this, value);
+                }
+                else
+                    throw new IndexOutOfRangeException("Impossible de changer la selection, l'index spécifié est en dehors des limites du tableau.");
             }
         }
     }

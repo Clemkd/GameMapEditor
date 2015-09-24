@@ -484,7 +484,6 @@ namespace GameMapEditor
             this.Name = "MainFrame";
             this.Text = "Editeur";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFrame_FormClosing);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainFrame_FormClosed);
             this.MenuStrip.ResumeLayout(false);
             this.MenuStrip.PerformLayout();
             this.ToolStrip.ResumeLayout(false);

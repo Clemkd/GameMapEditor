@@ -17,6 +17,16 @@ namespace GameMapEditor.Frames
             InitializeComponent();
         }
 
+        private void MapPanelFrame_Load(object sender, EventArgs e)
+        {
+            this.textBoxMapName.Text = "Carte " + Directory.GetFiles(GlobalData.MAPS_DIRECTORY_PATH, "*.frog").Count().ToString();
+        }
+
+        /// <summary>
+        /// Formate et retourne le nom valide (système) du nom de fichier spécifié
+        /// </summary>
+        /// <param name="filename">Le nom à formatter</param>
+        /// <returns>Le nom de fichier valide</returns>
         private string SafeFilename(string filename)
         {
             return string.Join("", filename.Split(Path.GetInvalidFileNameChars()));
@@ -24,7 +34,7 @@ namespace GameMapEditor.Frames
 
         private void btnValidNewMap_Click(object sender, EventArgs e)
         {
-            string filename = this.txtMapName.Text;
+            string filename = this.textBoxMapName.Text;
 
             if(string.IsNullOrWhiteSpace(filename))
             {
@@ -47,7 +57,7 @@ namespace GameMapEditor.Frames
 
         private void txtMapName_Leave(object sender, EventArgs e)
         {
-            this.txtMapName.Text = SafeFilename(this.txtMapName.Text);
+            this.textBoxMapName.Text = SafeFilename(this.textBoxMapName.Text);
         }
     }
 }

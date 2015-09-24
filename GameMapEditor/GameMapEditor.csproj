@@ -126,7 +126,7 @@
     <Compile Include="Objects\Class\ErrorLog.cs" />
     <Compile Include="Objects\Class\GameMap.cs" />
     <Compile Include="Objects\Class\GameMapLayer.cs" />
-    <Compile Include="Objects\Class\GameTile.cs" />
+    <Compile Include="Objects\Class\GameMapTile.cs" />
     <Compile Include="Objects\Class\GameVector2.cs" />
     <Compile Include="Objects\Interfaces\IDrawable.cs" />
     <Compile Include="Objects\Extensions\ImageAttrExtension.cs" />

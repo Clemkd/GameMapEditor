@@ -19,6 +19,8 @@ namespace GameMapEditor.Objects.Controls
         public override void WriteLine(string value)
         {
             base.WriteLine(value);
+
+            // Oblige le WriteLine sur le thread UI
             this.output.Invoke((Action)delegate  { this.output.WriteLine(value); });
         }
 

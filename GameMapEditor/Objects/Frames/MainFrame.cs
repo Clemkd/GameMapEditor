@@ -48,6 +48,71 @@ namespace GameMapEditor
             LayerPanel.Instance.Refresh();
         }
 
+        /// <summary>
+        /// Réinitialise la position de la fenêtre Tileset et l'affiche
+        /// </summary>
+        private void LoadTilesetPanel()
+        {
+            TilesetPanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
+            TilesetPanel.Instance.Show(this.DockPanel);
+            TilesetPanel.Instance.DockTo(this.DockPanel, DockStyle.Left);
+        }
+
+        /// <summary>
+        /// Réinitialise la position de la fenêtre Console et l'affiche
+        /// </summary>
+        private void LoadConsolePanel()
+        {
+            ConsolePanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
+            ConsolePanel.Instance.Show(this.DockPanel);
+            ConsolePanel.Instance.DockTo(this.DockPanel, DockStyle.Bottom);
+        }
+
+        /// <summary>
+        /// Réinitialise la position de la fenêtre Explorateur et l'affiche
+        /// </summary>
+        private void LoadBrowserPanel()
+        {
+            BrowserPanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
+            BrowserPanel.Instance.Show(DockPanel);
+            BrowserPanel.Instance.DockTo(this.DockPanel, DockStyle.Right);
+        }
+
+        private void LoadLayerPanel()
+        {
+            LayerPanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
+            LayerPanel.Instance.Show(this.DockPanel);
+            LayerPanel.Instance.DockTo(this.DockPanel, DockStyle.Right);
+        }
+
+        /// <summary>
+        /// Libère les ressources associées
+        /// </summary>
+        private new void Dispose()
+        {
+            MapPanels.ForEach(mapPanel => mapPanel.UndoRedoUpdated -= MapPanel_UndoRedoUpdated);
+            this.Dispose(true);
+        }
+
+        private void MainFrame_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (ExistsUnsavedDocuments)
+            {
+                DialogResult result = MessageBox.Show(this, "Tous les documents n'ont pas été sauvegardé !\nQuitter sans sauvegarder ?",
+                    "Sauvegarde", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+                if (result == DialogResult.OK)
+                {
+                    this.Dispose();
+                    Environment.Exit(0);
+                }
+                else e.Cancel = true;
+            }
+            else
+            {
+                this.Dispose();
+            }
+        }
+
         private void TilesetPanel_TilesetChanged(object sender, TextureInfo texture)
         {
             MapPanels.ForEach(x => x.TextureInfo = texture);
@@ -129,7 +194,7 @@ namespace GameMapEditor
             catch (Exception ex)
             {
                 ConsolePanel.Instance.WriteLine(ex.Message);
-                
+
             }
         }
 
@@ -147,7 +212,7 @@ namespace GameMapEditor
                     waintingFrame.Show(this);
 
                     GameMap map = await GameMap.Load(openFileDialog.FileName);
-                    
+
                     MapPanel mapPanel = new MapPanel(TilesetPanel.Instance.TilesetInfo, map);
                     this.DockPanel.SuspendLayout();
                     mapPanel.Show(this.DockPanel);
@@ -201,43 +266,6 @@ namespace GameMapEditor
             this.Close();
         }
 
-        /// <summary>
-        /// Réinitialise la position de la fenêtre Tileset et l'affiche
-        /// </summary>
-        private void LoadTilesetPanel()
-        {
-            TilesetPanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-            TilesetPanel.Instance.Show(this.DockPanel);
-            TilesetPanel.Instance.DockTo(this.DockPanel, DockStyle.Left);
-        }
-
-        /// <summary>
-        /// Réinitialise la position de la fenêtre Console et l'affiche
-        /// </summary>
-        private void LoadConsolePanel()
-        {
-            ConsolePanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-            ConsolePanel.Instance.Show(this.DockPanel);
-            ConsolePanel.Instance.DockTo(this.DockPanel, DockStyle.Bottom);
-        }
-
-        /// <summary>
-        /// Réinitialise la position de la fenêtre Explorateur et l'affiche
-        /// </summary>
-        private void LoadBrowserPanel()
-        {
-            BrowserPanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-            BrowserPanel.Instance.Show(DockPanel);
-            BrowserPanel.Instance.DockTo(this.DockPanel, DockStyle.Right);
-        }
-
-        private void LoadLayerPanel()
-        {
-            LayerPanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-            LayerPanel.Instance.Show(this.DockPanel);
-            LayerPanel.Instance.DockTo(this.DockPanel, DockStyle.Right);
-        }
-
         private void DockPanel_ActiveDocumentChanged(object sender, EventArgs e)
         {
             LayerPanel.Instance.Refresh();
@@ -247,50 +275,6 @@ namespace GameMapEditor
             {
                 this.toolStripButtonUndo.Enabled = mapPanel.CanUndo;
                 this.toolStripButtonRedo.Enabled = mapPanel.CanRedo;
-            }
-        }
-
-        /// <summary>
-        /// Libère les ressources associées
-        /// </summary>
-        private new void Dispose()
-        {
-            MapPanels.ForEach(mapPanel => mapPanel.UndoRedoUpdated -= MapPanel_UndoRedoUpdated);
-            this.Dispose(true);
-        }
-
-        private void MainFrame_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if(ExistsUnsavedDocuments)
-            {
-                DialogResult result = MessageBox.Show(this, "Tous les documents n'ont pas été sauvegardé !\nQuitter sans sauvegarder ?",
-                    "Sauvegarde", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
-                if (result == DialogResult.OK)
-                {
-                    this.Close();
-                }
-                else e.Cancel = true;
-            }
-        }
-
-        private void MainFrame_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            this.Dispose();
-        }
-
-        /// <summary>
-        /// Obtient la valeur informant s'il existe des documents ouverts non sauvegardés
-        /// </summary>
-        private bool ExistsUnsavedDocuments
-        {
-            get
-            {
-                foreach (MapPanel mapPanel in DockPanel.Documents)
-                {
-                    if (!mapPanel.IsSaved)
-                        return true;
-                }
-                return false;
             }
         }
 
@@ -337,6 +321,22 @@ namespace GameMapEditor
                 LayerPanel.Instance.Refresh();
                 this.toolStripButtonRedo.Enabled = mapPanel.CanRedo;
                 this.toolStripButtonUndo.Enabled = mapPanel.CanUndo;
+            }
+        }
+
+        /// <summary>
+        /// Obtient la valeur informant s'il existe des documents ouverts non sauvegardés
+        /// </summary>
+        private bool ExistsUnsavedDocuments
+        {
+            get
+            {
+                foreach (MapPanel mapPanel in DockPanel.Documents)
+                {
+                    if (!mapPanel.IsSaved)
+                        return true;
+                }
+                return false;
             }
         }
     }
