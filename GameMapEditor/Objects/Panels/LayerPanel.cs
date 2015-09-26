@@ -24,6 +24,65 @@ namespace GameMapEditor
         {
             this.HideOnClose = true;
             InitializeComponent();
+
+            LayerControl.LayerVisibleStateChanged += Layer_VisibleStateChanged;
+            LayerControl.LayerTypeChanged += Layer_TypeChanged;
+            LayerControl.LayerRemoveButtonClicked += LayerControl_LayerRemoveButtonClicked;
+            LayerControl.LayerDownButtonClicked += LayerControl_LayerDownButtonClicked;
+            LayerControl.LayerUpButtonClicked += LayerControl_LayerUpButtonClicked;
+        }
+
+        private void LayerControl_LayerUpButtonClicked(object sender, EventArgs e)
+        {
+            LayerControl control = sender as LayerControl;
+            int index = this.layerPanelCTM.Controls.IndexOf(control);
+            this.SwapUp(index);
+        }
+
+        private void LayerControl_LayerDownButtonClicked(object sender, EventArgs e)
+        {
+            LayerControl control = sender as LayerControl;
+            int index = this.layerPanelCTM.Controls.IndexOf(control);
+            this.SwapDown(index);
+        }
+
+        private void LayerControl_LayerRemoveButtonClicked(object sender, EventArgs e)
+        {
+            LayerControl control = sender as LayerControl;
+            int index = this.layerPanelCTM.Controls.IndexOf(control);
+            this.Remove(index);
+        }
+
+        /// <summary>
+        /// Échange l'élément par celui de dessous si possible
+        /// </summary>
+        /// <param name="index">L'index de l'élément à échanger de place</param>
+        private void SwapDown(int index)
+        {
+            if (this.layerPanelCTM.Controls.Count > 0)
+            {
+                MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
+                if (mapPanel != null && mapPanel.Map.SwapLayers(index, index + 1))
+                {
+                    this.layerPanelCTM.Swap(index, index + 1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Échange l'élément par celui de dessus si possible
+        /// </summary>
+        /// <param name="index">L'index de l'élément à échanger de place</param>
+        private void SwapUp(int index)
+        {
+            if (this.layerPanelCTM.Controls.Count > 0)
+            {
+                MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
+                if (mapPanel != null && mapPanel.Map.SwapLayers(index, index - 1))
+                {
+                    this.layerPanelCTM.Swap(index, index - 1);
+                }
+            }
         }
 
         public void Clear()
@@ -87,31 +146,14 @@ namespace GameMapEditor
             formular.MapLayerAdded -= Formular_MapLayerAdded;
         }
 
-
         private void toolStripButtonUpLayer_Click(object sender, EventArgs e)
         {
-            if (this.layerPanelCTM.Controls.Count > 0)
-            {
-                int index1 = this.layerPanelCTM.SelectedIndex;
-                MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
-                if (mapPanel != null && mapPanel.Map.SwapLayers(index1, index1 - 1))
-                {
-                    this.layerPanelCTM.Swap(index1, index1 - 1);
-                }
-            }
+            this.SwapUp(this.layerPanelCTM.SelectedIndex);
         }
 
         private void toolStripButtonDownLayer_Click(object sender, EventArgs e)
         {
-            if(this.layerPanelCTM.Controls.Count > 0)
-            {
-                int index1 = this.layerPanelCTM.SelectedIndex;
-                MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
-                if (mapPanel != null && mapPanel.Map.SwapLayers(index1, index1 + 1))
-                {
-                    this.layerPanelCTM.Swap(index1, index1 + 1);
-                }
-            }   
+            this.SwapDown(this.layerPanelCTM.SelectedIndex);
         }
 
         private void toolStripButtonRemoveLayer_Click(object sender, EventArgs e)
@@ -121,11 +163,6 @@ namespace GameMapEditor
                 this.Remove(this.layerPanelCTM.SelectedIndex);
             }
             else ConsolePanel.Instance.WriteLine("Impossible de supprimer la dernière couche de la carte", RowType.Error);
-        }
-
-        private void toolStripButtonSetVisibleState_Click(object sender, EventArgs e)
-        {
-            this.layerPanelCTM_LayerVisibleStateChanged(sender, EventArgs.Empty);
         }
 
         private void Formular_MapLayerAdded(object sender, GameMapLayer layer)
@@ -146,7 +183,7 @@ namespace GameMapEditor
             this.MapLayerSelectionChanged?.Invoke(this, index);
         }
 
-        private void layerPanelCTM_LayerTypeChanged(object sender, EventArgs e)
+        private void Layer_TypeChanged(object sender, EventArgs e)
         {
             if (this.layerPanelCTM.Controls.Count > 0)
             {
@@ -163,8 +200,8 @@ namespace GameMapEditor
             }
         }
 
-        // TODO : Corriger (disfonctionnement survenu après un Undo, l'état d'affichage ne se modifi pas)
-        private void layerPanelCTM_LayerVisibleStateChanged(object sender, EventArgs e)
+        // TODO : Corriger (disfonctionnement survenu après un Undo, l'état d'affichage ne se modifie pas)
+        private void Layer_VisibleStateChanged(object sender, EventArgs e)
         {
             if (this.layerPanelCTM.Controls.Count > 0)
             {

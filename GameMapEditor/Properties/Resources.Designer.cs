@@ -73,6 +73,26 @@ namespace GameMapEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap arrow_090_medium {
+            get {
+                object obj = ResourceManager.GetObject("arrow-090-medium", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrow_270_medium {
+            get {
+                object obj = ResourceManager.GetObject("arrow-270-medium", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap categoryaccesslower {
             get {
                 object obj = ResourceManager.GetObject("categoryaccesslower", resourceCulture);
@@ -86,6 +106,16 @@ namespace GameMapEditor.Properties {
         internal static System.Drawing.Bitmap categoryaccessupper {
             get {
                 object obj = ResourceManager.GetObject("categoryaccessupper", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cross_script {
+            get {
+                object obj = ResourceManager.GetObject("cross-script", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

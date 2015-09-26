@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using GameMapEditor.Properties;
 
@@ -13,13 +7,17 @@ namespace GameMapEditor.Objects.Controls
 {
     public delegate void ItemClickedEventArgs(object sender, EventArgs e);
     public delegate void ItemChangedEventArgs(object sender, EventArgs e);
+    public delegate void ItemMenuItemClickedEventArgs(object sender, EventArgs e);
 
     public partial class LayerControl : UserControl
     {
-        public event ItemClickedEventArgs LayerClicked;
-        public event ItemClickedEventArgs LayerDoubleClicked;
-        public event ItemChangedEventArgs LayerVisibleStateChanged;
-        public event ItemChangedEventArgs LayerTypeChanged;
+        public static event ItemClickedEventArgs LayerClicked;
+        public static event ItemClickedEventArgs LayerDoubleClicked;
+        public static event ItemChangedEventArgs LayerVisibleStateChanged;
+        public static event ItemChangedEventArgs LayerTypeChanged;
+        public static event ItemMenuItemClickedEventArgs LayerRemoveButtonClicked;
+        public static event ItemMenuItemClickedEventArgs LayerDownButtonClicked;
+        public static event ItemMenuItemClickedEventArgs LayerUpButtonClicked;
 
         private static Color UnselectedBackColor = SystemColors.Window;
         private static Color SelectedBackColor = Color.LightSteelBlue;
@@ -72,7 +70,7 @@ namespace GameMapEditor.Objects.Controls
             {
                 this.visible = value;
                 this.pictureBoxVisibleState.Image = this.Visible ? Resources.eye : Resources.eyeclose;
-                this.LayerVisibleStateChanged?.Invoke(this, EventArgs.Empty);
+                LayerVisibleStateChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -86,7 +84,7 @@ namespace GameMapEditor.Objects.Controls
             {
                 this.type = value;
                 this.pictureBoxLayerType.Image = value == LayerType.Lower ? Resources.categoryaccesslower : Resources.categoryaccessupper;
-                this.LayerTypeChanged?.Invoke(this, EventArgs.Empty);
+                LayerTypeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -100,14 +98,18 @@ namespace GameMapEditor.Objects.Controls
             }
         }
 
-        private void LayerControl_Click(object sender, EventArgs e)
+        private void LayerControl_MouseClick(object sender, MouseEventArgs e)
         {
-            this.LayerClicked?.Invoke(this, EventArgs.Empty);
+            LayerClicked?.Invoke(this, EventArgs.Empty);
+            if (e.Button == MouseButtons.Right)
+            {
+                this.contextMenuStrip.Show(this, e.Location);
+            }
         }
 
         private void LayerControl_DoubleClick(object sender, EventArgs e)
         {
-            this.LayerDoubleClicked?.Invoke(this, EventArgs.Empty);
+            LayerDoubleClicked?.Invoke(this, EventArgs.Empty);
         }
 
         private void pictureBoxLayerType_Click(object sender, EventArgs e)
@@ -118,6 +120,21 @@ namespace GameMapEditor.Objects.Controls
         private void pictureBoxVisibleState_Click(object sender, EventArgs e)
         {
             this.Visible = !this.visible;
+        }
+
+        private void toolStripMenuItemDelete_Click(object sender, EventArgs e)
+        {
+            LayerRemoveButtonClicked?.Invoke(this, e);
+        }
+
+        private void toolStripMenuItemDown_Click(object sender, EventArgs e)
+        {
+            LayerDownButtonClicked?.Invoke(this, e);
+        }
+
+        private void toolStripMenuItemUp_Click(object sender, EventArgs e)
+        {
+            LayerUpButtonClicked?.Invoke(this, e);
         }
     }
 }

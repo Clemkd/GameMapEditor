@@ -107,8 +107,6 @@ namespace GameMapEditor
             this.layerPanelCTM.Size = new System.Drawing.Size(200, 115);
             this.layerPanelCTM.TabIndex = 2;
             this.layerPanelCTM.ItemSelectionChanged += new GameMapEditor.Objects.Controls.PanelItemSelectionChangedEventArgs(this.layerPanelCTM_ItemSelectionChanged);
-            this.layerPanelCTM.LayerVisibleStateChanged += new GameMapEditor.Objects.Controls.ItemChangedEventArgs(this.layerPanelCTM_LayerVisibleStateChanged);
-            this.layerPanelCTM.LayerTypeChanged += new GameMapEditor.Objects.Controls.ItemChangedEventArgs(this.layerPanelCTM_LayerTypeChanged);
             // 
             // LayerPanel
             // 

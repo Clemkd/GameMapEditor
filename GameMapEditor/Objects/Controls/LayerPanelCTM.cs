@@ -14,8 +14,6 @@ namespace GameMapEditor.Objects.Controls
     public class LayerPanelCTM : Panel
     {
         public event PanelItemSelectionChangedEventArgs ItemSelectionChanged;
-        public event ItemChangedEventArgs LayerVisibleStateChanged;
-        public event ItemChangedEventArgs LayerTypeChanged;
 
         private int selectedIndex;
 
@@ -23,6 +21,8 @@ namespace GameMapEditor.Objects.Controls
         {
             this.HorizontalScroll.Enabled = false;
             this.HorizontalScroll.Visible = false;
+
+            LayerControl.LayerClicked += LayerControl_Click;
         }
 
         /// <summary>
@@ -32,10 +32,6 @@ namespace GameMapEditor.Objects.Controls
         public void Add(GameMapLayer layer)
         {
             LayerControl layerControl = new LayerControl(layer.Name, layer.Visible, layer.Type);
-            layerControl.LayerClicked += LayerControl_Click;
-            layerControl.LayerVisibleStateChanged += LayerControl_LayerVisibleStateChanged;
-            layerControl.LayerTypeChanged += LayerControl_LayerTypeChanged;
-
             this.Controls.Add(layerControl);
         }
 
@@ -48,12 +44,8 @@ namespace GameMapEditor.Objects.Controls
         {
             if (index >= 0)
             {
-                LayerControl layerControl = new LayerControl(layer.Name, layer.Visible, layer.Type);
-                layerControl.LayerClicked += LayerControl_Click;
-                layerControl.LayerVisibleStateChanged += LayerControl_LayerVisibleStateChanged;
-                layerControl.LayerTypeChanged += LayerControl_LayerTypeChanged;
-
-                this.Controls.Add(layerControl);
+                this.Add(layer);
+                LayerControl layerControl = this.Controls[this.Controls.Count - 1] as LayerControl;
                 this.Controls.SetChildIndex(layerControl, index);
                 this.Refresh();
                 this.SelectedIndex = index;
@@ -71,9 +63,6 @@ namespace GameMapEditor.Objects.Controls
             if (index >= 0 && index < this.Controls.Count)
             {
                 LayerControl layerControl = this.Controls[index] as LayerControl;
-                layerControl.LayerClicked -= LayerControl_Click;
-                layerControl.LayerVisibleStateChanged -= LayerControl_LayerVisibleStateChanged;
-                layerControl.LayerTypeChanged -= LayerControl_LayerTypeChanged;
 
                 this.Controls.RemoveAt(index);
                 this.Refresh();
@@ -160,16 +149,6 @@ namespace GameMapEditor.Objects.Controls
             this.SelectedIndex = this.Controls.IndexOf(layerC);
         }
 
-        private void LayerControl_LayerVisibleStateChanged(object sender, EventArgs e)
-        {
-            this.LayerVisibleStateChanged?.Invoke(sender, e);
-        }
-
-        private void LayerControl_LayerTypeChanged(object sender, EventArgs e)
-        {
-            this.LayerTypeChanged?.Invoke(sender, e);
-        }
-
         protected override void OnResize(EventArgs eventargs)
         {
             base.OnResize(eventargs);
@@ -197,6 +176,15 @@ namespace GameMapEditor.Objects.Controls
                 else
                     throw new IndexOutOfRangeException("Impossible de changer la selection, l'index spécifié est en dehors des limites du tableau.");
             }
+        }
+
+        /// <summary>
+        /// Libère les ressources utilisées
+        /// </summary>
+        public new void Dispose()
+        {
+            LayerControl.LayerClicked -= LayerControl_Click;
+            this.Dispose(true);
         }
     }
 }
