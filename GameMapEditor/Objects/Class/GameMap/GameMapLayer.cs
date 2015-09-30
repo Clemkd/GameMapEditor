@@ -10,8 +10,9 @@ namespace GameMapEditor
 {
     public delegate void LayerChangeEventArgs(object sender, EventArgs e);
 
+    [Serializable]
     [ProtoContract]
-    public class GameMapLayer : IDrawable, ICloneable
+    public class GameMapLayer : IDrawable
     {
         public event LayerChangeEventArgs LayerChanged;
 
@@ -25,9 +26,7 @@ namespace GameMapEditor
         private List<GameMapTile> tiles;
 
         // Protobuf constructor
-        private GameMapLayer()
-        {
-        }
+        private GameMapLayer() { }
 
         public GameMapLayer(string name)
         {
@@ -45,21 +44,6 @@ namespace GameMapEditor
             {
                 this.tiles.Add(new GameMapTile(index));
             }
-        }
-
-        /// <summary>
-        /// Réalise et retourne une copie de l'objet
-        /// </summary>
-        /// <returns></returns>
-        public object Clone()
-        {
-            GameMapLayer layer = new GameMapLayer();
-            layer.name = this.name;
-            layer.type = this.type;
-            layer.visible = this.visible;
-            layer.tiles = this.tiles.Clone();
-
-            return layer;
         }
 
         /// <summary>
@@ -85,7 +69,7 @@ namespace GameMapEditor
         {
             get
             {
-                if (x >= 0 && x < GlobalData.MapSize.Width && y >= 0 && y < GlobalData.MapSize.Height)
+                if (GameMap.InBounds(new GameVector2(x, y)))
                 {
                     int index = GameMapTile.EncodeFormattedIndex(new Point(x, y), GlobalData.MapSize.Width);
                     if (index < this.tiles.Count)
@@ -97,7 +81,7 @@ namespace GameMapEditor
             }
             set
             {
-                if (x >= 0 && x < GlobalData.MapSize.Width && y >= 0 && y < GlobalData.MapSize.Height)
+                if (GameMap.InBounds(new GameVector2(x, y)))
                 {
                     int index = GameMapTile.EncodeFormattedIndex(new Point(x, y), GlobalData.MapSize.Width);
                     if (index < this.tiles.Count)

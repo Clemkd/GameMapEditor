@@ -14,6 +14,8 @@ namespace GameMapEditor
 {
     public partial class TilesetPanel : DockContent
     {
+        private const string TEXTURES_EXTENSIONS = "*.png";
+
         private Point tilesetOrigin;
         private List<TextureInfo> textures;
         
@@ -32,6 +34,8 @@ namespace GameMapEditor
         private TilesetPanel()
         {
             this.HideOnClose = true;
+            this.DoubleBuffered = true;
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
         }
 
         #region FrameEvents
@@ -180,7 +184,7 @@ namespace GameMapEditor
         {
             if (Directory.Exists(GlobalData.TEXTURES_DIRECTORY_PATH))
             {
-                string[] tilesetFiles = Directory.GetFiles(GlobalData.TEXTURES_DIRECTORY_PATH, "*.png", SearchOption.AllDirectories);
+                string[] tilesetFiles = Directory.GetFiles(GlobalData.TEXTURES_DIRECTORY_PATH, TEXTURES_EXTENSIONS, SearchOption.AllDirectories);
                 foreach (string file in tilesetFiles)
                 {
                     this.textures.Add(new TextureInfo(file, Image.FromFile(file) as Bitmap));
@@ -206,16 +210,16 @@ namespace GameMapEditor
                 this.hPicTilesetScrollBar.Enabled = this.picTileset.Size.Width < this.textureInfo.BitmapSource.Size.Width;
 
                 this.vPicTilesetScrollBar.Minimum = 0;
-                this.vPicTilesetScrollBar.SmallChange = this.textureInfo.BitmapSource.Size.Height / 20;
-                this.vPicTilesetScrollBar.LargeChange = this.textureInfo.BitmapSource.Size.Height / 5;
+                this.vPicTilesetScrollBar.SmallChange = this.textureInfo.BitmapSource.Size.Height / 100;
+                this.vPicTilesetScrollBar.LargeChange = this.textureInfo.BitmapSource.Size.Height / 50;
                 int scrollHeightValue = this.textureInfo.BitmapSource.Size.Height + 50 - this.picTileset.Size.Height;
                 this.vPicTilesetScrollBar.Maximum = scrollHeightValue > 0 ? scrollHeightValue : 1;
                 this.vPicTilesetScrollBar.Maximum += this.vPicTilesetScrollBar.LargeChange;
                 this.vPicTilesetScrollBar.Value = scrollY < this.vPicTilesetScrollBar.Maximum ? scrollY : this.vPicTilesetScrollBar.Maximum;
 
                 this.hPicTilesetScrollBar.Minimum = 0;
-                this.hPicTilesetScrollBar.SmallChange = this.textureInfo.BitmapSource.Size.Width / 20;
-                this.hPicTilesetScrollBar.LargeChange = this.textureInfo.BitmapSource.Size.Width / 5;
+                this.hPicTilesetScrollBar.SmallChange = this.textureInfo.BitmapSource.Size.Width / 30;
+                this.hPicTilesetScrollBar.LargeChange = this.textureInfo.BitmapSource.Size.Width / 15;
                 int scrollWidthValue = this.textureInfo.BitmapSource.Size.Width + 50 - this.picTileset.Size.Width;
                 this.hPicTilesetScrollBar.Maximum = scrollWidthValue > 0 ? scrollWidthValue : 1;
                 this.hPicTilesetScrollBar.Maximum += this.hPicTilesetScrollBar.LargeChange;

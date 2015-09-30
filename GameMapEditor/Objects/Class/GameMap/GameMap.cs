@@ -1,6 +1,7 @@
 ﻿
 using GameMapEditor;
 using GameMapEditor.Objects;
+using GameMapEditor.Objects.Class;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,10 +18,13 @@ namespace GameMapEditor
 {
     public delegate void MapChangedEventArgs(object sender);
 
+    [Serializable]
     [ProtoContract]
-    public partial class GameMap : IDrawable, ICloneable
+    public partial class GameMap : IDrawable
     {
+        [field:NonSerialized]
         public event MapChangedEventArgs MapChanged;
+
         public const string DEFAULT_LAYER_NAME = "Couche 1";
         public const byte MAX_LAYER_COUNT = 10;
 
@@ -36,7 +41,7 @@ namespace GameMapEditor
         private GameMap()
         {
             // Cas de sauvegarde vide
-            if(this.textures == null)
+            if (this.textures == null)
                 this.textures = new Dictionary<string, int>();
         }
 
@@ -49,17 +54,17 @@ namespace GameMapEditor
         }
 
         /// <summary>
-        /// Réalise et retourne une copie de l'objet
+        /// Réalise une copie de l'objet dans une séquence de mémorisation
         /// </summary>
-        /// <returns></returns>
-        public object Clone()
+        /// <returns>La séquence mémoire</returns>
+        public MemoryStream CopyToMemoryStream()
         {
-            GameMap map = new GameMap();
-            map.name = this.name;
-            map.textures = this.textures.ToDictionary(k => k.Key, c => c.Value);
-            map.layers = this.layers.Clone();
+            BinaryFormatter serializer = new BinaryFormatter();
+            MemoryStream result = new MemoryStream();
 
-            return map;
+            serializer.Serialize(result, this);
+
+            return result;
         }
 
         /// <summary>
@@ -74,6 +79,41 @@ namespace GameMapEditor
             };
             layer.LayerChanged += Layer_LayerChanged;
             this.layers.Add(layer);
+        }
+
+        /// <summary>
+        /// Obtient ou définit le tile sur le layer et à la position spécifiée
+        /// </summary>
+        /// <param name="l">L'index du layer</param>
+        /// <param name="x">La coordonnée horizontale du tile</param>
+        /// <param name="y">La coordonnée verticale du tile</param>
+        /// <returns>Le tile</returns>
+        public GameMapTile this[int l, int x, int y]
+        {
+            get
+            {
+                return this.layers?[l]?[x, y];
+            }
+            set
+            {
+                if (l >= 0 && l < this.layers.Count)
+                {
+                    this.layers[l][x, y] = value;
+                }
+            }
+        }
+
+        // TODO : Implémenter
+        public GameMapCase this[int x, int y]
+        {
+            get
+            {
+                throw new NotImplementedException("Attributes not implemented");
+            }
+            set
+            {
+                throw new NotImplementedException("Attributes not implemented");
+            }
         }
 
         /// <summary>
@@ -317,26 +357,34 @@ namespace GameMapEditor
             }
         }
 
-        // TODO : Non testé
-        /*
-        public MemoryStream SaveToMemoryStream()
-        {
-            MemoryStream stream = new MemoryStream();
-            Serializer.Serialize(stream, this);
-            return stream; 
-        }*/
-
         /// <summary>
-        /// Charge la carte de jeu depuis un fichier de données
+        /// [Protobuf] Chargement asynchrone de la carte de jeu depuis un fichier de données
         /// </summary>
         /// <param name="fileName">Chemin suivi du nom et de l'extension du fichier de données</param>
-        /// <returns></returns>
+        /// <returns>La carte</returns>
         public static async Task<GameMap> Load(string fileName)
         {
             using (FileStream file = File.OpenRead(fileName))
             {
                 return await Serializer.Deserialize<GameMap>(file).LoadDependences();
             }
+        }
+
+        /// <summary>
+        /// [Binary] Chargement synchrone de la carte de jeu depuis un stream
+        /// </summary>
+        /// <param name="stream">Le stream contenant les données de la carte</param>
+        /// <returns>La carte</returns>
+        public static GameMap Load(MemoryStream stream)
+        {
+            BinaryFormatter deserializer = new BinaryFormatter();
+            stream.Seek(0, SeekOrigin.Begin);
+            return deserializer.Deserialize(stream) as GameMap;
+        }
+
+        public static bool InBounds(GameVector2 relativePosition)
+        {
+            return relativePosition.X >= 0 && relativePosition.X < GlobalData.MapSize.Width && relativePosition.Y >= 0 && relativePosition.Y < GlobalData.MapSize.Height;
         }
 
         private void Layer_LayerChanged(object sender, EventArgs e)

@@ -38,6 +38,7 @@ namespace GameMapEditor
             this.toolStripButtonRemoveLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonUpLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonDownLayer = new System.Windows.Forms.ToolStripButton();
+            this.toolStripLabelLayerCount = new System.Windows.Forms.ToolStripLabel();
             this.layerPanelCTM = new GameMapEditor.Objects.Controls.LayerPanelCTM();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -49,7 +50,8 @@ namespace GameMapEditor
             this.toolStripButtonAddLayer,
             this.toolStripButtonRemoveLayer,
             this.toolStripButtonUpLayer,
-            this.toolStripButtonDownLayer});
+            this.toolStripButtonDownLayer,
+            this.toolStripLabelLayerCount});
             this.toolStrip.Location = new System.Drawing.Point(0, 115);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(200, 25);
@@ -96,6 +98,15 @@ namespace GameMapEditor
             this.toolStripButtonDownLayer.Text = "Mettre en dessous";
             this.toolStripButtonDownLayer.Click += new System.EventHandler(this.toolStripButtonDownLayer_Click);
             // 
+            // toolStripLabelLayerCount
+            // 
+            this.toolStripLabelLayerCount.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabelLayerCount.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.toolStripLabelLayerCount.ForeColor = System.Drawing.SystemColors.AppWorkspace;
+            this.toolStripLabelLayerCount.Name = "toolStripLabelLayerCount";
+            this.toolStripLabelLayerCount.Size = new System.Drawing.Size(16, 22);
+            this.toolStripLabelLayerCount.Text = "...";
+            // 
             // layerPanelCTM
             // 
             this.layerPanelCTM.AutoScroll = true;
@@ -135,5 +146,6 @@ namespace GameMapEditor
         private System.Windows.Forms.ToolStripButton toolStripButtonDownLayer;
         private System.Windows.Forms.ToolStripButton toolStripButtonRemoveLayer;
         private Objects.Controls.LayerPanelCTM layerPanelCTM;
+        private ToolStripLabel toolStripLabelLayerCount;
     }
 }

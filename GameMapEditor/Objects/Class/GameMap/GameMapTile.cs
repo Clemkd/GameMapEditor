@@ -7,9 +7,9 @@ using System.Windows.Forms;
 
 namespace GameMapEditor
 {
-    //[Serializable]
+    [Serializable]
     [ProtoContract]
-    public class GameMapTile : IDrawable, ICloneable
+    public class GameMapTile : IDrawable
     {
         /// <summary>
         /// Le tile vide
@@ -33,21 +33,6 @@ namespace GameMapEditor
         {
             this.FormattedIndex = EMPTY;
             this.Position = DecodeFormattedIndex(formattedPosition, GlobalData.MapSize.Width);
-        }
-
-        /// <summary>
-        /// Réalise et retourne une copie de l'objet
-        /// </summary>
-        /// <returns></returns>
-        public object Clone()
-        {
-            GameMapTile tile = new GameMapTile();
-            tile.formattedIndex = this.formattedIndex;
-            tile.texturesetIndex = this.texturesetIndex;
-            tile.position = this.position;
-            tile.Texture = this.Texture;
-
-            return tile;
         }
 
         /// <summary>

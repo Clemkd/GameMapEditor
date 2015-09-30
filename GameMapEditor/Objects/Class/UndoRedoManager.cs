@@ -8,33 +8,35 @@ using System.Threading.Tasks;
 
 namespace GameMapEditor.Objects
 {
-    // TODO : Corriger 
-    public class UndoRedoManager
+    // TODO : Corriger le RedoStack (décalage)
+    public class UndoRedoManager<T>
     {
+        public delegate void UndoRedoEventArgs(object sender, T e);
+
         private const int MAX_LENGHT = 20;
 
-        private LimitedStack<GameMap> undoStack;
-        private LimitedStack<GameMap> redoStack;
+        private LimitedStack<T> undoStack;
+        private LimitedStack<T> redoStack;
 
-        public event EventHandler<UndoRedoEventArgs> UndoHappened;
-        public event EventHandler<UndoRedoEventArgs> RedoHappened;
+        public event UndoRedoEventArgs UndoHappened;
+        public event UndoRedoEventArgs RedoHappened;
 
         /// <summary>
         /// Créer un nouveau manager d'historique de modifications
         /// </summary>
         public UndoRedoManager()
         {
-            this.undoStack = new LimitedStack<GameMap>(MAX_LENGHT);
-            this.redoStack = new LimitedStack<GameMap>(MAX_LENGHT);
+            this.undoStack = new LimitedStack<T>(MAX_LENGHT);
+            this.redoStack = new LimitedStack<T>(MAX_LENGHT);
         }
 
         /// <summary>
         /// Ajoute une nouvelle étape dans l'historique
         /// </summary>
         /// <param name="map"></param>
-        public void Add(GameMap map)
+        public void Add(T obj)
         {
-            this.undoStack.Push(map.Clone() as GameMap);
+            this.undoStack.Push(obj);
             this.redoStack.Clear();
         }
 
@@ -50,7 +52,7 @@ namespace GameMapEditor.Objects
 
             var value = this.undoStack.Pop();
             this.redoStack.Push(value);
-            this.UndoHappened?.Invoke(this, new UndoRedoEventArgs(value));
+            this.UndoHappened?.Invoke(this, value);
         }
 
         // TODO : Réviser
@@ -66,11 +68,8 @@ namespace GameMapEditor.Objects
 
             var value = this.redoStack.Pop();
             this.undoStack.Push(value);
-            this.RedoHappened?.Invoke(this, new UndoRedoEventArgs(value));
+            this.RedoHappened?.Invoke(this, value);
         }
-
-        // TODO : Debug only
-        public override string ToString() => $"Undo : {this.undoStack.Count}\nRedo : {this.redoStack.Count}";
 
         /// <summary>
         /// Obtient l'état de possibilité d'action du Undo

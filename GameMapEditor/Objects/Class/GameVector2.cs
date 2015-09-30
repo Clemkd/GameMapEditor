@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace GameMapEditor
 {
+    [Serializable]
     [ProtoContract]
     public class GameVector2
     {

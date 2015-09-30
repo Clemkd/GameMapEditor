@@ -266,6 +266,18 @@ namespace GameMapEditor
             this.Close();
         }
 
+        /// <summary>
+        /// Met à jour les états des boutons UI liés à la gestion d'historique
+        /// </summary>
+        /// <param name="manager">Le gestionnaire d'historique courant</param>
+        private void RefreshUndoRedoButtonState(UndoRedoManager<MemoryStream> manager)
+        {
+            this.toolStripButtonUndo.Enabled = manager.CanUndo;
+            this.toolStripButtonRedo.Enabled = manager.CanRedo;
+            this.toolStripMenuItemUndo.Enabled = manager.CanUndo;
+            this.toolStripMenuItemRedo.Enabled = manager.CanRedo;
+        }
+
         private void DockPanel_ActiveDocumentChanged(object sender, EventArgs e)
         {
             LayerPanel.Instance.Refresh();
@@ -273,8 +285,7 @@ namespace GameMapEditor
             MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
             if (mapPanel != null)
             {
-                this.toolStripButtonUndo.Enabled = mapPanel.CanUndo;
-                this.toolStripButtonRedo.Enabled = mapPanel.CanRedo;
+                this.RefreshUndoRedoButtonState(mapPanel.Manager);
             }
         }
 
@@ -294,33 +305,29 @@ namespace GameMapEditor
             }
         }
 
-        private void MapPanel_UndoRedoUpdated(object sender, UndoRedoManager manager)
+        private void MapPanel_UndoRedoUpdated(object sender, UndoRedoManager<MemoryStream> manager)
         {
-            this.toolStripButtonUndo.Enabled = manager.CanUndo;
-            this.toolStripButtonRedo.Enabled = manager.CanRedo;
+            this.RefreshUndoRedoButtonState(manager);
         }
 
         private void toolStripButtonUndo_Click(object sender, EventArgs e)
         {
             MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
-            if (mapPanel != null && mapPanel.CanUndo)
+            if (mapPanel != null && mapPanel.Manager.CanUndo)
             {
-                mapPanel.Undo();
+                mapPanel.Manager.Undo();
                 LayerPanel.Instance.Refresh();
-                this.toolStripButtonRedo.Enabled = mapPanel.CanRedo;
-                this.toolStripButtonUndo.Enabled = mapPanel.CanUndo;
+                this.RefreshUndoRedoButtonState(mapPanel.Manager);
             }
         }
 
         private void toolStripButtonRedo_Click(object sender, EventArgs e)
         {
             MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
-            if (mapPanel != null && mapPanel.CanRedo)
+            if (mapPanel != null && mapPanel.Manager.CanRedo)
             {
-                mapPanel.Redo();
-                LayerPanel.Instance.Refresh();
-                this.toolStripButtonRedo.Enabled = mapPanel.CanRedo;
-                this.toolStripButtonUndo.Enabled = mapPanel.CanUndo;
+                mapPanel.Manager.Redo();
+                this.RefreshUndoRedoButtonState(mapPanel.Manager);
             }
         }
 

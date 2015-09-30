@@ -38,10 +38,10 @@ namespace GameMapEditor
         private GameVector2 location;
         private Point oldLocation;
 
-        private UndoRedoManager undoRedoManager;
+        private UndoRedoManager<MemoryStream> undoRedoManager;
         private bool mouseReleased;
 
-        public delegate void UndoRedoUpdatedEventArgs(object sender, UndoRedoManager manager);
+        public delegate void UndoRedoUpdatedEventArgs(object sender, UndoRedoManager<MemoryStream> manager);
         public event UndoRedoUpdatedEventArgs UndoRedoUpdated;
         #endregion
 
@@ -78,7 +78,7 @@ namespace GameMapEditor
             this.selectedLayerIndex = 0;
             this.mouseReleased = true;
 
-            this.undoRedoManager = new UndoRedoManager();
+            this.undoRedoManager = new UndoRedoManager<MemoryStream>();
             this.undoRedoManager.UndoHappened += UndoRedoSystem_UndoHappened;
             this.undoRedoManager.RedoHappened += UndoRedoSystem_RedoHappened;
 
@@ -88,9 +88,9 @@ namespace GameMapEditor
         /// <summary>
         /// Évènement appelé lorsqu'un Redo a été effectué
         /// </summary>
-        private void UndoRedoSystem_RedoHappened(object sender, UndoRedoEventArgs e)
+        private void UndoRedoSystem_RedoHappened(object sender, MemoryStream e)
         {
-            this.Map = e.CurrentItem as GameMap;
+            this.Map = GameMap.Load(e);
             this.Map.MapChanged += GameMap_MapChanged;
             this.picMap.Refresh();
         }
@@ -98,9 +98,9 @@ namespace GameMapEditor
         /// <summary>
         /// Évènement appelé lorsqu'un Undo a été effectué
         /// </summary>
-        private void UndoRedoSystem_UndoHappened(object sender, UndoRedoEventArgs e)
+        private void UndoRedoSystem_UndoHappened(object sender, MemoryStream e)
         {
-            this.Map = e.CurrentItem as GameMap;
+            this.Map = GameMap.Load(e);
             this.Map.MapChanged += GameMap_MapChanged;
             this.picMap.Refresh();
         }
@@ -142,7 +142,7 @@ namespace GameMapEditor
         {
             if (this.mouseReleased)
             {
-                this.undoRedoManager.Add(this.Map);
+                this.undoRedoManager.Add(this.Map.CopyToMemoryStream());
                 this.UndoRedoUpdated?.Invoke(this, this.undoRedoManager);
             }
             this.mouseReleased = false;
@@ -168,7 +168,7 @@ namespace GameMapEditor
         }
 
         /// <summary>
-        /// Réalise la modification des données de la carte selon 
+        /// Réalise la modification des données de la carte selon le model d'édition donné
         /// </summary>
         /// <param name="e">L'évènement souris</param>
         private void DoTileEdition(MouseEventArgs e)
@@ -243,7 +243,7 @@ namespace GameMapEditor
         {
             if (this.texture != null)
             {
-                this.undoRedoManager.Add(this.Map);
+                this.undoRedoManager.Add(this.Map.CopyToMemoryStream());
                 this.gameMap.Fill(this.selectedLayerIndex, this.texture);
                 this.picMap.Refresh();
                 this.UndoRedoUpdated?.Invoke(this, this.undoRedoManager);
@@ -365,9 +365,7 @@ namespace GameMapEditor
                                     attributes);
                     }
                 }
-                else if (this.State == GameEditorState.Erase && 
-                    location.X >= 0 && location.X < GlobalData.MapSize.Width &&
-                    location.Y >= 0 && location.Y < GlobalData.MapSize.Height)
+                else if (this.State == GameEditorState.Erase && GameMap.InBounds(location))
                 {
                     e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(100, 255, 45, 45)),
                         location.X * GlobalData.TileSize.Width - this.mapOrigin.X,
@@ -449,7 +447,7 @@ namespace GameMapEditor
             this.undoRedoManager.UndoHappened -= UndoRedoSystem_UndoHappened;
             this.undoRedoManager.RedoHappened -= UndoRedoSystem_RedoHappened;
             base.Dispose(true);
-            GC.SuppressFinalize(this);
+            //GC.SuppressFinalize(this);
         }
 
         private void MapPanel_FormClosed(object sender, FormClosedEventArgs e)
@@ -558,24 +556,9 @@ namespace GameMapEditor
             get { return this.Map.Name; }
         }
 
-        public bool CanUndo
+        public UndoRedoManager<MemoryStream> Manager
         {
-            get { return this.undoRedoManager.CanUndo; }
-        }
-
-        public bool CanRedo
-        {
-            get { return this.undoRedoManager.CanRedo; }
-        }
-
-        public void Undo()
-        {
-            this.undoRedoManager.Undo();
-        }
-
-        public void Redo()
-        {
-            this.undoRedoManager.Redo();
+            get { return this.undoRedoManager; }
         }
         #endregion
     }

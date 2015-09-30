@@ -23,6 +23,9 @@ namespace GameMapEditor
         private LayerPanel()
         {
             this.HideOnClose = true;
+            this.DoubleBuffered = true;
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+
             InitializeComponent();
 
             LayerControl.LayerVisibleStateChanged += Layer_VisibleStateChanged;
@@ -101,7 +104,7 @@ namespace GameMapEditor
 
             foreach (GameMapLayer layer in map.Layers)
             {
-                this.layerPanelCTM.Add(layer);
+                this.Add(layer);
             }
             this.layerPanelCTM.SelectedIndex = index;
             this.layerPanelCTM.Refresh();
@@ -112,7 +115,10 @@ namespace GameMapEditor
         /// </summary>
         public override void Refresh()
         {
+            
             base.Refresh();
+
+            this.toolStripLabelLayerCount.Text = $"({this.LayersCount}/{GameMap.MAX_LAYER_COUNT})";
 
             MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
             this.Enabled = mapPanel != null;
@@ -123,9 +129,16 @@ namespace GameMapEditor
             }
         }
 
+        public void Insert(GameMapLayer layer, int index)
+        {
+            this.layerPanelCTM.Insert(index, layer);
+            this.toolStripLabelLayerCount.Text = $"({this.LayersCount}/{GameMap.MAX_LAYER_COUNT})";
+        }
+
         public void Add(GameMapLayer layer)
         {
-            this.layerPanelCTM.Insert(0, layer);
+            this.layerPanelCTM.Add(layer);
+            this.toolStripLabelLayerCount.Text = $"({this.LayersCount}/{GameMap.MAX_LAYER_COUNT})";
         }
 
         public void Remove(int index)
@@ -135,6 +148,7 @@ namespace GameMapEditor
             {
                 mapPanel.Map.RemoveLayerAt(index);
                 this.layerPanelCTM.Remove(index);
+                this.toolStripLabelLayerCount.Text = $"({this.LayersCount}/{GameMap.MAX_LAYER_COUNT})";
             }
         }
 
@@ -169,7 +183,7 @@ namespace GameMapEditor
         {
             if (this.layerPanelCTM.Controls.Count < GameMap.MAX_LAYER_COUNT)
             {
-                this.Add(layer);
+                this.Insert(layer, 0);
                 this.MapLayerAdded?.Invoke(sender, layer);
             }
             else
