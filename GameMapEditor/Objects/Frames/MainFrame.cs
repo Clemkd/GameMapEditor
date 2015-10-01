@@ -125,8 +125,7 @@ namespace GameMapEditor
 
         private void toolStripBtnFill_Click(object sender, EventArgs e)
         {
-            MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
-            if (mapPanel != null) mapPanel.Fill();
+            this.ActiveMapPanel?.Fill();
         }
 
         private void MapFrame_CreationValidated(object sender, string mapName)
@@ -171,12 +170,8 @@ namespace GameMapEditor
         private void PanelToolsSaveCurrent_Click(object sender, EventArgs e)
         {
             // Sauvegarder map courante
-            MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
-            if (mapPanel != null)
-            {
-                mapPanel.Save();
-                ConsolePanel.Instance.WriteLine("Carte de jeu enregistrée avec succés.", RowType.Information);
-            }
+            this.ActiveMapPanel?.Save();
+            ConsolePanel.Instance.WriteLine("Carte de jeu enregistrée avec succés.", RowType.Information);
         }
 
         private void PanelToolsSaveAll_Click(object sender, EventArgs e)
@@ -239,17 +234,13 @@ namespace GameMapEditor
 
         private void LayerPanel_MapLayerAdded(object sender, GameMapLayer layer)
         {
-            MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
-            if (mapPanel != null)
-            {
-                mapPanel.Map.AddLayer(layer);
-                ConsolePanel.Instance.WriteLine("La couche a été ajouté avec succés à la carte en cours", RowType.Information);
-            }
+            this.ActiveMapPanel?.Map.AddLayer(layer);
+            ConsolePanel.Instance.WriteLine("La couche a été ajouté avec succés à la carte en cours", RowType.Information);
         }
 
         private void LayerPanel_MapLayerSelectionChanged(object sender, int index)
         {
-            MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
+            MapPanel mapPanel = this.ActiveMapPanel;
             if (mapPanel != null)
             {
                 mapPanel.SelectedLayerIndex = index;
@@ -281,12 +272,7 @@ namespace GameMapEditor
         private void DockPanel_ActiveDocumentChanged(object sender, EventArgs e)
         {
             LayerPanel.Instance.Refresh();
-
-            MapPanel mapPanel = this.DockPanel.ActiveDocument as MapPanel;
-            if (mapPanel != null)
-            {
-                this.RefreshUndoRedoButtonState(mapPanel.Manager);
-            }
+            this.RefreshUndoRedoButtonState(this.ActiveMapPanel?.Manager);
         }
 
         private void toolStripButtonErase_Click(object sender, EventArgs e)
@@ -294,14 +280,7 @@ namespace GameMapEditor
             this.toolStripButtonErase.Checked = !this.toolStripButtonErase.Checked;
             foreach (MapPanel mapPanel in this.DockPanel.Documents)
             {
-                if (this.toolStripButtonErase.Checked)
-                {
-                    mapPanel.State = GameEditorState.Erase;
-                }
-                else
-                {
-                    mapPanel.State = GameEditorState.Default;
-                }
+                mapPanel.State = this.toolStripButtonErase.Checked ? GameEditorState.Erase : GameEditorState.Default;
             }
         }
 
@@ -312,10 +291,10 @@ namespace GameMapEditor
 
         private void toolStripButtonUndo_Click(object sender, EventArgs e)
         {
-            MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
+            MapPanel mapPanel = this.ActiveMapPanel;
             if (mapPanel != null && mapPanel.Manager.CanUndo)
             {
-                mapPanel.Manager.Undo();
+                mapPanel.Manager.Undo(mapPanel.Map.CopyToMemoryStream());
                 LayerPanel.Instance.Refresh();
                 this.RefreshUndoRedoButtonState(mapPanel.Manager);
             }
@@ -323,10 +302,10 @@ namespace GameMapEditor
 
         private void toolStripButtonRedo_Click(object sender, EventArgs e)
         {
-            MapPanel mapPanel = DockPanel.ActiveDocument as MapPanel;
+            MapPanel mapPanel = this.ActiveMapPanel;
             if (mapPanel != null && mapPanel.Manager.CanRedo)
             {
-                mapPanel.Manager.Redo();
+                mapPanel.Manager.Redo(mapPanel.Map.CopyToMemoryStream());
                 this.RefreshUndoRedoButtonState(mapPanel.Manager);
             }
         }
@@ -345,6 +324,14 @@ namespace GameMapEditor
                 }
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Obtient le panel d'édition de carte actif
+        /// </summary>
+        private MapPanel ActiveMapPanel
+        {
+            get { return this.DockPanel.ActiveDocument as MapPanel; }
         }
     }
 }

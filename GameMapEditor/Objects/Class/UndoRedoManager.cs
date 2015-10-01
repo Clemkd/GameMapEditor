@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace GameMapEditor.Objects
 {
-    // TODO : Corriger le RedoStack (décalage)
     public class UndoRedoManager<T>
     {
         public delegate void UndoRedoEventArgs(object sender, T e);
@@ -33,7 +32,7 @@ namespace GameMapEditor.Objects
         /// <summary>
         /// Ajoute une nouvelle étape dans l'historique
         /// </summary>
-        /// <param name="map"></param>
+        /// <param name="obj">L'ancienne valeur avant modification</param>
         public void Add(T obj)
         {
             this.undoStack.Push(obj);
@@ -41,9 +40,10 @@ namespace GameMapEditor.Objects
         }
 
         /// <summary>
-        /// Effectue un "Annuler"
+        /// Réalise un undo auprès du manager
         /// </summary>
-        public void Undo()
+        /// <param name="obj">L'élément courant</param>
+        public void Undo(T obj)
         {
             if (!this.CanUndo)
             {
@@ -51,15 +51,15 @@ namespace GameMapEditor.Objects
             }
 
             var value = this.undoStack.Pop();
-            this.redoStack.Push(value);
+            this.redoStack.Push(obj);
             this.UndoHappened?.Invoke(this, value);
         }
 
-        // TODO : Réviser
         /// <summary>
-        /// Effectue un "Refaire"
+        /// Réalise un redo auprès du manager
         /// </summary>
-        public void Redo()
+        /// <param name="obj">L'élément courant</param>
+        public void Redo(T obj)
         {
             if (!this.CanRedo)
             {
@@ -67,24 +67,18 @@ namespace GameMapEditor.Objects
             }
 
             var value = this.redoStack.Pop();
-            this.undoStack.Push(value);
+            this.undoStack.Push(obj);
             this.RedoHappened?.Invoke(this, value);
         }
 
         /// <summary>
         /// Obtient l'état de possibilité d'action du Undo
         /// </summary>
-        public bool CanUndo
-        {
-            get { return this.undoStack.Count > 0; }
-        }
+        public bool CanUndo => this.undoStack.Count > 0;
 
         /// <summary>
         /// Obtient l'état de possibilité d'action du Redo
         /// </summary>
-        public bool CanRedo
-        {
-            get { return this.redoStack.Count > 0; }
-        }
+        public bool CanRedo => this.redoStack.Count > 0;
     }
 }
