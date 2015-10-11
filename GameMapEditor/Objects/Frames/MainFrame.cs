@@ -263,10 +263,13 @@ namespace GameMapEditor
         /// <param name="manager">Le gestionnaire d'historique courant</param>
         private void RefreshUndoRedoButtonState(UndoRedoManager<MemoryStream> manager)
         {
-            this.toolStripButtonUndo.Enabled = manager.CanUndo;
-            this.toolStripButtonRedo.Enabled = manager.CanRedo;
-            this.toolStripMenuItemUndo.Enabled = manager.CanUndo;
-            this.toolStripMenuItemRedo.Enabled = manager.CanRedo;
+            if (manager != null)
+            {
+                this.toolStripButtonUndo.Enabled = manager.CanUndo;
+                this.toolStripButtonRedo.Enabled = manager.CanRedo;
+                this.toolStripMenuItemUndo.Enabled = manager.CanUndo;
+                this.toolStripMenuItemRedo.Enabled = manager.CanRedo;
+            }
         }
 
         private void DockPanel_ActiveDocumentChanged(object sender, EventArgs e)
@@ -332,6 +335,18 @@ namespace GameMapEditor
         private MapPanel ActiveMapPanel
         {
             get { return this.DockPanel.ActiveDocument as MapPanel; }
+        }
+
+        private void toolStripButtonMapTest_Click(object sender, EventArgs e)
+        {
+            this.toolStripButtonMapTest.Checked = !this.toolStripButtonMapTest.Checked;
+            this.toolStripButtonMapTest.Image = this.toolStripButtonMapTest.Checked ? Resources.controlstopsquare : Resources.control;
+            this.toolStripButtonMapTest.Text = this.toolStripButtonMapTest.Checked ? "Arrêter" : "Tester";
+
+            foreach (MapPanel mapPanel in this.DockPanel.Documents)
+            {
+                mapPanel.State = this.toolStripButtonMapTest.Checked ? GameEditorState.Test : GameEditorState.Default;
+            }
         }
     }
 }

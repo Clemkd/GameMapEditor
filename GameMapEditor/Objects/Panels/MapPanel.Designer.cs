@@ -110,6 +110,7 @@ namespace GameMapEditor
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(300, 300);
+            this.Name = "MapPanel";
             this.Text = "Map";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MapPanel_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MapPanel_FormClosed);

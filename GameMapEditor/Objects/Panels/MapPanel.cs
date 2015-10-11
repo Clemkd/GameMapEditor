@@ -1,4 +1,5 @@
 ﻿using GameMapEditor.Objects;
+using GameMapEditor.Objects.Class.GameCharacter;
 using GameMapEditor.Objects.Enumerations;
 using GameMapEditor.Properties;
 using System;
@@ -21,6 +22,7 @@ namespace GameMapEditor
         private static new GameVector2 Margin = new GameVector2(100, 100);
         private static Pen GridPenColor = new Pen(Color.FromArgb(255, 130, 130, 130), 1);
         private static Cursor EraseCursor = new Cursor(Resources.eraser.GetHicon());
+        private static GameCharacter Character = new GameCharacter();
 
         private GameVector2 mapOrigin;
         private bool isGridActived;
@@ -195,9 +197,7 @@ namespace GameMapEditor
             if (this.state != GameEditorState.Erase)
                 this.Cursor = Cursors.Default;
 
-            // Save gameMap state (Undo / Redo list)
             this.mouseReleased = true;
-            
         }
 
         private void vScrollBarPicMap_Scroll(object sender, ScrollEventArgs e)
@@ -554,6 +554,7 @@ namespace GameMapEditor
         public new string Name
         {
             get { return this.Map.Name; }
+            private set {  }
         }
 
         public UndoRedoManager<MemoryStream> Manager

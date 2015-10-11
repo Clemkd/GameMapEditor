@@ -80,7 +80,7 @@ namespace GameMapEditor.Objects.Controls
             // 
             // toolStripMenuItemDown
             // 
-            this.toolStripMenuItemDown.Image = global::GameMapEditor.Properties.Resources.arrow_270_medium;
+            this.toolStripMenuItemDown.Image = global::GameMapEditor.Properties.Resources.arrow270medium;
             this.toolStripMenuItemDown.Name = "toolStripMenuItemDown";
             this.toolStripMenuItemDown.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItemDown.Text = "Descendre";
@@ -88,7 +88,7 @@ namespace GameMapEditor.Objects.Controls
             // 
             // toolStripMenuItemUp
             // 
-            this.toolStripMenuItemUp.Image = global::GameMapEditor.Properties.Resources.arrow_090_medium;
+            this.toolStripMenuItemUp.Image = global::GameMapEditor.Properties.Resources.arrow090medium;
             this.toolStripMenuItemUp.Name = "toolStripMenuItemUp";
             this.toolStripMenuItemUp.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItemUp.Text = "Monter";
@@ -124,7 +124,7 @@ namespace GameMapEditor.Objects.Controls
             // 
             // toolStripMenuItemDelete
             // 
-            this.toolStripMenuItemDelete.Image = global::GameMapEditor.Properties.Resources.cross_script;
+            this.toolStripMenuItemDelete.Image = global::GameMapEditor.Properties.Resources.crossscript;
             this.toolStripMenuItemDelete.Name = "toolStripMenuItemDelete";
             this.toolStripMenuItemDelete.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItemDelete.Text = "Supprimer";

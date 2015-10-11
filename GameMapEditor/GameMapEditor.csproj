@@ -68,6 +68,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\Class\GameCharacter\GameCharacter.cs" />
+    <Compile Include="Objects\Class\GameCharacter\GameDirection.cs" />
+    <Compile Include="Objects\Class\GameCharacter\GameTimer.cs" />
+    <Compile Include="Objects\Class\GameCharacter\GameVelocity.cs" />
     <Compile Include="Objects\Class\GameMap\BlockType.cs" />
     <Compile Include="Objects\Class\GameMap\GameMapAttributes.cs" />
     <Compile Include="Objects\Class\GameMap\GameMapCase.cs" />
@@ -259,6 +263,60 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\cross-script.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\control-stop-square.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\control.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Sprite1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeFull.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeLeft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeLeftDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeLeftUp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeLeftUpDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeRightDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeRightLeft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeRightLeftDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeRightLeftUp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeRightUp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeRightUpDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeUp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockTypeUpDown.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

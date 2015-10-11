@@ -25,7 +25,7 @@ namespace GameMapEditor
         [field:NonSerialized]
         public event MapChangedEventArgs MapChanged;
 
-        public const string DEFAULT_LAYER_NAME = "Couche 1";
+        public const string DEFAULT_LAYER_NAME = "Couche 1"; 
         public const byte MAX_LAYER_COUNT = 10;
 
         #region Fields
@@ -45,9 +45,9 @@ namespace GameMapEditor
                 this.textures = new Dictionary<string, int>();
         }
 
-        public GameMap(string mapName)
+        public GameMap(string name)
         {
-            this.name = mapName;
+            this.name = name;
             this.textures = new Dictionary<string, int>();
             this.layers = new List<GameMapLayer>();
             this.InitializeComponents();

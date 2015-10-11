@@ -73,9 +73,9 @@ namespace GameMapEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap arrow_090_medium {
+        internal static System.Drawing.Bitmap arrow090medium {
             get {
-                object obj = ResourceManager.GetObject("arrow-090-medium", resourceCulture);
+                object obj = ResourceManager.GetObject("arrow090medium", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,159 @@ namespace GameMapEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap arrow_270_medium {
+        internal static System.Drawing.Bitmap arrow270medium {
             get {
-                object obj = ResourceManager.GetObject("arrow-270-medium", resourceCulture);
+                object obj = ResourceManager.GetObject("arrow270medium", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeDown {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeDown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeFull {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeFull", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeLeft {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeLeft", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeLeftDown {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeLeftDown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeLeftUp {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeLeftUp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeLeftUpDown {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeLeftUpDown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeRight {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeRight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeRightDown {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeRightDown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeRightLeft {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeRightLeft", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeRightLeftDown {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeRightLeftDown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeRightLeftUp {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeRightLeftUp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeRightUp {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeRightUp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeRightUpDown {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeRightUpDown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeUp {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeUp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blockTypeUpDown {
+            get {
+                object obj = ResourceManager.GetObject("blockTypeUpDown", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,9 +263,29 @@ namespace GameMapEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap cross_script {
+        internal static System.Drawing.Bitmap control {
             get {
-                object obj = ResourceManager.GetObject("cross-script", resourceCulture);
+                object obj = ResourceManager.GetObject("control", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap controlstopsquare {
+            get {
+                object obj = ResourceManager.GetObject("controlstopsquare", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap crossscript {
+            get {
+                object obj = ResourceManager.GetObject("crossscript", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -153,9 +323,9 @@ namespace GameMapEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap layers_stack {
+        internal static System.Drawing.Bitmap layersstack {
             get {
-                object obj = ResourceManager.GetObject("layers-stack", resourceCulture);
+                object obj = ResourceManager.GetObject("layersstack", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -173,9 +343,19 @@ namespace GameMapEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap table_heatmap {
+        internal static System.Drawing.Bitmap Sprite1 {
             get {
-                object obj = ResourceManager.GetObject("table-heatmap", resourceCulture);
+                object obj = ResourceManager.GetObject("Sprite1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tableheatmap {
+            get {
+                object obj = ResourceManager.GetObject("tableheatmap", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

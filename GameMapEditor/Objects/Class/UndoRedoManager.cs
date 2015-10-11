@@ -17,7 +17,14 @@ namespace GameMapEditor.Objects
         private LimitedStack<T> undoStack;
         private LimitedStack<T> redoStack;
 
+        /// <summary>
+        /// Survient lorsque l'action d'Undo a été effectuée
+        /// </summary>
         public event UndoRedoEventArgs UndoHappened;
+
+        /// <summary>
+        /// Survient lorsque l'action de Redo a été effectuée
+        /// </summary>
         public event UndoRedoEventArgs RedoHappened;
 
         /// <summary>
