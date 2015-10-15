@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace GameMapEditor.Frames
 {
+    public delegate void MapLayerAddedEventArgs(object sender, GameMapLayer layer);
+
     public partial class MapLayerFrame : Form
     {
         public event MapLayerAddedEventArgs MapLayerAdded;
@@ -15,7 +18,7 @@ namespace GameMapEditor.Frames
         private void MapLayerFrame_Load(object sender, EventArgs e)
         {
             this.textBoxName.Select();
-            this.textBoxName.Text = "Couche " + (LayerPanel.Instance.LayersCount + 1).ToString();
+            this.textBoxName.Text = this.GetFreeLayerName(LayerPanel.Instance.LayerPane.ControlsName);
         }
 
         private void checkBoxVisibleState_CheckedChanged(object sender, EventArgs e)
@@ -45,6 +48,18 @@ namespace GameMapEditor.Frames
             {
                 ConsolePanel.Instance.WriteLine("Impossible de créer une couche avec un nom vide", RowType.Error);
             }
+        }
+
+        private string GetFreeLayerName(List<string> existingNames)
+        {
+            int index = 1;
+            string currentName = $"Couche {index}";
+            while (existingNames.Exists(x => x == currentName))
+            {
+                index++;
+                currentName = $"Couche {index}";
+            }
+            return currentName;
         }
     }
 }

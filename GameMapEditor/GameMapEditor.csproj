@@ -75,6 +75,9 @@
     <Compile Include="Objects\Class\GameMap\BlockType.cs" />
     <Compile Include="Objects\Class\GameMap\GameMapAttributes.cs" />
     <Compile Include="Objects\Class\GameMap\GameMapCase.cs" />
+    <Compile Include="Objects\Controls\LayerPanelControl.Designer.cs">
+      <DependentUpon>LayerPanelControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Objects\Panels\ConsolePanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,7 +104,7 @@
     <Compile Include="Objects\Controls\LayerControl.Designer.cs">
       <DependentUpon>LayerControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Objects\Controls\LayerPanelCTM.cs">
+    <Compile Include="Objects\Controls\LayerPanelControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Objects\Enumerations\GameEditorState.cs" />
@@ -184,8 +187,8 @@
     <EmbeddedResource Include="Objects\Controls\LayerControl.resx">
       <DependentUpon>LayerControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Objects\Controls\LayerPanelCTM.resx">
-      <DependentUpon>LayerPanelCTM.cs</DependentUpon>
+    <EmbeddedResource Include="Objects\Controls\LayerPanelControl.resx">
+      <DependentUpon>LayerPanelControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

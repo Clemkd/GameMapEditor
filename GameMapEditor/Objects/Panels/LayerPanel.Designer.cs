@@ -1,4 +1,5 @@
 ﻿using GameMapEditor.Objects;
+using GameMapEditor.Objects.Controls;
 using System;
 using System.Windows.Forms;
 
@@ -39,7 +40,7 @@ namespace GameMapEditor
             this.toolStripButtonUpLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonDownLayer = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabelLayerCount = new System.Windows.Forms.ToolStripLabel();
-            this.layerPanelCTM = new GameMapEditor.Objects.Controls.LayerPanelCTM();
+            this.layerPanelControl = new GameMapEditor.Objects.Controls.LayerPanelControl();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -107,24 +108,21 @@ namespace GameMapEditor
             this.toolStripLabelLayerCount.Size = new System.Drawing.Size(16, 22);
             this.toolStripLabelLayerCount.Text = "...";
             // 
-            // layerPanelCTM
+            // layerPanelControl
             // 
-            this.layerPanelCTM.AutoScroll = true;
-            this.layerPanelCTM.AutoScrollMargin = new System.Drawing.Size(20, 0);
-            this.layerPanelCTM.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.layerPanelCTM.Location = new System.Drawing.Point(0, 0);
-            this.layerPanelCTM.Name = "layerPanelCTM";
-            this.layerPanelCTM.SelectedIndex = 0;
-            this.layerPanelCTM.Size = new System.Drawing.Size(200, 115);
-            this.layerPanelCTM.TabIndex = 2;
-            this.layerPanelCTM.ItemSelectionChanged += new GameMapEditor.Objects.Controls.PanelItemSelectionChangedEventArgs(this.layerPanelCTM_ItemSelectionChanged);
+            this.layerPanelControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layerPanelControl.Location = new System.Drawing.Point(0, 0);
+            this.layerPanelControl.Name = "layerPanelControl";
+            this.layerPanelControl.SelectedIndex = 0;
+            this.layerPanelControl.Size = new System.Drawing.Size(200, 115);
+            this.layerPanelControl.TabIndex = 2;
             // 
             // LayerPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(200, 140);
-            this.Controls.Add(this.layerPanelCTM);
+            this.Controls.Add(this.layerPanelControl);
             this.Controls.Add(this.toolStrip);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -145,7 +143,7 @@ namespace GameMapEditor
         private System.Windows.Forms.ToolStripButton toolStripButtonUpLayer;
         private System.Windows.Forms.ToolStripButton toolStripButtonDownLayer;
         private System.Windows.Forms.ToolStripButton toolStripButtonRemoveLayer;
-        private Objects.Controls.LayerPanelCTM layerPanelCTM;
         private ToolStripLabel toolStripLabelLayerCount;
+        private LayerPanelControl layerPanelControl;
     }
 }

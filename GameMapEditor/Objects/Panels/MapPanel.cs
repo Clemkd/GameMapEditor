@@ -504,7 +504,7 @@ namespace GameMapEditor
         }
 
         /// <summary>
-        /// Obtient ou définit l'index du layer selectionné associé à l'objet
+        /// Obtient ou définit l'index du layer selectionné, associé à l'objet
         /// </summary>
         public int SelectedLayerIndex
         {

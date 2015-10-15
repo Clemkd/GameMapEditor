@@ -41,11 +41,82 @@ namespace GameMapEditor
 
             // Création des liens
             MapPanelFrame.Instance.MapValidated += MapFrame_CreationValidated;
+
             TilesetPanel.Instance.TilesetSelectionChanged += TilesetPanel_TilesetSelectionChanged;
             TilesetPanel.Instance.TilesetChanged += TilesetPanel_TilesetChanged;
-            LayerPanel.Instance.MapLayerAdded += LayerPanel_MapLayerAdded;
-            LayerPanel.Instance.MapLayerSelectionChanged += LayerPanel_MapLayerSelectionChanged;
-            LayerPanel.Instance.Refresh();
+
+            LayerPanel.Instance.LayerPane.ItemRemoved += LayerPane_ItemRemoved;
+            LayerPanel.Instance.LayerPane.ItemAdded += LayerPane_ItemAdded;
+            LayerPanel.Instance.LayerPane.ItemsSwapped += LayerPane_ItemsSwapped;
+            LayerPanel.Instance.LayerPane.ItemSelectionChanged += LayerPane_ItemSelectionChanged;
+            LayerPanel.Instance.LayerPane.ItemTypeChanged += LayerPane_ItemTypeChanged;
+            LayerPanel.Instance.LayerPane.ItemVisibleStateChanged += LayerPane_ItemVisibleStateChanged;
+        }
+
+        private void LayerPane_ItemVisibleStateChanged(object sender, int index, bool value)
+        {
+            if (this.ActiveMapPanel != null)
+            {
+                GameMapLayer layer = this.ActiveMapPanel.Map.GetLayerAt(index);
+
+                if (layer != null)
+                {
+                    layer.Visible = value;
+                }
+                else throw new NullReferenceException("Tentative de modification du type d'un objet inexistant");
+            }
+            else throw new NullReferenceException("Tentative de modification d'un control enfant inexistant");
+        }
+
+        private void LayerPane_ItemTypeChanged(object sender, int index, LayerType type)
+        {
+            if (this.ActiveMapPanel != null)
+            {
+                GameMapLayer layer = this.ActiveMapPanel.Map.GetLayerAt(index);
+
+                if (layer != null)
+                {
+                    layer.Type = type;
+                }
+                else throw new NullReferenceException("Tentative de modification du type d'un objet inexistant");
+            }
+            else throw new NullReferenceException("Tentative de modification d'un control enfant inexistant");
+        }
+
+        private void LayerPane_ItemSelectionChanged(object sender, int index)
+        {
+            if (this.ActiveMapPanel != null)
+            {
+                this.ActiveMapPanel.SelectedLayerIndex = index;
+            }
+            else throw new NullReferenceException("Tentative de selection d'un objet inexistant");
+        }
+
+        private void LayerPane_ItemsSwapped(object sender, int index1, int index2)
+        {
+            if (this.ActiveMapPanel != null)
+            {
+                this.ActiveMapPanel.Map.SwapLayers(index1, index2);
+            }
+            else throw new NullReferenceException("Tentative d'échange entre une ou plusieurs valeurs inexistantes");
+        }
+
+        private void LayerPane_ItemAdded(object sender, int index, GameMapLayer layer)
+        {
+            if (this.ActiveMapPanel != null)
+            {
+                this.ActiveMapPanel.Map.InsertLayerAt(index, layer);
+            }
+            else throw new NullReferenceException("Tentative d'ajout d'une ou plusieurs valeurs dans un control parent inexistant");
+        }
+
+        private void LayerPane_ItemRemoved(object sender, int index)
+        {
+            if (this.ActiveMapPanel != null)
+            {
+                this.ActiveMapPanel.Map.RemoveLayerAt(index);
+            }
+            else throw new NullReferenceException("Tentative de suppression d'une ou plusieurs valeurs dans un control parent inexistant");
         }
 
         /// <summary>
@@ -78,6 +149,9 @@ namespace GameMapEditor
             BrowserPanel.Instance.DockTo(this.DockPanel, DockStyle.Right);
         }
 
+        /// <summary>
+        /// Réinitialise la position de la fenêtre de layers et l'affiche
+        /// </summary>
         private void LoadLayerPanel()
         {
             LayerPanel.Instance.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
@@ -90,6 +164,16 @@ namespace GameMapEditor
         /// </summary>
         private new void Dispose()
         {
+            MapPanelFrame.Instance.MapValidated -= MapFrame_CreationValidated;
+
+            TilesetPanel.Instance.TilesetSelectionChanged -= TilesetPanel_TilesetSelectionChanged;
+            TilesetPanel.Instance.TilesetChanged -= TilesetPanel_TilesetChanged;
+
+            LayerPanel.Instance.LayerPane.ItemRemoved -= LayerPane_ItemRemoved;
+            LayerPanel.Instance.LayerPane.ItemsSwapped -= LayerPane_ItemsSwapped;
+            LayerPanel.Instance.LayerPane.ItemSelectionChanged -= LayerPane_ItemSelectionChanged;
+            LayerPanel.Instance.LayerPane.ItemTypeChanged -= LayerPane_ItemTypeChanged;
+
             MapPanels.ForEach(mapPanel => mapPanel.UndoRedoUpdated -= MapPanel_UndoRedoUpdated);
             this.Dispose(true);
         }
@@ -219,7 +303,7 @@ namespace GameMapEditor
 
                     MapPanels.Add(mapPanel);
 
-                    LayerPanel.Instance.LoadLayers(map);
+                    LayerPanel.Instance.LayerPane.Load(map.Layers);
                 }
                 catch (Exception ex)
                 {
@@ -229,21 +313,6 @@ namespace GameMapEditor
                 {
                     waintingFrame.Close();
                 }
-            }
-        }
-
-        private void LayerPanel_MapLayerAdded(object sender, GameMapLayer layer)
-        {
-            this.ActiveMapPanel?.Map.AddLayer(layer);
-            ConsolePanel.Instance.WriteLine("La couche a été ajouté avec succés à la carte en cours", RowType.Information);
-        }
-
-        private void LayerPanel_MapLayerSelectionChanged(object sender, int index)
-        {
-            MapPanel mapPanel = this.ActiveMapPanel;
-            if (mapPanel != null)
-            {
-                mapPanel.SelectedLayerIndex = index;
             }
         }
 
@@ -263,19 +332,36 @@ namespace GameMapEditor
         /// <param name="manager">Le gestionnaire d'historique courant</param>
         private void RefreshUndoRedoButtonState(UndoRedoManager<MemoryStream> manager)
         {
-            if (manager != null)
-            {
-                this.toolStripButtonUndo.Enabled = manager.CanUndo;
-                this.toolStripButtonRedo.Enabled = manager.CanRedo;
-                this.toolStripMenuItemUndo.Enabled = manager.CanUndo;
-                this.toolStripMenuItemRedo.Enabled = manager.CanRedo;
-            }
+            this.toolStripButtonUndo.Enabled = manager != null ? manager.CanUndo : false;
+            this.toolStripButtonRedo.Enabled = manager != null ? manager.CanRedo : false;
+            this.toolStripMenuItemUndo.Enabled = manager != null ? manager.CanUndo : false;
+            this.toolStripMenuItemRedo.Enabled = manager != null ? manager.CanRedo : false;
         }
 
         private void DockPanel_ActiveDocumentChanged(object sender, EventArgs e)
         {
-            LayerPanel.Instance.Refresh();
-            this.RefreshUndoRedoButtonState(this.ActiveMapPanel?.Manager);
+            if (this.ActiveMapPanel != null)
+            {
+                LayerPanel.Instance.Enabled = true;
+                LayerPanel.Instance.LayerPane.Load(this.ActiveMapPanel.Map.Layers);
+                this.RefreshUndoRedoButtonState(this.ActiveMapPanel.Manager);
+                this.toolStripBtnFill.Enabled = true;
+                this.toolStripButtonErase.Enabled = true;
+                this.toolStripButtonSaveAll.Enabled = true;
+                this.toolStripButtonSaveCurrent.Enabled = true;
+                this.toolStripButtonMapTest.Enabled = true;
+            }
+            else
+            {
+                LayerPanel.Instance.Reset();
+                LayerPanel.Instance.Enabled = false;
+                this.RefreshUndoRedoButtonState(null);
+                this.toolStripBtnFill.Enabled = false;
+                this.toolStripButtonErase.Enabled = false;
+                this.toolStripButtonSaveAll.Enabled = false;
+                this.toolStripButtonSaveCurrent.Enabled = false;
+                this.toolStripButtonMapTest.Enabled = false;
+            }
         }
 
         private void toolStripButtonErase_Click(object sender, EventArgs e)
@@ -313,6 +399,18 @@ namespace GameMapEditor
             }
         }
 
+        private void toolStripButtonMapTest_Click(object sender, EventArgs e)
+        {
+            this.toolStripButtonMapTest.Checked = !this.toolStripButtonMapTest.Checked;
+            this.toolStripButtonMapTest.Image = this.toolStripButtonMapTest.Checked ? Resources.controlstopsquare : Resources.control;
+            this.toolStripButtonMapTest.Text = this.toolStripButtonMapTest.Checked ? "Arrêter" : "Tester";
+
+            foreach (MapPanel mapPanel in this.DockPanel.Documents)
+            {
+                mapPanel.State = this.toolStripButtonMapTest.Checked ? GameEditorState.Test : GameEditorState.Default;
+            }
+        }
+
         /// <summary>
         /// Obtient la valeur informant s'il existe des documents ouverts non sauvegardés
         /// </summary>
@@ -335,18 +433,6 @@ namespace GameMapEditor
         private MapPanel ActiveMapPanel
         {
             get { return this.DockPanel.ActiveDocument as MapPanel; }
-        }
-
-        private void toolStripButtonMapTest_Click(object sender, EventArgs e)
-        {
-            this.toolStripButtonMapTest.Checked = !this.toolStripButtonMapTest.Checked;
-            this.toolStripButtonMapTest.Image = this.toolStripButtonMapTest.Checked ? Resources.controlstopsquare : Resources.control;
-            this.toolStripButtonMapTest.Text = this.toolStripButtonMapTest.Checked ? "Arrêter" : "Tester";
-
-            foreach (MapPanel mapPanel in this.DockPanel.Documents)
-            {
-                mapPanel.State = this.toolStripButtonMapTest.Checked ? GameEditorState.Test : GameEditorState.Default;
-            }
         }
     }
 }
