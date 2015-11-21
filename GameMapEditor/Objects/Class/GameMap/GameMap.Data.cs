@@ -2,6 +2,7 @@
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -14,6 +15,8 @@ namespace GameMapEditor
 {
     public partial class GameMap
     {
+        private static Rectangle DESTINATION_RECT_32 = new Rectangle(0, 0, 32, 32);
+
         private static Dictionary<string, Bitmap> Textures = new Dictionary<string, Bitmap>();
         private static Dictionary<string, Bitmap> CroppedTextures = new Dictionary<string, Bitmap>();
 
@@ -62,10 +65,13 @@ namespace GameMapEditor
             if (!CroppedTextures.ContainsKey(croppedKey))
             {
                 Bitmap texture = this.GetTexture(textureName);
-
+                Bitmap croppedTexture = new Bitmap(GlobalData.TileSize.Width, GlobalData.TileSize.Height);
+                Graphics graphics = Graphics.FromImage(croppedTexture);
                 GameVector2 vector = GameMapTile.DecodeFormattedIndex(tileIndex, texture.Width / GlobalData.TileSize.Width) * GlobalData.TileSize;
-                CroppedTextures.Add(croppedKey, texture.Clone(new Rectangle(vector.X, vector.Y, GlobalData.TileSize.Width, GlobalData.TileSize.Height),
-                    System.Drawing.Imaging.PixelFormat.DontCare));
+                Rectangle section = new Rectangle(vector.X, vector.Y, GlobalData.TileSize.Width, GlobalData.TileSize.Height);
+
+                graphics.DrawImage(texture, DESTINATION_RECT_32, section, GraphicsUnit.Pixel);
+                CroppedTextures.Add(croppedKey, croppedTexture);
             }
 
             Bitmap resultBitmap;
@@ -82,6 +88,7 @@ namespace GameMapEditor
         {
             await Task.Run(() =>
             {
+                
                 foreach (GameMapLayer layer in layers)
                 {
                     layer.LayerChanged += Layer_LayerChanged;
@@ -95,6 +102,7 @@ namespace GameMapEditor
                         }
                     }
                 }
+                
             });
 
             // TODO : Debug only
