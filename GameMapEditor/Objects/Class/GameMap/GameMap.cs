@@ -5,6 +5,7 @@ using GameMapEditor.Objects.Class;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -260,9 +261,13 @@ namespace GameMapEditor
         /// <param name="position">La position du premier tile en haut à gauche à modifier</param>
         public void SetTiles(int layerIndex, GameVector2 position, TextureInfo texture, bool raiseChanged = true)
         {
+#if DEBUG
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+#endif
             if (layerIndex >= 0 && layerIndex < this.layers.Count)
             {
-                if (texture?.BitmapSelection != null && texture?.BitmapSource != null)
+                if (texture != null && texture.BitmapSelection != null && texture.BitmapSource != null)
                 {
                     int tmpWidth = texture.BitmapSelection.Width / GlobalData.TileSize.Width;
                     int tmpHeight = texture.BitmapSelection.Height / GlobalData.TileSize.Height;
@@ -287,6 +292,7 @@ namespace GameMapEditor
                                 if (bounds.Contains(selection))
                                 {
                                     // OutOfMemory eventuel, par usage de textures inexistantes (OutOfRange extension)
+
                                     tile.Texture = texture.BitmapSelection.Clone(selection, PixelFormat.DontCare);
 
                                     Point location = new Point(
@@ -313,6 +319,10 @@ namespace GameMapEditor
                 if(raiseChanged)
                     this.MapChanged?.Invoke(this);
             }
+#if DEBUG
+            watch.Stop();
+            Console.WriteLine($"SetTile : {watch.ElapsedMilliseconds.ToString()} ms");
+#endif
         }
 
         /// <summary>
@@ -400,7 +410,6 @@ namespace GameMapEditor
             get { return textures.Keys.ToList(); }
         }
 
-        // TODO : Debug Only
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
