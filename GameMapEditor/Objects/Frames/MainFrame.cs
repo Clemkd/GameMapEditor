@@ -349,7 +349,6 @@ namespace GameMapEditor
                 this.toolStripButtonErase.Enabled = true;
                 this.toolStripButtonSaveAll.Enabled = true;
                 this.toolStripButtonSaveCurrent.Enabled = true;
-                this.toolStripButtonMapTest.Enabled = true;
             }
             else
             {
@@ -360,7 +359,6 @@ namespace GameMapEditor
                 this.toolStripButtonErase.Enabled = false;
                 this.toolStripButtonSaveAll.Enabled = false;
                 this.toolStripButtonSaveCurrent.Enabled = false;
-                this.toolStripButtonMapTest.Enabled = false;
             }
         }
 
@@ -396,18 +394,6 @@ namespace GameMapEditor
             {
                 mapPanel.Manager.Redo(mapPanel.Map.CopyToMemoryStream());
                 this.RefreshUndoRedoButtonState(mapPanel.Manager);
-            }
-        }
-
-        private void toolStripButtonMapTest_Click(object sender, EventArgs e)
-        {
-            this.toolStripButtonMapTest.Checked = !this.toolStripButtonMapTest.Checked;
-            this.toolStripButtonMapTest.Image = this.toolStripButtonMapTest.Checked ? Resources.controlstopsquare : Resources.control;
-            this.toolStripButtonMapTest.Text = this.toolStripButtonMapTest.Checked ? "Arrêter" : "Tester";
-
-            foreach (MapPanel mapPanel in this.DockPanel.Documents)
-            {
-                mapPanel.State = this.toolStripButtonMapTest.Checked ? GameEditorState.Test : GameEditorState.Default;
             }
         }
 

@@ -31,8 +31,8 @@ namespace GameMapEditor
             // 
             // picTileset
             // 
-            this.picTileset.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.picTileset.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picTileset.Location = new System.Drawing.Point(0, 27);
             this.picTileset.Name = "picTileset";
@@ -47,7 +47,7 @@ namespace GameMapEditor
             // 
             // vPicTilesetScrollBar
             // 
-            this.vPicTilesetScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.vPicTilesetScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.vPicTilesetScrollBar.Location = new System.Drawing.Point(185, 27);
             this.vPicTilesetScrollBar.Name = "vPicTilesetScrollBar";
@@ -57,7 +57,7 @@ namespace GameMapEditor
             // 
             // hPicTilesetScrollBar
             // 
-            this.hPicTilesetScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.hPicTilesetScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.hPicTilesetScrollBar.Location = new System.Drawing.Point(0, 110);
             this.hPicTilesetScrollBar.Name = "hPicTilesetScrollBar";
@@ -67,7 +67,7 @@ namespace GameMapEditor
             // 
             // comboTilesetFileSelecter
             // 
-            this.comboTilesetFileSelecter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.comboTilesetFileSelecter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboTilesetFileSelecter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboTilesetFileSelecter.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -109,8 +109,8 @@ namespace GameMapEditor
             this.Controls.Add(this.hPicTilesetScrollBar);
             this.Controls.Add(this.vPicTilesetScrollBar);
             this.Controls.Add(this.picTileset);
-            this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)((((WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight)
-            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockTop)
+            this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)((((WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight) 
+            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockTop) 
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom)));
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -123,6 +123,7 @@ namespace GameMapEditor
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
     }
 }

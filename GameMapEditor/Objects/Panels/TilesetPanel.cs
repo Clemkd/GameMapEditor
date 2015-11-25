@@ -36,6 +36,7 @@ namespace GameMapEditor
             this.HideOnClose = true;
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+            this.ResizeRedraw = true;
         }
 
         #region FrameEvents
@@ -155,6 +156,7 @@ namespace GameMapEditor
         private void picTileset_SizeChanged(object sender, EventArgs e)
         {
             this.RefreshScrollComponents(this.hPicTilesetScrollBar.Value, this.vPicTilesetScrollBar.Value);
+            this.picTileset.Invalidate();
         }
 
         private void comboTilesetFileSelecter_SelectedIndexChanged(object sender, EventArgs e)

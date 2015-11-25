@@ -263,26 +263,6 @@ namespace GameMapEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap control {
-            get {
-                object obj = ResourceManager.GetObject("control", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap controlstopsquare {
-            get {
-                object obj = ResourceManager.GetObject("controlstopsquare", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap crossscript {
             get {
                 object obj = ResourceManager.GetObject("crossscript", resourceCulture);

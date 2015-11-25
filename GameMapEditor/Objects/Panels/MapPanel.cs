@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
@@ -20,7 +21,7 @@ namespace GameMapEditor
         #region Fields
         private const string UNSAVED_DOCUMENT_MARK = "*";
         private static new GameVector2 Margin = new GameVector2(100, 100);
-        private static Pen GridPenColor = new Pen(Color.FromArgb(255, 130, 130, 130), 1);
+        private static Pen GridPenColor = new Pen(Color.FromArgb(255, 70, 70, 70), 1);
         private static Cursor EraseCursor = new Cursor(Resources.eraser.GetHicon());
         private static GameCharacter Character = new GameCharacter();
 
@@ -74,6 +75,9 @@ namespace GameMapEditor
             this.IsTilesetSelectionShown = true;
             this.State = GameEditorState.Default;
             this.gridColor = GridPenColor;
+            this.gridColor.DashStyle = DashStyle.Dash;
+            this.gridColor.Alignment = PenAlignment.Center;
+            this.gridColor.DashOffset = 3.4f;
             this.mouseLocation = new Point();
             this.location = new GameVector2();
             this.oldLocation = new Point();
