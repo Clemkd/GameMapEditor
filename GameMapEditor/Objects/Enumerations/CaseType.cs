@@ -6,9 +6,15 @@ using System.Threading.Tasks;
 
 namespace GameMapEditor.Objects.Enumerations
 {
-    public enum GameEditorState
+    public enum CaseType
     {
-        Default,
-        Erase
+        None = 0,
+        Down = 1,
+        Up = 2,
+        Right = 4,
+        Left = 8,
+        Teleport = 16,
+        Algo = 32
+        // ...
     }
 }

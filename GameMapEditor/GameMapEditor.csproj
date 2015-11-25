@@ -68,11 +68,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Objects\Class\GameCharacter\GameCharacter.cs" />
-    <Compile Include="Objects\Class\GameCharacter\GameDirection.cs" />
-    <Compile Include="Objects\Class\GameCharacter\GameTimer.cs" />
-    <Compile Include="Objects\Class\GameCharacter\GameVelocity.cs" />
-    <Compile Include="Objects\Class\GameMap\BlockType.cs" />
+    <Compile Include="Objects\Enumerations\CaseType.cs" />
     <Compile Include="Objects\Class\GameMap\GameMapAttributes.cs" />
     <Compile Include="Objects\Class\GameMap\GameMapCase.cs" />
     <Compile Include="Objects\Panels\ConsolePanel.cs">

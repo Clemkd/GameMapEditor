@@ -10,7 +10,9 @@ namespace GameMapEditor
 {
     [Serializable]
     [ProtoContract]
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class GameVector2
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     {
         [ProtoMember(1)]
         public int X { get; set; }

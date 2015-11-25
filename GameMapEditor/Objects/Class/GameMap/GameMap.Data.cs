@@ -105,9 +105,6 @@ namespace GameMapEditor
                 
             });
 
-            // TODO : Debug only
-            Console.WriteLine("Textures : {0}, CroppedTextures : {1}", Textures.Count, CroppedTextures.Count);
-
             return this;
         }
     }

@@ -1,5 +1,5 @@
 ﻿using GameMapEditor.Objects;
-using GameMapEditor.Objects.Class.GameCharacter;
+using GameMapEditor.Objects.Class;
 using GameMapEditor.Objects.Enumerations;
 using GameMapEditor.Properties;
 using System;
@@ -23,7 +23,6 @@ namespace GameMapEditor
         private static new GameVector2 Margin = new GameVector2(100, 100);
         private static Pen GridPenColor = new Pen(Color.FromArgb(255, 70, 70, 70), 1);
         private static Cursor EraseCursor = new Cursor(Resources.eraser.GetHicon());
-        private static GameCharacter Character = new GameCharacter();
 
         private GameVector2 mapOrigin;
         private bool isGridActived;
@@ -69,6 +68,7 @@ namespace GameMapEditor
         {
             this.InitializeComponent();
             this.HideOnClose = false;
+            this.AllowEndUserDocking = false;
             this.mapOrigin = new GameVector2();
             this.IsGridActived = true;
             this.IsSaved = false;
@@ -98,7 +98,7 @@ namespace GameMapEditor
         {
             this.Map = GameMap.Load(e);
             this.Map.MapChanged += GameMap_MapChanged;
-            this.picMap.Refresh();
+            this.picMap.Invalidate();
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace GameMapEditor
         {
             this.Map = GameMap.Load(e);
             this.Map.MapChanged += GameMap_MapChanged;
-            this.picMap.Refresh();
+            this.picMap.Invalidate();
         }
 
         #region FrameEvents
@@ -120,7 +120,7 @@ namespace GameMapEditor
         private void GameMap_MapChanged(object sender)
         {
             this.IsSaved = false;
-            this.picMap.Refresh();
+            this.picMap.Invalidate();
         }
 
         private void picMap_Resize(object sender, EventArgs e)
@@ -133,7 +133,7 @@ namespace GameMapEditor
             if (!this.vScrollBarPicMap.Enabled)
                 this.mapOrigin.Y = ((GlobalData.TileSize.Height * GlobalData.MapSize.Height) / 2) - (this.picMap.Size.Height / 2);
 
-            this.Refresh();
+            this.Invalidate();
         }
 
         private void picMap_Paint(object sender, PaintEventArgs e)
@@ -170,7 +170,7 @@ namespace GameMapEditor
                 this.DoTileEdition(e);
             }
 
-            this.picMap.Refresh();
+            this.picMap.Invalidate();
         }
 
         /// <summary>
@@ -207,13 +207,13 @@ namespace GameMapEditor
         private void vScrollBarPicMap_Scroll(object sender, ScrollEventArgs e)
         {
             this.mapOrigin.Y = vScrollBarPicMap.Value - Margin.Y;
-            this.picMap.Refresh();
+            this.picMap.Invalidate();
         }
 
         private void hScrollBarPicMap_Scroll(object sender, ScrollEventArgs e)
         {
             this.mapOrigin.X = hScrollBarPicMap.Value - Margin.X;
-            this.picMap.Refresh();
+            this.picMap.Invalidate();
         }
 
         private void toolStripBtnGrid_Click(object sender, EventArgs e)
@@ -249,7 +249,7 @@ namespace GameMapEditor
             {
                 this.undoRedoManager.Add(this.Map.CopyToMemoryStream());
                 this.gameMap.Fill(this.selectedLayerIndex, this.texture);
-                this.picMap.Refresh();
+                this.picMap.Invalidate();
                 this.UndoRedoUpdated?.Invoke(this, this.undoRedoManager);
             }
         }
@@ -439,7 +439,7 @@ namespace GameMapEditor
                     (scrollValue > 0 ? scrollValue : 0) : this.hScrollBarPicMap.Maximum;
             }
 
-            this.picMap.Refresh();
+            this.picMap.Invalidate();
         }
 
         /// <summary>
@@ -471,7 +471,7 @@ namespace GameMapEditor
             {
                 this.isGridActived = value;
                 this.toolStripBtnGrid.Checked = this.IsGridActived;
-                this.picMap.Refresh();
+                this.picMap.Invalidate();
             }
         }
 
@@ -481,7 +481,7 @@ namespace GameMapEditor
         public Pen GridColor
         {
             get { return this.gridColor ?? GridPenColor; }
-            set { this.gridColor = value; this.picMap.Refresh(); }
+            set { this.gridColor = value; this.picMap.Invalidate(); }
         }
 
         /// <summary>
@@ -494,7 +494,7 @@ namespace GameMapEditor
             {
                 this.isTilesetSelectionShowProcessActived = value;
                 this.toolStripBtnTilesetSelection.Checked = this.IsTilesetSelectionShown;
-                this.picMap.Refresh();
+                this.picMap.Invalidate();
             }
         }
 

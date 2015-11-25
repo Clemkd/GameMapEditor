@@ -151,7 +151,9 @@ namespace GameMapEditor
             dockPaneStripToolWindowGradient1.InactiveTabGradient = tabGradient7;
             dockPaneStripSkin1.ToolWindowGradient = dockPaneStripToolWindowGradient1;
             dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
+#pragma warning disable CS0618 // Type or member is obsolete
             this.DockPanel.Skin = dockPanelSkin1;
+#pragma warning restore CS0618 // Type or member is obsolete
             this.DockPanel.SupportDeeplyNestedContent = true;
             this.DockPanel.TabIndex = 0;
             this.DockPanel.Theme = this.OriginalTheme;

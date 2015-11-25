@@ -54,7 +54,6 @@ namespace GameMapEditor
             this.gridColor = new Pen(Color.FromArgb(130, 170, 170, 170), 1);
             this.IsSelectingTiles = false;
             this.IsGridActived = true;
-
             this.TryLoadTilesetFileList();
         }
 
@@ -100,7 +99,7 @@ namespace GameMapEditor
                     this.textureInfo.Selection.Location = pt;
                     this.textureInfo.Selection.Size = GlobalData.TileSize;
                     this.IsSelectingTiles = true;
-                    this.picTileset.Refresh();
+                    this.picTileset.Invalidate();
                 }
             }
         }
@@ -118,7 +117,7 @@ namespace GameMapEditor
                     int tmpHeight = (int)((pt.Y - this.textureInfo.Selection.Location.Y) / GlobalData.TileSize.Height) + 1;
 
                     this.textureInfo.Selection.Size = new Size(tmpWidth * GlobalData.TileSize.Width, tmpHeight * GlobalData.TileSize.Height);
-                    this.picTileset.Refresh();
+                    this.picTileset.Invalidate();
                 }
             }
         }
@@ -144,13 +143,13 @@ namespace GameMapEditor
         private void vPicTilesetScrollBar_Scroll(object sender, ScrollEventArgs e)
         {
             this.tilesetOrigin.Y = vPicTilesetScrollBar.Value;
-            this.picTileset.Refresh();
+            this.picTileset.Invalidate();
         }
 
         private void hPicTilesetScrollBar_Scroll(object sender, ScrollEventArgs e)
         {
             this.tilesetOrigin.X = hPicTilesetScrollBar.Value;
-            this.picTileset.Refresh();
+            this.picTileset.Invalidate();
         }
 
         private void picTileset_SizeChanged(object sender, EventArgs e)
@@ -227,7 +226,7 @@ namespace GameMapEditor
                 this.hPicTilesetScrollBar.Maximum += this.hPicTilesetScrollBar.LargeChange;
                 this.hPicTilesetScrollBar.Value = scrollX < this.hPicTilesetScrollBar.Maximum ? scrollX : this.hPicTilesetScrollBar.Maximum;
 
-                this.picTileset.Refresh();
+                this.picTileset.Invalidate();
             }
             else
             {
@@ -294,14 +293,14 @@ namespace GameMapEditor
             {
                 this.isGridActived = value;
                 this.toolStripButtonGrid.Checked = this.IsGridActived;
-                this.picTileset.Refresh();
+                this.picTileset.Invalidate();
             }
         }
 
         public Pen GridColor
         {
             get { return this.gridColor ?? Pens.Black; }
-            set { this.gridColor = value; this.picTileset.Refresh(); }
+            set { this.gridColor = value; this.picTileset.Invalidate(); }
         }
         #endregion
     }
